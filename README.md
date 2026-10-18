@@ -9,7 +9,7 @@
 Jeu 3D gratuit, directement dans le navigateur, sur ordinateur, tablette et mobile.
 Disponible en français, en anglais et en espagnol.
 
-### [▶ Jouer maintenant](https://SoucoupeJanus.github.io/soucoupe-janus/)
+### [▶ Jouer maintenant](https://soucoupejanus.github.io/soucoupe-janus/)
 
 </div>
 
@@ -74,6 +74,8 @@ Montrez-vous aux témoins, puis disparaissez sous leurs yeux. Tracez des agrogly
 
 Un joystick à gauche pour se déplacer, un glissement du doigt sur l'écran pour regarder autour, et des boutons à droite : monter, descendre, boost, charge, rayon, agir, MHD, nuage et relâcher. Le menu ☰ donne accès à la carte, aux missions, au laboratoire et au bouton **📍 Choisir un lieu** pour se rendre n'importe où.
 
+> **Installer le jeu :** le bouton **📲 Installer le jeu** du menu d'accueil l'ajoute à l'écran d'accueil du téléphone ou de l'ordinateur. Il s'ouvre ensuite en plein écran, comme une application.
+>
 > **Sur iPhone ou iPad :** ouvrez le jeu par son lien dans Safari. L'aperçu de l'app Fichiers ou d'une pièce jointe n'exécute pas les scripts, et le jeu ne peut pas y démarrer. Pour le lancer comme une application, utilisez Partager puis « Sur l'écran d'accueil ».
 
 ## D'où vient le jeu
@@ -95,14 +97,17 @@ L'encyclopédie du jeu (touche I) détaille le modèle avec des schémas et un q
 
 ### Héberger sa propre copie
 
-1. Créez un dépôt public sur GitHub et déposez-y `index.html` (et ce README avec le dossier `docs` si vous le souhaitez).
+1. Créez un dépôt public sur GitHub et déposez-y `index.html`, `manifest.webmanifest`, `sw.js` et le dossier `icons` (ainsi que ce README et le dossier `docs` si vous le souhaitez).
 2. Dans **Settings → Pages**, choisissez **Deploy from a branch**, la branche **main** et le dossier **/ (root)**.
-3. Au bout d'une à deux minutes, le jeu est en ligne à l'adresse `https://SoucoupeJanus.github.io/nom-du-depot/`.
+3. Au bout d'une à deux minutes, le jeu est en ligne à l'adresse `https://votre-pseudo.github.io/nom-du-depot/`.
 
 ## Structure du dépôt
 
 ```
 index.html            le jeu complet
+manifest.webmanifest  nom, couleurs et icônes pour l'écran d'accueil
+sw.js                 service worker (installation du jeu sur l'appareil)
+icons/                icône du jeu (favori, onglet, écran d'accueil)
 README.md             cette page
 docs/affiche.jpg      l'affiche du jeu
 docs/captures/        captures d'écran

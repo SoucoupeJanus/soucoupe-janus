@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0" stop-color="#13284d"/>
+      <stop offset=".55" stop-color="#081329"/>
+      <stop offset="1" stop-color="#03050b"/>
+    </radialGradient>
+    <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef6ff"/>
+      <stop offset=".55" stop-color="#9fb4cf"/>
+      <stop offset="1" stop-color="#4a5f7e"/>
+    </linearGradient>
+    <linearGradient id="dome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6fdff"/>
+      <stop offset=".5" stop-color="#7ff1ff"/>
+      <stop offset="1" stop-color="#22b8d6"/>
+    </linearGradient>
+    <linearGradient id="hullN" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#ffd0ec"/>
+      <stop offset=".55" stop-color="#b0558f"/>
+      <stop offset="1" stop-color="#4a1840"/>
+    </linearGradient>
+    <linearGradient id="domeN" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#ffe3f4"/>
+      <stop offset=".5" stop-color="#ff6ad0"/>
+      <stop offset="1" stop-color="#b8237f"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4fe3ff" stop-opacity="0"/>
+      <stop offset=".3" stop-color="#4fe3ff"/>
+      <stop offset=".7" stop-color="#ff3fae"/>
+      <stop offset="1" stop-color="#ff3fae" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#4fe3ff" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#4fe3ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowN" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ff3fae" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#ff3fae" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath><g clip-path="url(#rr)"><rect width="512" height="512" fill="url(#bg)"/>
+  <g fill="#cfe6ff" opacity=".8">
+    <circle cx="92" cy="98" r="3"/><circle cx="418" cy="80" r="2.5"/><circle cx="452" cy="170" r="2"/><circle cx="64" cy="190" r="2"/><circle cx="360" cy="118" r="1.8"/><circle cx="150" cy="60" r="1.6"/>
+  </g>
+  <g fill="#ffb3dc" opacity=".55">
+    <circle cx="96" cy="414" r="2.5"/><circle cx="420" cy="432" r="3"/><circle cx="448" cy="344" r="2"/><circle cx="70" cy="330" r="1.8"/>
+  </g>
+  <!-- halos -->
+  <ellipse cx="256" cy="196" rx="200" ry="110" fill="url(#glow)"/>
+  <ellipse cx="256" cy="316" rx="200" ry="110" fill="url(#glowN)"/>
+  <!-- saucer + (positive world) -->
+  <g>
+    <path d="M196 196 A60 62 0 0 1 316 196 Z" fill="url(#dome)"/>
+    <path d="M214 178 A44 40 0 0 1 252 148" fill="none" stroke="#ffffff" stroke-opacity=".85" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="256" cy="204" rx="156" ry="36" fill="url(#hull)"/>
+    <ellipse cx="256" cy="196" rx="120" ry="16" fill="#ffffff" fill-opacity=".35"/>
+    <path d="M100 204 Q256 262 412 204" fill="none" stroke="#2c3e5c" stroke-width="5"/>
+    <g fill="#7ff9ff"><circle cx="146" cy="217" r="7"/><circle cx="200" cy="228" r="7"/><circle cx="256" cy="232" r="7"/><circle cx="312" cy="228" r="7"/><circle cx="366" cy="217" r="7"/></g>
+  </g>
+  <!-- hypersurface -->
+  <rect x="40" y="254" width="432" height="5" rx="2.5" fill="url(#line)"/>
+  <!-- saucer − (negative world, mirrored) -->
+  <g transform="translate(0 513) scale(1 -1)" opacity=".8">
+    <path d="M196 196 A60 62 0 0 1 316 196 Z" fill="url(#domeN)"/>
+    <ellipse cx="256" cy="204" rx="156" ry="36" fill="url(#hullN)"/>
+    <path d="M100 204 Q256 262 412 204" fill="none" stroke="#3a1030" stroke-width="5"/>
+    <g fill="#ff6ad0"><circle cx="146" cy="217" r="7"/><circle cx="200" cy="228" r="7"/><circle cx="256" cy="232" r="7"/><circle cx="312" cy="228" r="7"/><circle cx="366" cy="217" r="7"/></g>
+  </g>
+</g></svg>
