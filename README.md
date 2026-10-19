@@ -34,6 +34,7 @@ Montrez-vous aux témoins, puis disparaissez sous leurs yeux. Tracez des agrogly
 - **Des témoins et des réseaux sociaux :** les passants filment, publient et commentent. La presse et la propagande réagissent en direct.
 - **13 sites des civilisations disparues** à découvrir : Gizeh, l'île de Pâques, Stonehenge, Carnac, Göbekli Tepe… et un artéfact unique à la clé.
 - **Des laboratoires secrets** sur Terre, et quelques lieux que seuls les plus curieux trouveront.
+- **Des simulations scientifiques** dans l'encyclopédie (touche I) : la naissance des galaxies selon le modèle Janus, et une exploration 3D du feuillet négatif.
 - **Le système solaire entier :** la Lune, les planètes et les conglomérats de masse négative, à l'échelle réelle des distances.
 - **Une progression :** plusieurs vaisseaux, des améliorations, un rang de pilote, des succès, des missions et le courrier d'Ummo.
 
@@ -109,6 +110,7 @@ manifest.webmanifest  nom, couleurs et icônes pour l'écran d'accueil
 sw.js                 service worker (installation du jeu sur l'appareil)
 icons/                icône du jeu (favori, onglet, écran d'accueil)
 README.md             cette page
+sims/                 simulations interactives de l'encyclopédie (galaxies, feuillet négatif)
 docs/affiche.jpg      l'affiche du jeu
 docs/captures/        captures d'écran
 ```

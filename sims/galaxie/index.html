@@ -1,0 +1,301 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Galaxie Janus</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Mise en page : l'image de simulation domine à gauche, le « cadran » temporel à droite ;
+   la frise temporelle s'étire sous les deux. Thème volontairement unique : nuit d'observatoire. */
+:root {
+  --night: #070912;        /* fond */
+  --panel: #0e1220;        /* surfaces */
+  --line: #232a40;         /* filets */
+  --ink: #e6e8f0;          /* texte */
+  --muted: #8c93ab;        /* texte secondaire */
+  --gold: #ffc878;         /* masse positive */
+  --cyan: #5ac8ff;         /* masse négative */
+  --f-display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+html, body { background: var(--night); color: var(--ink); }
+body { font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-block: 28px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 22px;
+}
+header { display: grid; gap: 6px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: clamp(34px, 5vw, 56px); line-height: 1; letter-spacing: .01em; text-wrap: balance; }
+.lede { margin: 0; color: var(--muted); max-width: 68ch; }
+.lede b { color: var(--gold); font-weight: 500; }
+.lede i { color: var(--cyan); font-style: normal; font-weight: 500; }
+
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 22px; align-items: start; }
+@media (max-width: 860px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+
+.view { position: relative; width: 100%; max-width: 100%; aspect-ratio: 1 / 1; background: #000; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.view canvas { width: 100%; height: 100%; display: block; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
+.fov { position: absolute; left: 14px; bottom: 12px; display: grid; gap: 4px; font-family: var(--f-mono); font-size: 12px; color: #d8dbe6; text-shadow: 0 1px 3px #000; }
+.fov .bar { height: 2px; background: #d8dbe6; }
+
+.dial { display: grid; gap: 18px; }
+.clock { padding: 18px 18px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; display: grid; gap: 2px; }
+.clock .lbl { font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.years { font-family: var(--f-display); font-weight: 700; font-size: 64px; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
+.years small { display: block; margin-top: 6px; font-family: var(--f-body); font-size: 16px; font-weight: 500; color: var(--muted); letter-spacing: .02em; }
+.frozen { font-family: var(--f-mono); font-size: 12px; color: var(--cyan); min-height: 1.4em; }
+
+.step { display: grid; gap: 8px; }
+.chip { justify-self: start; font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; padding: 3px 9px; border-radius: 999px; border: 1px solid currentColor; }
+.step h2 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: 28px; line-height: 1.05; text-wrap: balance; }
+.step p { margin: 0; color: #c9cddb; }
+
+.curve { display: grid; gap: 6px; }
+.curve .lbl { font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.curve canvas { width: 100%; height: 120px; display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+/* frise */
+.timeline { display: grid; gap: 10px; }
+.controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+button { font: 500 14px var(--f-body); color: var(--night); background: var(--gold); border: 0; border-radius: 4px; padding: 8px 16px; cursor: pointer; min-width: 92px; }
+button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); min-width: 0; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.hint { font-size: 13px; color: var(--muted); }
+.track { position: relative; padding-top: 22px; }
+.segs { position: absolute; left: 0; right: 0; top: 0; height: 18px; display: flex; font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+.segs div { border-left: 1px solid var(--line); padding-left: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.segs div:first-child { border-left: 0; padding-left: 0; }
+input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 34px; background: transparent; margin: 0; cursor: pointer; }
+input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--cyan) 0%, var(--gold) 100%); opacity: .55; }
+input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--cyan) 0%, var(--gold) 100%); opacity: .55; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: var(--ink); border: 3px solid var(--night); box-shadow: 0 0 0 1px var(--ink); }
+input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--ink); border: 3px solid var(--night); }
+.ticks { position: relative; height: 18px; font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+.ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.ticks span::before { content: ""; position: absolute; left: 50%; top: -8px; width: 1px; height: 5px; background: var(--muted); }
+
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px 28px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.notes h3 { margin: 0 0 4px; font-family: var(--f-mono); font-weight: 500; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+.notes p { margin: 0; max-width: 60ch; }
+code { font-family: var(--f-mono); font-size: 12px; color: var(--ink); }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+/* adaptation mobile et intégration dans le jeu */
+@media (max-width: 600px) {
+  .wrap { padding-block: 14px 24px; gap: 16px; }
+  h1 { font-size: 30px; }
+  .lede { font-size: 14px; }
+  .years { font-size: 42px; }
+  .years small { font-size: 14px; }
+  .clock { padding: 12px 14px; }
+  .step h2 { font-size: 22px; }
+  .step p { font-size: 14px; }
+  .hint { display: none; }
+  .controls button { padding: 10px 16px; }
+  .controls button.ghost { min-width: 48px; }
+  .segs { font-size: 10px; }
+  .notes { font-size: 12.5px; }
+}
+@media (hover: none) { .hint { display: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Modèle cosmologique Janus · simulation N-corps 2D</div>
+    <h1>De la toile cosmique à la galaxie</h1>
+    <p class="lede">Déplacez le curseur pour remonter ou avancer dans le temps. La matière ordinaire, de <b>masse positive</b>, est en doré. Les <i>masses négatives</i> sont en bleu. Les deux se repoussent, alors que chacune attire ses semblables.</p>
+  </header>
+
+  <section class="stage">
+    <div class="view" id="view">
+      <canvas id="cv" width="900" height="900" aria-label="Image de la simulation à l'instant choisi"></canvas>
+      <div class="loading" id="loading">Chargement des images de la simulation…</div>
+      <div class="fov" id="fov"><span id="fovTxt"></span><div class="bar" style="width:120px"></div></div>
+    </div>
+
+    <aside class="dial">
+      <div class="clock">
+        <span class="lbl">Temps écoulé</span>
+        <div class="years" id="years">0<small>millions d'années</small></div>
+        <div class="frozen" id="frozen"></div>
+      </div>
+      <div class="step">
+        <span class="chip" id="chip">Étape 1</span>
+        <h2 id="stepTitle">La toile cosmique</h2>
+        <p id="stepTxt"></p>
+      </div>
+      <div class="curve" id="curveBox" hidden>
+        <span class="lbl">Courbe de rotation de la galaxie</span>
+        <canvas id="curve" width="720" height="240" aria-label="Vitesse de rotation moyenne en fonction du rayon"></canvas>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--gold)"></i>masse positive</span>
+        <span><i class="dot" style="background:var(--cyan)"></i>masse négative</span>
+      </div>
+    </aside>
+  </section>
+
+  <section class="timeline">
+    <div class="controls">
+      <button id="play" type="button">Lecture</button>
+      <button id="prev" class="ghost" type="button" aria-label="Image précédente">◀</button>
+      <button id="next" class="ghost" type="button" aria-label="Image suivante">▶</button>
+      <span class="hint">Flèches du clavier : image par image</span>
+    </div>
+    <div class="track">
+      <div class="segs" id="segs"></div>
+      <input type="range" id="slider" min="0" max="0" value="0" step="1" aria-label="Instant de la simulation">
+      <div class="ticks" id="ticks"></div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <div>
+      <h3>Échelle de temps</h3>
+      <p>La simulation n'a pas d'unités physiques. Les années sont donc une échelle indicative, calée sur la thèse : selon elle, les galaxies naissent pendant les quelque 100 premiers millions d'années. La fin de l'étape 2, quand les proto-galaxies sont formées, est placée à <code>100 Ma</code>. La même conversion s'applique ensuite, y compris dans la partie zoomée. Le zéro correspond au début de la simulation, pas au Big Bang.</p>
+    </div>
+    <div>
+      <h3>Ce qui est simulé</h3>
+      <p>Chaque particule suit la règle d'interaction de la thèse (éq. 4.4.10) : a = sgn(m₁)·G·m₂/r². Au départ, la masse négative est 8 fois plus dense que la masse positive. À l'étape 3, la région choisie est recalculée avec 30 fois plus de particules, aux mêmes positions et vitesses.</p>
+    </div>
+    <div>
+      <h3>Limites</h3>
+      <p>Simulation en 2D, dont le refroidissement du gaz est une approximation simple, absente de la thèse. La galaxie obtenue est barrée et compacte : la rotation acquise dans la toile ne suffit pas pour former de grands bras spiraux.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const STEPS = {
+    1:   { chip: 'Étape 1', title: 'La toile cosmique', color: 'var(--cyan)' },
+    2:   { chip: 'Étape 2', title: 'Naissance des proto-galaxies', color: 'var(--gold)' },
+    2.5: { chip: 'Zoom', title: 'Zoom sur une proto-galaxie', color: 'var(--ink)' },
+    3:   { chip: 'Étape 3', title: 'Formation de la galaxie', color: 'var(--gold)' },
+  };
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), ctx = cv.getContext('2d');
+  const slider = $('slider');
+  let meta = null, sheets = [], cur = 0, timer = null, myrPerUnit = 1;
+  const fmt = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  function years(t) { return t * myrPerUnit; }
+
+  function drawFrame(i) {
+    const per = meta.cols * meta.rows, s = Math.floor(i / per), j = i % per;
+    const img = sheets[s];
+    if (!img || !img.complete || !img.naturalWidth) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cv.width, cv.height); return false; }
+    const fw = img.naturalWidth / meta.cols, fh = img.naturalHeight / meta.rows;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, (j % meta.cols) * fw, Math.floor(j / meta.cols) * fh, fw, fh, 0, 0, cv.width, cv.height);
+    return true;
+  }
+
+  function drawCurve(rc) {
+    const box = $('curveBox');
+    if (!rc) { box.hidden = true; return; }
+    box.hidden = false;
+    const c = $('curve'), g = c.getContext('2d'), W = c.width, H = c.height, pad = 28;
+    g.clearRect(0, 0, W, H);
+    const vals = rc.filter(v => v != null);
+    const vmax = Math.max(...vals) * 1.2 || 1;
+    g.strokeStyle = 'rgba(140,147,171,.25)'; g.lineWidth = 1;
+    for (let k = 1; k < 4; k++) { const y = pad + (H - 2 * pad) * k / 4; g.beginPath(); g.moveTo(pad, y); g.lineTo(W - 12, y); g.stroke(); }
+    g.strokeStyle = 'rgba(140,147,171,.6)'; g.beginPath(); g.moveTo(pad, pad - 6); g.lineTo(pad, H - pad); g.lineTo(W - 12, H - pad); g.stroke();
+    g.fillStyle = '#8c93ab'; g.font = '22px "IBM Plex Mono", monospace';
+    g.fillText('rayon →', W - 130, H - 4); g.fillText('vitesse', pad + 8, pad + 4);
+    const x = k => pad + (W - pad - 12) * (k + 0.5) / rc.length, y = v => H - pad - (H - 2 * pad) * v / vmax;
+    g.strokeStyle = '#ffc878'; g.lineWidth = 5; g.lineJoin = 'round'; g.beginPath();
+    let started = false;
+    rc.forEach((v, k) => { if (v == null) { started = false; return; } if (!started) { g.moveTo(x(k), y(v)); started = true; } else g.lineTo(x(k), y(v)); });
+    g.stroke();
+  }
+
+  function show(i) {
+    cur = Math.max(0, Math.min(meta.n - 1, i));
+    slider.value = cur;
+    const f = meta.frames[cur], st = STEPS[f.etape];
+    drawFrame(cur);
+    const y = years(f.t);
+    $('years').innerHTML = fmt.format(y) + '<small>millions d\'années</small>';
+    $('frozen').textContent = f.etape === 2.5 ? 'Temps arrêté pendant le zoom de la caméra' : '';
+    $('chip').textContent = st.chip; $('chip').style.color = st.color;
+    $('stepTitle').textContent = st.title;
+    $('stepTxt').textContent = f.txt;
+    const pct = 100 * f.w * 120 / cv.clientWidth;
+    $('fovTxt').textContent = 'Barre : ' + (pct >= 1 ? fmt.format(pct) : pct.toLocaleString('fr-FR', { maximumFractionDigits: 2 })) + ' % de la boîte initiale';
+    drawCurve(f.rc);
+  }
+
+  function buildTimeline() {
+    // segments
+    const segs = $('segs'), n = meta.n;
+    const bounds = [];
+    meta.frames.forEach((f, i) => { if (!bounds.length || bounds[bounds.length - 1].e !== f.etape) bounds.push({ e: f.etape, a: i, b: i }); else bounds[bounds.length - 1].b = i; });
+    segs.innerHTML = '';
+    bounds.forEach(b => { const d = document.createElement('div'); d.style.width = (100 * (b.b - b.a + 1) / n) + '%'; d.textContent = STEPS[b.e].chip; d.title = STEPS[b.e].title; segs.appendChild(d); });
+    // graduations en millions d'années
+    const ticks = $('ticks'); ticks.innerHTML = '';
+    const tmax = years(meta.frames[n - 1].t);
+    const marks = [0, 25, 50, 75, 100, 110, 120, 130, 140, 150].filter(m => m <= tmax + 0.01);
+    let lastPos = -100;
+    marks.forEach(m => {
+      let idx = meta.frames.findIndex(f => years(f.t) >= m - 1e-6);
+      if (idx < 0) return;
+      const pos = 100 * idx / (n - 1);
+      const minGap = 100 * 52 / Math.max(1, ticks.clientWidth);
+      if (pos - lastPos < minGap) return; lastPos = pos;
+      const s = document.createElement('span'); s.style.left = pos + '%'; s.textContent = m + ' Ma'; ticks.appendChild(s);
+    });
+  }
+
+  function play() {
+    if (timer) { clearInterval(timer); timer = null; $('play').textContent = 'Lecture'; return; }
+    if (cur >= meta.n - 1) show(0);
+    $('play').textContent = 'Pause';
+    timer = setInterval(() => { if (cur >= meta.n - 1) { play(); return; } show(cur + 1); }, 70);
+  }
+
+  slider.addEventListener('input', () => { if (timer) play(); show(+slider.value); });
+  $('play').addEventListener('click', play);
+  $('prev').addEventListener('click', () => { if (timer) play(); show(cur - 1); });
+  $('next').addEventListener('click', () => { if (timer) play(); show(cur + 1); });
+  document.addEventListener('keydown', e => {
+    if (e.target === slider) return;
+    if (e.key === 'ArrowRight') { show(cur + 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { show(cur - 1); e.preventDefault(); }
+  });
+  window.addEventListener('resize', () => { if (meta) { buildTimeline(); show(cur); } });
+
+  fetch('frames/meta.json').then(r => r.json()).then(m => {
+    meta = m; myrPerUnit = 100 / m.T12;
+    slider.max = m.n - 1;
+    buildTimeline();
+    const nS = Math.ceil(m.n / (m.cols * m.rows));
+    let loaded = 0;
+    for (let s = 0; s < nS; s++) {
+      const im = new Image();
+      im.onload = () => { loaded++; if (s === Math.floor(cur / (m.cols * m.rows))) show(cur); if (loaded === nS) $('loading').hidden = true; else $('loading').textContent = `Chargement des images… ${loaded}/${nS}`; };
+      im.onerror = () => { $('loading').textContent = 'Une partie des images n\'a pas pu être chargée. Rechargez la page.'; };
+      im.src = `frames/sheet${s}.jpg`;
+      sheets[s] = im;
+    }
+    // premier écran : une image significative de l'étape 1
+    show(Math.floor(m.frames.findIndex(f => f.etape === 2) * 0.75));
+  }).catch(() => { $('loading').textContent = 'Les données de la simulation n\'ont pas pu être chargées. Rechargez la page.'; });
+})();
+</script>
+
+</body></html>

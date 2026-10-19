@@ -1,0 +1,657 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Feuillet négatif</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,500&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : plein écran WebGL, instruments posés aux quatre coins comme sur un cockpit d'observation */
+:root{
+  --void:#070304;        /* fond, noir biaisé vers le rouge */
+  --ink:#f1e4dc;         /* texte principal */
+  --muted:#a78f86;       /* texte secondaire */
+  --ember:#ff7a3d;       /* accent : braise infrarouge */
+  --glass:rgba(22,9,8,.72);
+  --line:rgba(255,122,61,.22);
+  --ghost:#9fc4ff;       /* matière positive (fantôme) */
+  --f-display:"Bodoni Moda", "Didot", Georgia, serif;
+  --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-data:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme:dark;
+}
+html,body{height:100%;overflow:hidden;background:var(--void);color:var(--ink)}
+body{font-family:var(--f-body);font-size:14px;line-height:1.5}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
+.hud{position:fixed;z-index:5;pointer-events:none;font-family:var(--f-data);font-size:12px;font-variant-numeric:tabular-nums}
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:3px;padding:10px 12px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#tl{top:calc(14px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px))}
+#tl h1{font-family:var(--f-display);font-style:italic;font-weight:500;font-size:26px;line-height:1;margin:0 0 4px;letter-spacing:.01em}
+#tl .sub{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+#bl{bottom:calc(14px + env(safe-area-inset-bottom,0px));left:max(16px,env(safe-area-inset-left,0px));min-width:250px}
+.row{display:flex;justify-content:space-between;gap:18px}
+.row span:first-child{color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;padding-top:1px}
+.row b{font-weight:500}
+#near{color:var(--ember)}
+#tr{top:calc(14px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));pointer-events:auto;width:236px;display:flex;flex-direction:column;gap:8px}
+.lbl{color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-size:10px;margin-bottom:6px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+button{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:2px;padding:6px 8px;cursor:pointer;text-align:left}
+button:hover{border-color:var(--ember)}
+button:focus-visible{outline:2px solid var(--ember);outline-offset:2px}
+button[aria-pressed="true"]{background:rgba(255,122,61,.16);border-color:var(--ember);color:#fff}
+.tog{display:flex;flex-direction:column;gap:4px}
+.tog button{display:flex;justify-content:space-between;align-items:center}
+.tog button::after{content:"off";color:var(--muted);font-size:10px}
+.tog button[aria-pressed="true"]::after{content:"on";color:var(--ember)}
+#ghostBtn[aria-pressed="true"]{border-color:var(--ghost);background:rgba(159,196,255,.12)}
+#ghostBtn[aria-pressed="true"]::after{color:var(--ghost)}
+#br{bottom:calc(14px + env(safe-area-inset-bottom,0px));right:max(16px,env(safe-area-inset-right,0px));color:var(--muted);font-size:11px;text-align:right;line-height:1.7}
+kbd{font-family:var(--f-data);color:var(--ink);border:1px solid var(--line);border-radius:2px;padding:0 4px;font-size:10.5px}
+#info{font-family:var(--f-body);font-size:12.5px;line-height:1.5;color:var(--ink)}
+#info p{margin:0 0 6px}
+#info p:last-child{margin:0;color:var(--muted);font-size:11px}
+#info b{color:var(--ember);font-weight:500}
+#info .g{color:var(--ghost)}
+#infoBody[hidden]{display:none}
+
+/* Écran d'entrée */
+#intro{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:radial-gradient(ellipse at 60% 40%,rgba(120,24,8,.35),rgba(7,3,4,.92) 60%);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px}
+#intro .card{max-width:560px}
+#intro .eyebrow{font-family:var(--f-data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ember)}
+#intro h2{font-family:var(--f-display);font-style:italic;font-weight:500;font-size:clamp(38px,8vw,64px);line-height:1;margin:10px 0 16px;text-wrap:balance}
+#intro p{color:#d9c6bd;max-width:62ch;margin:0 0 12px;font-size:15px}
+#intro .keys{font-family:var(--f-data);font-size:12px;color:var(--muted);margin:18px 0 22px;display:flex;flex-wrap:wrap;gap:10px 18px}
+#go{font-family:var(--f-data);font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:12px 20px;border-color:var(--ember);background:rgba(255,122,61,.14)}
+#intro.gone{opacity:0;pointer-events:none;transition:opacity .6s}
+#err{position:fixed;inset:0;display:grid;place-items:center;z-index:30;background:var(--void);padding:24px;text-align:center}
+
+@media (max-width:640px){
+  #tr{width:150px;gap:6px}
+  #tr .panel{padding:7px 8px}
+  #tr button{padding:6px 6px;font-size:11px}
+  #infoCard{display:none}
+  #br{display:none}
+  #bl{min-width:0;right:auto;font-size:10.5px;padding:7px 9px;max-width:calc(100vw - 32px)}
+  #bl .row{gap:10px}
+  #tl h1{font-size:20px}
+  #tl .sub{font-size:9.5px;max-width:170px}
+  #intro p{font-size:14px}
+}
+@media (max-height:480px){
+  #infoCard{display:none}
+  #bl .row:nth-child(n+4){display:none}
+  #tr .panel{padding:6px 8px}
+}
+#intro{overflow-y:auto}
+@media (hover:none){#br{display:none}}
+@media (max-height:520px){#intro{place-items:start center;padding-top:calc(56px + env(safe-area-inset-top,0px))}#intro h2{font-size:34px;margin:6px 0 10px}#intro p{font-size:13.5px;margin-bottom:8px}#intro .keys{margin:10px 0 14px}}
+#touchHint{display:none;position:fixed;z-index:6;pointer-events:none;left:50%;top:55%;transform:translate(-50%,-50%);font-family:var(--f-data);font-size:12px;color:var(--ink);text-align:center;background:var(--glass);border:1px solid var(--ember);border-radius:4px;padding:10px 14px;max-width:min(320px,80vw);line-height:1.5;transition:opacity .6s}
+#touchHint.show{display:block}#touchHint.fade{opacity:0}
+</style>
+
+<canvas id="gl" aria-label="Vue 3D du feuillet négatif"></canvas>
+
+<div class="hud" id="tl">
+  <h1>Feuillet négatif</h1>
+  <div class="sub">Modèle cosmologique Janus · vue d'un observateur m⁻</div>
+</div>
+
+<div class="hud panel" id="bl">
+  <div class="row"><span>Position</span><b id="pos">0 · 0 · 0 Mpc</b></div>
+  <div class="row"><span>Vitesse</span><b id="spd">20 Mpc/s</b></div>
+  <div class="row"><span>Le plus proche</span><b id="near">—</b></div>
+  <div class="row"><span>Distance surface</span><b id="ndist">—</b></div>
+  <div class="row"><span>Lentilles actives</span><b id="nlens">0</b></div>
+  <div class="row" id="accRow" hidden><span>Gravité ressentie</span><b id="acc">—</b></div>
+</div>
+
+<div class="hud" id="tr">
+  <div class="panel">
+    <div class="lbl">Vision</div>
+    <div class="seg" role="group" aria-label="Mode de vision">
+      <button id="mEye" aria-pressed="true">Œil</button>
+      <button id="mIR" aria-pressed="false">Infrarouge</button>
+    </div>
+  </div>
+  <div class="panel tog">
+    <div class="lbl">Couches</div>
+    <button id="lensBtn" aria-pressed="true">Lentille négative</button>
+    <button id="ghostBtn" aria-pressed="false">Matière positive</button>
+    <button id="gravBtn" aria-pressed="false">Gravité</button>
+  </div>
+  <div class="panel" id="infoCard">
+    <div class="lbl" style="display:flex;justify-content:space-between"><span>Ce que vous voyez</span><button id="infoTog" style="padding:0 6px;font-size:10px" aria-expanded="true">–</button></div>
+    <div id="info"><div id="infoBody">
+      <p><b>Sphères rouges</b> : conglomérats d'antimatière de masse négative (anti-H, anti-He). Ce sont des proto-étoiles géantes qui ne s'allument jamais et rayonnent en rouge et infrarouge.</p>
+      <p>Elles occupent les centres des grands vides et forment un réseau régulier. Aucune étoile, galaxie ou molécule ne s'y forme.</p>
+      <p>Les <b>zones sombres déformées</b> correspondent aux parois de <span class="g">matière positive</span>. Celle-ci est invisible ici, mais elle agit sur votre lumière comme une lentille divergente.</p>
+      <p>D'après le chap. 3 (p. 59-85, fig. 3.13-3.15). Échelles et proportions sont illustratives.</p>
+    </div></div>
+  </div>
+</div>
+
+<div class="hud" id="br">
+  <kbd>Z Q S D</kbd> / <kbd>W A S D</kbd> se déplacer · <kbd>Espace</kbd> <kbd>Maj</kbd> monter / descendre<br>
+  Souris : regarder · Molette : vitesse · <kbd>R</kbd> freiner · <kbd>Échap</kbd> libérer le curseur
+</div>
+
+<div id="touchHint">Glissez le doigt à gauche de l'écran pour avancer,<br>à droite pour regarder autour.</div>
+<div id="intro">
+  <div class="card">
+    <div class="eyebrow">Modèle Janus · secteur des masses négatives</div>
+    <h2>Le monde négatif, vu de l'intérieur</h2>
+    <p>Vous êtes un observateur hypothétique fait de masse négative. Vous ne voyez que les photons d'énergie négative. Autour de vous, des conglomérats géants d'antimatière rougeoient faiblement dans l'infrarouge, espacés d'environ cent mégaparsecs.</p>
+    <p>Notre univers est là aussi, dans les parois entre ces sphères, mais il vous reste invisible. Vous le repérez seulement aux déformations qu'il imprime à votre ciel.</p>
+    <div class="keys"><span>ZQSD / WASD : avancer</span><span>Souris : regarder</span><span>Molette : vitesse</span><span>Mobile : glisser à gauche pour avancer, à droite pour regarder</span></div>
+    <button id="go">Entrer dans le feuillet</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+if(!window.THREE){document.body.insertAdjacentHTML("beforeend",'<div id="err">Three.js n\'a pas pu être chargé. Vérifiez la connexion puis rechargez la page.</div>');return;}
+
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const canvas = document.getElementById("gl");
+let renderer;
+try{ renderer = new THREE.WebGLRenderer({canvas, antialias:true, powerPreference:"high-performance"}); }
+catch(e){ document.body.insertAdjacentHTML("beforeend",'<div id="err">WebGL est indisponible dans ce navigateur. Essayez Chrome, Firefox ou Safari récent.</div>'); return; }
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
+renderer.setClearColor(0x000000,1);
+
+/* ---------------- Monde : boîte périodique ---------------- */
+const CELL = 100;            // Mpc, taille typique d'un grand vide
+const N = 4;                 // 4×4×4 cellules
+const L = CELL*N;            // 400 Mpc, l'univers se répète (exploration infinie)
+const HALF = L/2;
+
+// RNG reproductible
+let seed = 1337;
+function rnd(){ seed = (seed*16807)%2147483647; return (seed-1)/2147483646; }
+function gauss(){ let u=0,v=0; while(!u)u=rnd(); while(!v)v=rnd(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 1200);
+
+// Conglomérats de masse négative : réseau régulier légèrement perturbé
+const clumps = [];
+for(let i=0;i<N;i++)for(let j=0;j<N;j++)for(let k=0;k<N;k++){
+  const p = new THREE.Vector3((i+.5)*CELL+(rnd()-.5)*30,(j+.5)*CELL+(rnd()-.5)*30,(k+.5)*CELL+(rnd()-.5)*30);
+  clumps.push({p, r: 8+rnd()*8, heat: .75+rnd()*.5, spin: (rnd()-.5)*.04, id: clumps.length, ijk:[i,j,k]});
+}
+function wrapNear(p, c, out){
+  out.set(
+    p.x + L*Math.round((c.x-p.x)/L),
+    p.y + L*Math.round((c.y-p.y)/L),
+    p.z + L*Math.round((c.z-p.z)/L));
+  return out;
+}
+function clumpName(c){ return "Conglomérat h-" + String(c.id+1).padStart(2,"0"); }
+
+// Nœuds de matière positive : centres des parois entre conglomérats voisins
+const walls = [];
+for(const a of clumps){
+  for(let ax=0;ax<3;ax++){
+    const ijk = a.ijk.slice(); ijk[ax]=(ijk[ax]+1)%N;
+    const b = clumps[ijk[0]*N*N+ijk[1]*N+ijk[2]];
+    const bp = wrapNear(b.p, a.p, new THREE.Vector3());
+    const n = bp.clone().sub(a.p).normalize();
+    // la paroi est repoussée vers le plus petit conglomérat
+    const t = .5 + (a.r-b.r)/(a.r+b.r)*.15;
+    const m = a.p.clone().lerp(bp, t);
+    walls.push({p:m, n, mass:.6+rnd()*.8});
+  }
+}
+
+/* ---------------- Bruit GLSL (Ashima simplex 3D) ---------------- */
+const NOISE = `
+vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}
+vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}
+vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);}
+vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-.85373472095314*r;}
+float snoise(vec3 v){
+  const vec2 C=vec2(1./6.,1./3.);const vec4 D=vec4(0.,.5,1.,2.);
+  vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);
+  vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);
+  vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;
+  i=mod289(i);
+  vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
+  float n_=.142857142857;vec3 ns=n_*D.wyz-D.xzx;
+  vec4 j=p-49.*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.*x_);
+  vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.-abs(x)-abs(y);
+  vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
+  vec4 s0=floor(b0)*2.+1.;vec4 s1=floor(b1)*2.+1.;vec4 sh=-step(h,vec4(0.));
+  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+  vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+  p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
+  vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);m=m*m;
+  return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+}
+float fbm(vec3 p){float s=0.,a=.5;for(int i=0;i<5;i++){s+=a*snoise(p);p*=2.03;a*=.5;}return s;}
+`;
+
+/* ---------------- Conglomérats ---------------- */
+const clumpGeo = new THREE.IcosahedronGeometry(1, 5);
+const clumpVS = `
+varying vec3 vN; varying vec3 vP; varying vec3 vWorld;
+void main(){
+  vP = position;
+  vN = normalize(normalMatrix*normal);
+  vec4 mv = modelViewMatrix*vec4(position,1.);
+  vWorld = -mv.xyz;
+  gl_Position = projectionMatrix*mv;
+}`;
+const clumpFS = NOISE + `
+uniform float uTime, uHeat, uFade, uSeed;
+varying vec3 vN; varying vec3 vP; varying vec3 vWorld;
+vec3 ramp(float t){
+  // du rouge sombre (bord, plus froid) à l'orange terne (cœur)
+  vec3 a=vec3(.05,.004,.003), b=vec3(.42,.035,.012), c=vec3(.95,.22,.05), d=vec3(1.3,.62,.22);
+  return t<.4? mix(a,b,t/.4) : t<.75? mix(b,c,(t-.4)/.35) : mix(c,d,(t-.75)/.25);
+}
+void main(){
+  vec3 V = normalize(vWorld);
+  float mu = abs(dot(normalize(vN),V));
+  float limb = pow(mu,.55);                       // assombrissement centre-bord
+  vec3 q = vP*2.2 + vec3(uSeed);
+  float cells = fbm(q + vec3(0.,uTime*.03,uTime*.02));
+  float gran  = snoise(q*4. - uTime*.05)*.5+.5;   // granulation convective lente
+  float t = clamp(limb*(.55+.2*cells) + .12*gran*limb + (uHeat-1.)*.25, 0., 1.);
+  vec3 col = ramp(t)*1.6;
+  col = 1. - exp(-col);
+  gl_FragColor = vec4(col*uFade, 1.);
+}`;
+const haloTex = (function(){
+  const c=document.createElement("canvas");c.width=c.height=256;const g=c.getContext("2d");
+  const gr=g.createRadialGradient(128,128,0,128,128,128);
+  gr.addColorStop(0,"rgba(255,110,50,1)");gr.addColorStop(.25,"rgba(200,40,12,.55)");
+  gr.addColorStop(.55,"rgba(110,12,6,.18)");gr.addColorStop(1,"rgba(0,0,0,0)");
+  g.fillStyle=gr;g.fillRect(0,0,256,256);
+  const t=new THREE.CanvasTexture(c);return t;
+})();
+const clumpObjs = clumps.map((c,idx)=>{
+  const mat = new THREE.ShaderMaterial({
+    uniforms:{uTime:{value:0},uHeat:{value:c.heat},uFade:{value:1},uSeed:{value:idx*7.31}},
+    vertexShader:clumpVS, fragmentShader:clumpFS, side:THREE.DoubleSide
+  });
+  const mesh = new THREE.Mesh(clumpGeo, mat);
+  mesh.scale.setScalar(c.r);
+  mesh.rotation.set(rnd()*6,rnd()*6,rnd()*6);
+  scene.add(mesh);
+  const sm = new THREE.SpriteMaterial({map:haloTex, color:0xffffff, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, opacity:.55});
+  const halo = new THREE.Sprite(sm);
+  halo.scale.setScalar(c.r*5.2);
+  scene.add(halo);
+  return {mesh, halo, mat, sm};
+});
+
+/* ---------------- Gaz diffus d'anti-hydrogène ---------------- */
+const pointVS = `
+uniform vec3 uCam; uniform float uL; uniform float uScale; uniform float uSize;
+attribute float aSize; attribute float aBright;
+varying float vB;
+void main(){
+  vec3 d = position - uCam;
+  d -= uL*floor(d/uL + .5);
+  vec4 mv = viewMatrix*vec4(uCam + d,1.);
+  float dist = length(d);
+  vB = aBright * smoothstep(uL*.5, uL*.32, dist) * smoothstep(.5, 4., dist);
+  gl_PointSize = clamp(uSize*aSize*uScale/max(-mv.z,.1), 0., 64.);
+  gl_Position = projectionMatrix*mv;
+}`;
+const pointFS = `
+uniform vec3 uColor; uniform float uAlpha;
+varying float vB;
+void main(){
+  vec2 c = gl_PointCoord-.5; float r = dot(c,c)*4.;
+  if(r>1.) discard;
+  float a = (1.-r); a*=a;
+  gl_FragColor = vec4(uColor*a*vB*uAlpha, 1.);
+}`;
+function makePoints(positions, sizes, bright, color, size){
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(positions,3));
+  g.setAttribute("aSize", new THREE.Float32BufferAttribute(sizes,1));
+  g.setAttribute("aBright", new THREE.Float32BufferAttribute(bright,1));
+  const m = new THREE.ShaderMaterial({
+    uniforms:{uCam:{value:new THREE.Vector3()},uL:{value:L},uScale:{value:1},uSize:{value:size},uColor:{value:new THREE.Color(color)},uAlpha:{value:1}},
+    vertexShader:pointVS, fragmentShader:pointFS, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending
+  });
+  const p = new THREE.Points(g,m); p.frustumCulled=false; scene.add(p); return p;
+}
+// gaz : concentré en enveloppes autour des conglomérats + fond ténu
+(function(){
+  const P=[],S=[],B=[];
+  for(const c of clumps){
+    for(let n=0;n<650;n++){
+      const dir = new THREE.Vector3(gauss(),gauss(),gauss()).normalize();
+      const rr = c.r*(1.15 + Math.pow(rnd(),2.2)*3.2);
+      P.push(c.p.x+dir.x*rr, c.p.y+dir.y*rr, c.p.z+dir.z*rr);
+      S.push(1.5+rnd()*4); B.push(.06 + .25*Math.exp(-(rr/c.r-1.15)*1.2));
+    }
+  }
+  for(let n=0;n<16000;n++){ P.push(rnd()*L,rnd()*L,rnd()*L); S.push(.8+rnd()*1.6); B.push(.05+rnd()*.07); }
+  makePoints(P,S,B,0xff5a28, 900);
+})();
+
+/* ---------------- Matière positive (invisible, révélable) ---------------- */
+const ghost = (function(){
+  const P=[],S=[],B=[];
+  const tmp=new THREE.Vector3(), u=new THREE.Vector3(), v=new THREE.Vector3();
+  for(const w of walls){
+    u.set(1,0,0); if(Math.abs(w.n.x)>.8) u.set(0,1,0);
+    u.cross(w.n).normalize(); v.copy(w.n).cross(u).normalize();
+    // amas de galaxies (nœuds) dans la paroi
+    const knots=[]; for(let k=0;k<3;k++) knots.push([gauss()*18, gauss()*18]);
+    for(let n=0;n<130;n++){
+      let a,b;
+      if(rnd()<.55){ const k=knots[(rnd()*3)|0]; a=k[0]+gauss()*5; b=k[1]+gauss()*5; }
+      else { a=(rnd()-.5)*95; b=(rnd()-.5)*95; }
+      const h = gauss()*2.2;
+      tmp.copy(w.p).addScaledVector(u,a).addScaledVector(v,b).addScaledVector(w.n,h);
+      P.push(tmp.x,tmp.y,tmp.z); S.push(1+rnd()*2.4); B.push(.35+rnd()*.5);
+    }
+  }
+  const pts = makePoints(P,S,B,0x9fc4ff, 600);
+  pts.material.uniforms.uAlpha.value = 0;
+  return pts;
+})();
+
+/* ---------------- Ciel lointain : conglomérats au-delà de la boîte ---------------- */
+const sky = new THREE.Mesh(new THREE.SphereGeometry(1000,48,32), new THREE.ShaderMaterial({
+  side:THREE.BackSide, depthWrite:false, depthTest:false,
+  vertexShader:`varying vec3 vD; void main(){ vD=normalize(position); vec4 p=projectionMatrix*modelViewMatrix*vec4(position,1.); gl_Position=p.xyww; }`,
+  fragmentShader: NOISE + `varying vec3 vD;
+  void main(){
+    float n = snoise(vD*9.)*.5+.5; n = pow(n,7.);
+    float m = snoise(vD*22.+3.)*.5+.5; m = pow(m,14.);
+    float h = fbm(vD*3.)*.5+.5;
+    vec3 c = vec3(.10,.012,.008)*n + vec3(.22,.04,.015)*m + vec3(.018,.003,.003)*h;
+    gl_FragColor = vec4(c,1.);
+  }`
+}));
+sky.renderOrder = -1;
+scene.add(sky);
+
+/* ---------------- Passe finale : lentille négative + vision ---------------- */
+let rt;
+function makeRT(w,h){
+  if(rt){ rt.dispose(); if(rt.depthTexture) rt.depthTexture.dispose(); }
+  rt = new THREE.WebGLRenderTarget(w,h,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});
+  rt.depthTexture = new THREE.DepthTexture(w,h);
+  rt.depthTexture.type = THREE.UnsignedIntType;
+}
+const MAXL = 16;
+const lensArr = []; for(let i=0;i<MAXL;i++) lensArr.push(new THREE.Vector4());
+const post = new THREE.ShaderMaterial({
+  uniforms:{
+    tCol:{value:null}, tDepth:{value:null}, uAsp:{value:1}, uLens:{value:lensArr}, uN:{value:0},
+    uLensOn:{value:1}, uMode:{value:0}, uInside:{value:0}, uTime:{value:0}, uNear:{value:camera.near}, uFar:{value:camera.far}
+  },
+  vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.,1.); }`,
+  fragmentShader:`
+  uniform sampler2D tCol, tDepth; uniform float uAsp, uLensOn, uMode, uInside, uTime, uNear, uFar;
+  uniform vec4 uLens[${MAXL}]; uniform int uN;
+  varying vec2 vUv;
+  float linDepth(float d){ float z=d*2.-1.; return (2.*uNear*uFar)/(uFar+uNear-z*(uFar-uNear)); }
+  float hash(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
+  vec3 inferno(float t){
+    t=clamp(t,0.,1.);
+    vec3 c0=vec3(0.,0.,.02), c1=vec3(.25,.04,.42), c2=vec3(.72,.15,.38), c3=vec3(.98,.45,.09), c4=vec3(.99,.93,.6);
+    return t<.25?mix(c0,c1,t/.25):t<.5?mix(c1,c2,(t-.25)/.25):t<.75?mix(c2,c3,(t-.5)/.25):mix(c3,c4,(t-.75)/.25);
+  }
+  void main(){
+    vec2 p = (vUv-.5)*vec2(uAsp,1.);
+    float dz = linDepth(texture2D(tDepth,vUv).x);
+    vec2 disp = vec2(0.); float mag = 1.;
+    for(int i=0;i<${MAXL};i++){
+      if(i>=uN) break;
+      vec4 Ls = uLens[i];
+      vec2 d = p-Ls.xy; float r2 = dot(d,d)+1e-5; float te2 = Ls.z*Ls.z;
+      float w = smoothstep(Ls.w*.92, Ls.w*1.08, dz)*uLensOn;   // seulement ce qui est derrière la paroi
+      disp += d*te2/r2*w;                                      // déviation divergente : β = θ + θE²/θ
+      mag *= mix(1., r2/(r2+te2), w);                           // démagnification → assombrissement
+    }
+    float dl = length(disp); if(dl>1.5) disp *= 1.5/dl;
+    vec2 suv = (p+disp)/vec2(uAsp,1.)+.5;
+    vec2 m = min(suv, 1.-suv);
+    float edge = smoothstep(-.02,.03,min(m.x,m.y));
+    vec3 c = texture2D(tCol, clamp(suv,0.,1.)).rgb * mag * mix(.15,1.,edge);
+
+    // à l'intérieur d'un conglomérat : brume chaude
+    float n = hash(vUv*vec2(913.,577.)+uTime);
+    vec3 fogc = vec3(.55,.09,.03)+vec3(.12,.03,0.)*n;
+    c = mix(c, fogc, uInside*.78);
+
+    float lum = dot(c, vec3(.55,.35,.10));
+    vec3 outc;
+    if(uMode<.5){
+      // ce qu'un œil percevrait : surtout du rouge sombre, l'infrarouge reste invisible
+      outc = c*vec3(1.,.82,.78);
+    } else {
+      // fausses couleurs : intensité totale (rouge + infrarouge)
+      outc = inferno(pow(lum*1.5,.7));
+    }
+    // vignette + grain
+    float vig = smoothstep(1.25,.35,length((vUv-.5)*vec2(uAsp*.8,1.)));
+    outc *= mix(.55,1.,vig);
+    outc += (n-.5)*.012;
+    gl_FragColor = vec4(outc,1.);
+  }`,
+  depthTest:false, depthWrite:false
+});
+const postScene = new THREE.Scene();
+const postCam = new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), post));
+
+/* ---------------- Redimensionnement ---------------- */
+function resize(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w,h,false);
+  camera.aspect = w/h; camera.updateProjectionMatrix();
+  const pr = renderer.getPixelRatio();
+  makeRT(Math.floor(w*pr), Math.floor(h*pr));
+  post.uniforms.uAsp.value = w/h;
+  scene.traverse(o=>{ if(o.isPoints) o.material.uniforms.uScale.value = h*pr/1000; });
+}
+addEventListener("resize", resize); resize();
+
+/* ---------------- Contrôles ---------------- */
+const start = clumps[1*N*N+1*N+1].p;
+camera.position.set(start.x - 8, start.y + 6, start.z - 62);
+let yaw = Math.PI, pitch = -0.05;   // regarder vers +z
+const vel = new THREE.Vector3();
+let speed = 20;
+const keys = {};
+let started = false, locked = false, dragging = false;
+
+addEventListener("keydown", e=>{
+  if(e.target.tagName==="BUTTON" && (e.code==="Space"||e.code==="Enter")) return;
+  keys[e.code]=true;
+  if(e.code==="Space") e.preventDefault();
+  if(e.code==="KeyR") vel.set(0,0,0);
+});
+addEventListener("keyup", e=>{ keys[e.code]=false; });
+addEventListener("blur", ()=>{ for(const k in keys) keys[k]=false; });
+
+function look(dx,dy){
+  yaw -= dx*0.0022; pitch -= dy*0.0022;
+  pitch = Math.max(-1.55, Math.min(1.55, pitch));
+}
+document.addEventListener("pointerlockchange", ()=>{ locked = document.pointerLockElement===canvas; });
+canvas.addEventListener("mousedown", e=>{
+  if(!started) return;
+  dragging = true;
+  if(!locked && canvas.requestPointerLock){ try{ const r = canvas.requestPointerLock(); if(r&&r.catch) r.catch(()=>{}); }catch(_){} }
+});
+addEventListener("mouseup", ()=>{ dragging=false; });
+addEventListener("mousemove", e=>{ if(locked || dragging) look(e.movementX||0, e.movementY||0); });
+canvas.addEventListener("wheel", e=>{ e.preventDefault(); speed = Math.max(1, Math.min(400, speed*Math.exp(-e.deltaY*0.0012))); }, {passive:false});
+
+// tactile : gauche = déplacement, droite = regard
+const touches = {};
+canvas.addEventListener("touchstart", e=>{
+  for(const t of e.changedTouches){ touches[t.identifier] = {x0:t.clientX,y0:t.clientY,x:t.clientX,y:t.clientY,left:t.clientX<innerWidth*.45}; }
+  e.preventDefault();
+},{passive:false});
+canvas.addEventListener("touchmove", e=>{
+  for(const t of e.changedTouches){ const s=touches[t.identifier]; if(!s) continue;
+    if(!s.left) look((t.clientX-s.x)*1.6,(t.clientY-s.y)*1.6);
+    s.x=t.clientX; s.y=t.clientY; }
+  e.preventDefault();
+},{passive:false});
+function endTouch(e){ for(const t of e.changedTouches) delete touches[t.identifier]; }
+canvas.addEventListener("touchend", endTouch); canvas.addEventListener("touchcancel", endTouch);
+
+/* ---------------- Interface ---------------- */
+const $ = id=>document.getElementById(id);
+const state = {mode:0, lens:true, ghost:false, grav:false};
+function press(btn,on){ btn.setAttribute("aria-pressed", on?"true":"false"); }
+$("mEye").onclick=()=>{ state.mode=0; press($("mEye"),1); press($("mIR"),0); save(); };
+$("mIR").onclick=()=>{ state.mode=1; press($("mEye"),0); press($("mIR"),1); save(); };
+$("lensBtn").onclick=()=>{ state.lens=!state.lens; press($("lensBtn"),state.lens); save(); };
+$("ghostBtn").onclick=()=>{ state.ghost=!state.ghost; press($("ghostBtn"),state.ghost); save(); };
+$("gravBtn").onclick=()=>{ state.grav=!state.grav; press($("gravBtn"),state.grav); $("accRow").hidden=!state.grav; save(); };
+$("infoTog").onclick=()=>{ const b=$("infoBody"); b.hidden=!b.hidden; $("infoTog").textContent=b.hidden?"+":"–"; $("infoTog").setAttribute("aria-expanded", String(!b.hidden)); };
+function save(){ try{ localStorage.setItem("janus-neg", JSON.stringify(state)); }catch(_){} }
+try{ const s = JSON.parse(localStorage.getItem("janus-neg")||"null"); if(s){
+  if(s.mode) $("mIR").onclick(); if(s.lens===false) $("lensBtn").onclick(); if(s.ghost) $("ghostBtn").onclick(); if(s.grav) $("gravBtn").onclick();
+}}catch(_){}
+$("go").onclick=()=>{
+  started = true; $("intro").classList.add("gone");
+  if(matchMedia("(hover:none)").matches){const th=$("touchHint");th.classList.add("show");setTimeout(()=>th.classList.add("fade"),6000);setTimeout(()=>th.classList.remove("show","fade"),6700);}
+  setTimeout(()=>{ $("intro").hidden = true; }, 650);
+  if(canvas.requestPointerLock && !("ontouchstart" in window)){ try{ const r=canvas.requestPointerLock(); if(r&&r.catch) r.catch(()=>{}); }catch(_){} }
+  canvas.focus && canvas.focus();
+};
+
+/* ---------------- Boucle ---------------- */
+const tmpV = new THREE.Vector3(), fwd = new THREE.Vector3(), right = new THREE.Vector3(), up = new THREE.Vector3(0,1,0);
+const euler = new THREE.Euler(0,0,0,"YXZ");
+const projV = new THREE.Vector3();
+const lensCand = [];
+let last = performance.now(), hudT = 0, ghostA = 0;
+function frame(now){
+  const dt = Math.min(.05,(now-last)/1000); last = now;
+  const t = reduced ? 0 : now/1000;
+
+  euler.set(pitch, yaw, 0); camera.quaternion.setFromEuler(euler);
+  fwd.set(0,0,-1).applyQuaternion(camera.quaternion);
+  right.set(1,0,0).applyQuaternion(camera.quaternion);
+  const camUp = new THREE.Vector3(0,1,0).applyQuaternion(camera.quaternion);
+
+  // poussée
+  const th = new THREE.Vector3();
+  if(started){
+    if(keys.KeyW||keys.ArrowUp) th.add(fwd);
+    if(keys.KeyS||keys.ArrowDown) th.sub(fwd);
+    if(keys.KeyD||keys.ArrowRight) th.add(right);
+    if(keys.KeyA||keys.ArrowLeft) th.sub(right);
+    if(keys.Space) th.add(camUp);
+    if(keys.ShiftLeft||keys.ShiftRight||keys.ControlLeft) th.sub(camUp);
+    for(const id in touches){ const s=touches[id]; if(!s.left) continue;
+      const dx=(s.x-s.x0)/80, dy=(s.y-s.y0)/80;
+      th.addScaledVector(fwd, -Math.max(-1,Math.min(1,dy))); th.addScaledVector(right, Math.max(-1,Math.min(1,dx))); }
+  }
+  if(th.lengthSq()>1) th.normalize();
+  vel.addScaledVector(th, speed*4*dt);
+
+  // gravité ressentie par une masse négative : attirée par les masses négatives, repoussée par les positives
+  let accMag = 0, accTo = "";
+  if(state.grav){
+    const a = new THREE.Vector3(); let best=0;
+    for(const c of clumps){
+      wrapNear(c.p, camera.position, tmpV); tmpV.sub(camera.position);
+      const r = Math.max(tmpV.length(), c.r);
+      const g = 2200*Math.pow(c.r/12,3)/(r*r);
+      a.addScaledVector(tmpV.normalize(), g);
+      if(g>best){best=g; accTo=clumpName(c);}
+    }
+    for(const w of walls){
+      wrapNear(w.p, camera.position, tmpV); tmpV.sub(camera.position);
+      const r = Math.max(tmpV.length(), 12);
+      a.addScaledVector(tmpV.normalize(), -500*w.mass/(r*r));
+    }
+    vel.addScaledVector(a, dt); accMag = a.length();
+  }
+  vel.multiplyScalar(Math.exp(-dt*(th.lengthSq()>0?1.2:2.2)));
+  camera.position.addScaledVector(vel, dt);
+  // rester dans la boîte périodique
+  camera.position.set(((camera.position.x%L)+L)%L, ((camera.position.y%L)+L)%L, ((camera.position.z%L)+L)%L);
+  camera.updateMatrixWorld();
+
+  // placer chaque conglomérat à son image la plus proche
+  let nearest=null, nd=1e9, inside=0;
+  clumps.forEach((c,i)=>{
+    const o = clumpObjs[i];
+    wrapNear(c.p, camera.position, o.mesh.position);
+    o.halo.position.copy(o.mesh.position);
+    o.mesh.rotation.y += c.spin*dt;
+    const d = o.mesh.position.distanceTo(camera.position);
+    const fade = THREE.MathUtils.smoothstep(HALF*1.0 - d, 0, HALF*.35);
+    o.mat.uniforms.uFade.value = fade;
+    o.mat.uniforms.uTime.value = t;
+    o.sm.opacity = .55*fade*THREE.MathUtils.smoothstep(d, c.r*.9, c.r*2.2);
+    const ds = d - c.r;
+    if(ds<nd){ nd=ds; nearest=c; }
+    inside = Math.max(inside, THREE.MathUtils.smoothstep(1 - d/c.r, -0.05, 0.35));
+  });
+
+  scene.traverse(o=>{ if(o.isPoints) o.material.uniforms.uCam.value.copy(camera.position); });
+  sky.position.copy(camera.position);
+  ghostA += ((state.ghost?1:0)-ghostA)*Math.min(1,dt*4);
+  ghost.material.uniforms.uAlpha.value = ghostA;
+  ghost.visible = ghostA>0.01;
+
+  // lentilles : parois de matière positive devant l'observateur
+  lensCand.length = 0;
+  const tanH = Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+  for(const w of walls){
+    wrapNear(w.p, camera.position, tmpV);
+    const v = projV.copy(tmpV).sub(camera.position);
+    const dist = v.length();
+    if(dist > HALF*.9) continue;
+    if(v.dot(fwd) < 0) continue;
+    projV.copy(tmpV).project(camera);
+    if(Math.abs(projV.x)>1.6 || Math.abs(projV.y)>1.6) continue;
+    const thetaE = 0.42*Math.sqrt(w.mass)/Math.sqrt(dist);           // rad
+    let s = thetaE/(2*tanH);                                          // en hauteurs d'écran
+    s *= THREE.MathUtils.smoothstep(dist, 6, 28) * THREE.MathUtils.smoothstep(HALF*.9-dist, 0, 60);
+    if(s<0.004) continue;
+    lensCand.push([projV.x*.5*camera.aspect, projV.y*.5, s, -v.dot(fwd)*-1]);
+  }
+  lensCand.sort((a,b)=>b[2]-a[2]);
+  const nL = Math.min(MAXL, lensCand.length);
+  for(let i=0;i<nL;i++){ const c=lensCand[i]; lensArr[i].set(c[0],c[1],c[2],c[3]); }
+  post.uniforms.uN.value = nL;
+  post.uniforms.uLensOn.value += ((state.lens?1:0)-post.uniforms.uLensOn.value)*Math.min(1,dt*5);
+  post.uniforms.uMode.value = state.mode;
+  post.uniforms.uInside.value = inside;
+  post.uniforms.uTime.value = (now/1000)%10;
+
+  renderer.setRenderTarget(rt); renderer.render(scene, camera);
+  post.uniforms.tCol.value = rt.texture; post.uniforms.tDepth.value = rt.depthTexture;
+  renderer.setRenderTarget(null); renderer.render(postScene, postCam);
+
+  // HUD (10 Hz)
+  hudT += dt;
+  if(hudT>.1){ hudT=0;
+    const p = camera.position;
+    $("pos").textContent = `${p.x.toFixed(0)} · ${p.y.toFixed(0)} · ${p.z.toFixed(0)} Mpc`;
+    $("spd").textContent = `${vel.length().toFixed(1)} Mpc/s  (max ${speed.toFixed(0)})`;
+    if(nearest){
+      $("near").textContent = clumpName(nearest) + ` · R ${nearest.r.toFixed(0)} Mpc`;
+      $("ndist").textContent = nd<0 ? "à l'intérieur" : `${nd.toFixed(1)} Mpc`;
+    }
+    $("nlens").textContent = state.lens ? `${nL} paroi${nL>1?"s":""} positive${nL>1?"s":""}` : "désactivées";
+    if(state.grav) $("acc").textContent = `${accMag.toFixed(1)} → ${accTo.replace("Conglomérat ","")}`;
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
