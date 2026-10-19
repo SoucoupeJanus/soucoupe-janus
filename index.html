@@ -619,6 +619,7 @@ body.mobile #ovThread .post p{font-size:13px}body.mobile #ovThread .cm p{font-si
 #ovStart details.more>.grid2,#ovStart details.more>p{padding:0 12px 12px;margin:0}
 body.mobile #ovStart details.more>summary{font-size:11.5px;padding:8px 10px;gap:8px}
 body.mobile #ovStart details.more>summary small{display:none}
+body.mobile #thermOv span{top:calc(196px + env(safe-area-inset-top,0px));font-size:10px}
 </style>
 
 <div id="stage"></div>
@@ -782,7 +783,7 @@ body.mobile #ovStart details.more>summary small{display:none}
     </div></details>
     <details class="more"><summary><span class="mi">🧭</span><span>Pour aller plus loin</span><small>Cliquez pour dérouler</small></summary>
     <p>Pour aller plus loin : l'<b>encyclopédie Janus</b> (touche I) explique le modèle avec des schémas, des extraits de l'ouvrage et un quiz. Le <b>programme d'échange</b> : emmenez des humains enlevés à la base de la face cachée de la Lune ou sur Mars (touche Y sur place) ; ils reviendront en ambassadeurs éveiller leur région. Le <b>courrier d'Ummo</b> (touche O) vous confie une quête : contacter des humains, leur transmettre des concepts, annoncer des apparitions, puis voyager jusqu'à IUMMA.</p></details>
-    <div class="actions"><button class="btn ghost" type="button" data-act="langCycle" data-notr>🌐 Français</button><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button><button class="btn ghost" id="btnLoadList" type="button" hidden>Charger…</button><button class="btn ghost" type="button" data-act="encOpen">📖 Sciences</button><button class="btn ghost" type="button" data-act="achOpen">🏆 Succès</button><button class="btn ghost" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="btn ghost" type="button" data-act="shareGame">📣 Partager le jeu</button><button class="btn ghost" type="button" data-act="linksOpen">🔗 Pour en savoir +</button><button class="btn ghost qBtn" type="button">Graphismes : auto</button><div class="verTag" data-notr>Version 99 · 19/10/2026</div></div>
+    <div class="actions"><button class="btn ghost" type="button" data-act="langCycle" data-notr>🌐 Français</button><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button><button class="btn ghost" id="btnLoadList" type="button" hidden>Charger…</button><button class="btn ghost" type="button" data-act="encOpen">📖 Sciences</button><button class="btn ghost" type="button" data-act="achOpen">🏆 Succès</button><button class="btn ghost" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="btn ghost" type="button" data-act="shareGame">📣 Partager le jeu</button><button class="btn ghost" type="button" data-act="linksOpen">🔗 Pour en savoir +</button><button class="btn ghost qBtn" type="button">Graphismes : auto</button><div class="verTag" data-notr>Version 100 · 19/10/2026</div></div>
   </div>
 </div>
 
@@ -838,7 +839,7 @@ body.mobile #ovStart details.more>summary small{display:none}
 <div id="mDrawer" hidden><div class="mdg">
  <button type="button" data-act="md" data-k="MAP"><span>🗺</span>Carte</button><button type="button" data-act="md" data-k="KeyJ"><span>🎯</span>Missions</button><button type="button" data-act="md" data-k="KeyT"><span>📱</span>Réseaux</button><button type="button" data-act="md" data-k="KeyL"><span>🧬</span>Labo</button>
  <button type="button" data-act="md" data-k="KeyU"><span>⚙</span>Améliorations</button><button type="button" data-act="md" data-k="KeyO"><span>✉</span>Ummo</button><button type="button" data-act="md" data-k="KeyI"><span>📖</span>Sciences</button><button type="button" data-act="md" data-k="Digit5"><span>📷</span>Photo</button>
- <button type="button" data-act="md" data-k="Digit4"><span>🌡</span>Thermique</button><button type="button" data-act="md" data-k="view"><span>🎥</span>Vue</button><button type="button" data-act="md" data-k="sound"><span>🔊</span>Son</button><button type="button" data-act="md" data-k="music"><span>♪</span>Musique</button>
+ <button type="button" data-act="md" data-k="Digit4"><span>🌡</span>Thermique</button><button type="button" data-act="md" data-k="view"><span>🎥</span>Vue</button><button type="button" data-act="md" data-k="therm"><span>🌡</span>Vision thermique (humains et bétail)</button><button type="button" data-act="md" data-k="sound"><span>🔊</span>Son</button><button type="button" data-act="md" data-k="music"><span>♪</span>Musique</button>
  <button type="button" data-act="tgtMenu"><span>📍</span>Choisir un lieu</button><button type="button" data-act="touchHelp"><span>❓</span>Aide des commandes</button><button type="button" data-act="md" data-k="KeyB"><span>🧭</span>S'orienter</button><button type="button" data-act="md" data-k="Digit6"><span>🔮</span>Orbe</button><button type="button" data-act="evSpd"><span>⏩</span>Événements ×1</button><button type="button" data-act="md" data-k="share"><span>📣</span>Partager</button><button type="button" data-act="md" data-k="pause"><span>⏸</span>Pause · sauver</button>
  <button type="button" class="close" data-act="mdClose" style="grid-column:1/-1"><span>▶</span>Reprendre</button></div></div>
 <div class="ov" id="ovLinks" hidden><div class="card" id="linksCard"><h2>Pour en savoir +</h2><p>Pour approfondir le modèle cosmologique Janus, à la source :</p>
@@ -1225,7 +1226,7 @@ RADARS.forEach(r=>{const g=new THREE.Group();g.matrixAutoUpdate=false;surfMat(r.
 const humGeo=mergeGeos([(()=>{const g=new THREE.ConeGeometry(.42,1.2,6);g.translate(0,.6,0);return g;})(),(()=>{const g=new THREE.IcosahedronGeometry(.27,0);g.translate(0,1.42,0);return g;})()]);
 const cowGeo=mergeGeos([(()=>{const g=new THREE.BoxGeometry(.9,.8,1.8);g.translate(0,1.0,0);return g;})(),(()=>{const g=new THREE.BoxGeometry(.55,.55,.6);g.translate(0,1.3,1.1);return g;})(),
   ...[[-.3,-.7],[.3,-.7],[-.3,.7],[.3,.7]].map(p=>{const g=new THREE.BoxGeometry(.2,.6,.2);g.translate(p[0],.3,p[1]);return g;})]);
-const MAXH=1700,MAXC=560;const VISH=IS_MOBILE?1.8:1.6,VISC=IS_MOBILE?1.4:1.25,VISV=IS_MOBILE?1.3:1.1;
+const MAXH=1700,MAXC=560;const VISH=IS_MOBILE?3:1.6,VISC=IS_MOBILE?2:1.25,VISV=IS_MOBILE?1.5:1.1;
 const humMesh=new THREE.InstancedMesh(humGeo,new THREE.MeshPhongMaterial({flatShading:true}),MAXH);humMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);earthSurf.add(humMesh);
 const cowMesh=new THREE.InstancedMesh(cowGeo,new THREE.MeshPhongMaterial({flatShading:true}),MAXC);cowMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);earthSurf.add(cowMesh);
 humMesh.frustumCulled=false;cowMesh.frustumCulled=false;
@@ -2054,7 +2055,7 @@ function updateCamera(dt){
   camera.position.copy(S.pos).add(S.camOff);
   // éviter de passer sous le sol (monde +)
   if(S.world>0){const cr=_v3.subVectors(camera.position,curBody.pos);const r=cr.length();const cmin=(S.sub&&curBody===EARTH)?curBody.R-SEAD+1.5:curBody.R+1.5;if(r<cmin&&curBody.type!=='star'){camera.position.copy(curBody.pos).addScaledVector(cr.divideScalar(r),cmin);}}
-  camera.up.copy(S.up);camera.lookAt(_v3.copy(S.pos).addScaledVector(ld,12).addScaledVector(S.up,1.2));
+  camera.up.copy(S.up);{let dn=1.2;if(IS_MOBILE&&S.world>0&&curBody===EARTH&&curAlt<300)dn-=(VIEWI===1?7:3)*(1-smooth(120,300,curAlt));camera.lookAt(_v3.copy(S.pos).addScaledVector(ld,12).addScaledVector(S.up,dn));}
   const fovT=66+(S.world<0?Math.min(14,Math.log10(1+sp)*2.4):Math.min(8,sp*.004));camera.fov+=(fovT-camera.fov)*(1-Math.exp(-3*dt));camera.updateProjectionMatrix();
   // ciel
   if(S.world>0){let bg=spaceBg.clone();const b=curBody;if(b.atm&&curAlt<b.R*1.2){const f=1-smooth(b.R*.08,b.R*1.2,curAlt);
@@ -2092,7 +2093,7 @@ function updatePopulation(dt){
     else{h.dir.applyAxisAngle(h.v,rr(-1,1)*dt*1.2);if(angDeg(h.v,homeV)>homeRad(h)){const back=_v2.subVectors(homeV,h.v);back.addScaledVector(h.v,-back.dot(h.v)).normalize();h.dir.lerp(back,.1).normalize();}
       h.v.addScaledVector(h.dir,h.spd*dt/ER).normalize();if(landScore(h.v)<0){h.v.addScaledVector(h.dir,-2*h.spd*dt/ER).normalize();h.dir.negate();}}
     h.dir.addScaledVector(h.v,-h.dir.dot(h.v)).normalize();
-    const s=(h.watching?1.15:1)*(THERM.on?1.9:1)*VISH;if(h.sleep>0&&!THERM.on){surfMat(h.v,.15,0,1,.28,1.4,_m);humMesh.setMatrixAt(i,_m);humMesh.setColorAt(i,_c.setRGB(.55,.6,.75));return;}
+    const s=(h.watching?1.15:1)*(THERM.on?(IS_MOBILE?1.25:1.9):1)*VISH;if(h.sleep>0&&!THERM.on){surfMat(h.v,.15,0,1,.28,1.4,_m);humMesh.setMatrixAt(i,_m);humMesh.setColorAt(i,_c.setRGB(.55,.6,.75));return;}
     surfMat(h.v,h.boat?.55:0,0,s,s,s,_m);humMesh.setMatrixAt(i,_m);
     let col=h.col;if(THERM.on){humMesh.setColorAt(i,_c.setRGB(1,.95,.75));return;}if(h.contact)col=[.55,.95,1];else if(h.awake)col=[.76,.55,1];else if(h.watching&&h.seeing)col=h.phone?[1,.95,.4]:[1,.82,.2];
     humMesh.setColorAt(i,_c.setRGB(col[0],col[1],col[2]));});
@@ -2104,7 +2105,7 @@ function updatePopulation(dt){
     c.dir.applyAxisAngle(c.v,rr(-1,1)*dt*.6);const fv=FARMS[c.farm].v;if(angDeg(c.v,fv)>.7*LK){const back=_v2.subVectors(fv,c.v);back.addScaledVector(c.v,-back.dot(c.v)).normalize();c.dir.lerp(back,.1).normalize();}
     c.v.addScaledVector(c.dir,c.spd*dt/ER).normalize();c.dir.addScaledVector(c.v,-c.dir.dot(c.v)).normalize();
     const east=_lp.set(0,1,0).cross(c.v).normalize();const north=_lt.crossVectors(c.v,east);const hd=Math.atan2(c.dir.dot(north),c.dir.dot(east));
-    const ts=(THERM.on?1.6:1)*VISC;surfMat(c.v,0,hd+Math.PI/2,ts,ts,ts,_m);cowMesh.setMatrixAt(i,_m);if(THERM.on)cowMesh.setColorAt(i,_c.setRGB(1,.7,.4));else cowMesh.setColorAt(i,_c.setRGB(...c.col));});
+    const ts=(THERM.on?(IS_MOBILE?1.2:1.6):1)*VISC;surfMat(c.v,0,hd+Math.PI/2,ts,ts,ts,_m);cowMesh.setMatrixAt(i,_m);if(THERM.on)cowMesh.setColorAt(i,_c.setRGB(1,.7,.4));else cowMesh.setColorAt(i,_c.setRGB(...c.col));});
   cowMesh.instanceMatrix.needsUpdate=true;if(cowMesh.instanceColor)cowMesh.instanceColor.needsUpdate=true;
   // repeuplement
   popTimer+=dt;if(popTimer>12){popTimer=0;const dead=HUM.filter(h=>!h.alive&&!h.parked);const reserve=S.cargo.filter(c=>c.type==='hum').length;
@@ -4238,9 +4239,9 @@ function touchHelp(force){if(!isTouch||!document.body.classList.contains('mobile
     h+=`<div class="thBadge" style="left:${Math.round(r.left+r.width/2)}px;top:${Math.round(r.top+r.height/2)}px">${n}</div>`;rows+=`<div class="thRow"><b>${n}</b><span>${T.d[id]}</span></div>`;}
   h+=`<div class="thCard"><div class="thTitle">${T.t}</div>${rows}<div class="thClose">${T.close}</div></div>`;
   o.innerHTML=h;o.hidden=false;paused=true;o.onclick=()=>{o.hidden=true;paused=false;};}
-const TKEY={fr:{Y:'Agir',E:'Rayon',G:'Relâcher',B:'🧭',M:'🗺 Carte',V:'Nuage',H:'MHD',L:'☰ Labo',J:'☰ Missions',U:'☰ Améliorations',T:'☰ Réseaux',I:'☰ Sciences',O:'☰ Ummo',P:'☰',X:'Stabiliser','Espace':'Disparaître','Maj':'Boost',F:'▼ Descendre',R:'▲ Monter','R / F':'▲ / ▼','R/F':'▲/▼'},
- en:{Y:'Act',E:'Beam',G:'Release',B:'🧭',M:'🗺 Map',V:'Cloud',H:'MHD',L:'☰ Lab',J:'☰ Missions',U:'☰ Upgrades',T:'☰ Social',I:'☰ Science',O:'☰ Ummo',P:'☰',X:'Stabilise','Space':'Vanish','Shift':'Boost',F:'▼ Descend',R:'▲ Climb','R / F':'▲ / ▼','R/F':'▲/▼'},
- es:{Y:'Actuar',E:'Rayo',G:'Soltar',B:'🧭',M:'🗺 Mapa',V:'Nube',H:'MHD',L:'☰ Laboratorio',J:'☰ Misiones',U:'☰ Mejoras',T:'☰ Redes',I:'☰ Ciencias',O:'☰ Ummo',P:'☰',X:'Estabilizar','Espacio':'Desaparecer','Mayús':'Boost',F:'▼ Bajar',R:'▲ Subir','R / F':'▲ / ▼','R/F':'▲/▼'}};
+const TKEY={fr:{'4':'☰ Vision thermique',Y:'Agir',E:'Rayon',G:'Relâcher',B:'🧭',M:'🗺 Carte',V:'Nuage',H:'MHD',L:'☰ Labo',J:'☰ Missions',U:'☰ Améliorations',T:'☰ Réseaux',I:'☰ Sciences',O:'☰ Ummo',P:'☰',X:'Stabiliser','Espace':'Disparaître','Maj':'Boost',F:'▼ Descendre',R:'▲ Monter','R / F':'▲ / ▼','R/F':'▲/▼'},
+ en:{'4':'☰ Thermal vision',Y:'Act',E:'Beam',G:'Release',B:'🧭',M:'🗺 Map',V:'Cloud',H:'MHD',L:'☰ Lab',J:'☰ Missions',U:'☰ Upgrades',T:'☰ Social',I:'☰ Science',O:'☰ Ummo',P:'☰',X:'Stabilise','Space':'Vanish','Shift':'Boost',F:'▼ Descend',R:'▲ Climb','R / F':'▲ / ▼','R/F':'▲/▼'},
+ es:{'4':'☰ Visión térmica',Y:'Actuar',E:'Rayo',G:'Soltar',B:'🧭',M:'🗺 Mapa',V:'Nube',H:'MHD',L:'☰ Laboratorio',J:'☰ Misiones',U:'☰ Mejoras',T:'☰ Redes',I:'☰ Ciencias',O:'☰ Ummo',P:'☰',X:'Estabilizar','Espacio':'Desaparecer','Mayús':'Boost',F:'▼ Bajar',R:'▲ Subir','R / F':'▲ / ▼','R/F':'▲/▼'}};
 const TKRE={};function tkRe(lang){if(TKRE[lang])return TKRE[lang];const M=TKEY[lang]||TKEY.fr;const ks=Object.keys(M).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\\/]/g,'\\$&')).join('|');
   return TKRE[lang]={M,par:new RegExp('\\((?:touche |key |tecla )?('+ks+')\\)','g'),verb:new RegExp('(\\b(?:la touche|les touches|touche|Touche|appuyez sur|Appuyez sur|maintenez|Maintenez|the key|key|press|Press|hold|Hold|la tecla|tecla|pulsa|Pulsa|mantén|Mantén))\\s+('+ks+')(?![\\wÀ-ÿ])','g'),lead:new RegExp('^(\\s*)('+ks+')(?=\\s?[:(])'),hold:new RegExp('\\b(ou|or|o) ([A-Z]) (maintenu|held|mantenid[oa])','g')};}
 function touchifyText(t,lang){const R=tkRe(lang);const lab=k=>R.M[k]||k;
@@ -4285,7 +4286,7 @@ setInterval(placeToasts,250);addEventListener('resize',placeToasts);addEventList
 function openDrawer(){if(!started)return;paused=true;$('mDrawer').hidden=false;}
 function closeDrawer(){$('mDrawer').hidden=true;if(!anyOverlay())paused=false;}
 ACT.md=d=>{const k=d.k;closeDrawer();
-  if(k==='pause'){openOv('ovPause');return;}if(k==='view'){setView((VIEWI+1)%2);return;}if(k==='sound'){$('muteBtn').click();return;}if(k==='music'){cycleMusic();return;}if(k==='share'){shareGame();return;}
+  if(k==='pause'){openOv('ovPause');return;}if(k==='view'){setView((VIEWI+1)%2);return;}if(k==='therm'){if(started)toggleThermal();return;}if(k==='sound'){$('muteBtn').click();return;}if(k==='music'){cycleMusic();return;}if(k==='share'){shareGame();return;}
   onKey(k);};
 ACT.mdClose=()=>closeDrawer();
 /* ----- partager le jeu dans la vraie vie ----- */
