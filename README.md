@@ -19,7 +19,7 @@ Disponible en français, en anglais et en espagnol.
 
 Vous pilotez une soucoupe capable d'**inverser sa masse** et de basculer dans un univers jumeau, le monde négatif. Votre but : **éveiller un maximum de consciences humaines** et faire comprendre à la Terre entière que les ovnis existent, sans que personne ne le prenne à la légère.
 
-Montrez-vous aux témoins, puis disparaissez sous leurs yeux. Tracez des agroglyphes, contactez des humains, échappez à l'armée et déjouez la propagande, de Roswell aux confins du système solaire. Atteignez **75 % d'éveil mondial** pour gagner, puis continuez si vous voulez aller plus loin.
+Montrez-vous aux témoins, puis disparaissez sous leurs yeux. Tracez des agroglyphes, contactez des humains, échappez à l'armée et déjouez la propagande, de Roswell aux confins du système solaire. Atteignez **90 % d'éveil mondial** pour gagner, puis continuez si vous voulez aller plus loin.
 
 <p align="center">
   <img src="docs/captures/vol-au-dessus-de-paris.jpg" alt="La soucoupe au-dessus d'une ville, avec le compteur de témoins et l'alerte militaire" width="49%">
