@@ -538,6 +538,9 @@ body.mobile #tRel{right:calc(218px + env(safe-area-inset-right,0px))!important;b
 #installBox .el-tip{font-size:13px;color:#9fb0cc}
 #installBox ol{padding-left:20px;margin:12px 0}#installBox li{margin:6px 0}
 #btnInstall{border-color:var(--acc,#4fe3ff);color:var(--acc,#4fe3ff)}
+
+.verTag{flex-basis:100%;text-align:center;font-family:var(--f-mono,monospace);font-size:10.5px;letter-spacing:.08em;color:rgba(160,180,210,.55);margin-top:2px;pointer-events:none}
+body.mobile .verTag{font-size:9.5px;margin-top:0}
 </style>
 
 <div id="stage"></div>
@@ -697,7 +700,7 @@ body.mobile #tRel{right:calc(218px + env(safe-area-inset-right,0px))!important;b
       </table>
     </div>
     <p>Pour aller plus loin : l'<b>encyclopédie Janus</b> (touche I) explique le modèle avec des schémas, des extraits de l'ouvrage et un quiz. Le <b>programme d'échange</b> : emmenez des humains enlevés à la base de la face cachée de la Lune ou sur Mars (touche Y sur place) ; ils reviendront en ambassadeurs éveiller leur région. Le <b>courrier d'Ummo</b> (touche O) vous confie une quête : contacter des humains, leur transmettre des concepts, annoncer des apparitions, puis voyager jusqu'à IUMMA.</p>
-    <div class="actions"><button class="btn ghost" type="button" data-act="langCycle" data-notr>🌐 Français</button><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button><button class="btn ghost" id="btnLoadList" type="button" hidden>Charger…</button><button class="btn ghost" type="button" data-act="encOpen">📖 Sciences</button><button class="btn ghost" type="button" data-act="achOpen">🏆 Succès</button><button class="btn ghost" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="btn ghost" type="button" data-act="shareGame">📣 Partager le jeu</button><button class="btn ghost" type="button" data-act="linksOpen">🔗 Pour en savoir +</button><button class="btn ghost qBtn" type="button">Graphismes : auto</button></div>
+    <div class="actions"><button class="btn ghost" type="button" data-act="langCycle" data-notr>🌐 Français</button><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button><button class="btn ghost" id="btnLoadList" type="button" hidden>Charger…</button><button class="btn ghost" type="button" data-act="encOpen">📖 Sciences</button><button class="btn ghost" type="button" data-act="achOpen">🏆 Succès</button><button class="btn ghost" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="btn ghost" type="button" data-act="shareGame">📣 Partager le jeu</button><button class="btn ghost" type="button" data-act="linksOpen">🔗 Pour en savoir +</button><button class="btn ghost qBtn" type="button">Graphismes : auto</button><div class="verTag" data-notr>Version 87 · 19/10/2026</div></div>
   </div>
 </div>
 
