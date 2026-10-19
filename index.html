@@ -552,7 +552,7 @@ body.mobile .simbox{height:calc(100dvh - 120px);min-height:420px}
 #touch .tq{right:calc(20px + env(safe-area-inset-right,0px));width:46px;height:46px;color:#9ff2ff;border-color:rgba(79,227,255,.45)}
 #tMap{top:calc(226px + env(safe-area-inset-top,0px))}#tPlace{top:calc(280px + env(safe-area-inset-top,0px))}
 body.mobile #touch .tq{right:calc(8px + env(safe-area-inset-right,0px))!important;width:44px!important;height:44px!important}
-body.mobile #tMap{top:calc(62px + env(safe-area-inset-top,0px))!important}body.mobile #tPlace{top:calc(112px + env(safe-area-inset-top,0px))!important}
+body.mobile #tMap{top:calc(66px + env(safe-area-inset-top,0px))!important}body.mobile #tPlace{top:calc(126px + env(safe-area-inset-top,0px))!important}
 #touch .tq svg{width:22px;height:22px}
 
 .simwait{height:auto!important;min-height:180px!important;display:grid;place-items:center;text-align:center;padding:20px;background:radial-gradient(ellipse at center,rgba(79,227,255,.08),#070912 70%)}
@@ -560,7 +560,7 @@ body.mobile #tMap{top:calc(62px + env(safe-area-inset-top,0px))!important}body.m
 
 #touch .tb .tbl{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:1px;font:600 9px/1.1 var(--f-body,sans-serif);letter-spacing:.02em;white-space:nowrap;color:rgba(232,241,255,.85);text-shadow:0 1px 2px #000,0 0 4px #000;pointer-events:none}
 #touch #tCh .tbl{color:var(--acc2,#ffb547)}#touch #tAct .tbl{color:var(--ok,#5dff9e)}
-#tHelp{top:calc(334px + env(safe-area-inset-top,0px))}body.mobile #tHelp{top:calc(162px + env(safe-area-inset-top,0px))!important}
+#tHelp{top:calc(334px + env(safe-area-inset-top,0px))}body.mobile #tHelp{top:calc(186px + env(safe-area-inset-top,0px))!important}
 #touchHelpOv{position:fixed;inset:0;z-index:70;background:rgba(2,5,14,.72);color:#e8f1ff;font-family:var(--f-body,sans-serif)}#touchHelpOv[hidden]{display:none}
 #touchHelpOv .thBadge{position:absolute;transform:translate(-50%,-50%);min-width:26px;height:26px;border-radius:13px;background:#4fe3ff;color:#04121a;font:800 14px/26px sans-serif;text-align:center;box-shadow:0 0 0 3px rgba(4,18,26,.8),0 0 14px rgba(79,227,255,.8);pointer-events:none}
 #touchHelpOv .thCard{position:absolute;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);width:min(380px,calc(100vw - 110px));max-height:calc(100dvh - 250px);overflow-y:auto;background:rgba(8,16,32,.95);border:1px solid rgba(79,227,255,.55);border-radius:10px;padding:10px 12px;box-shadow:0 12px 40px rgba(0,0,0,.6)}
@@ -572,6 +572,27 @@ body.mobile #tMap{top:calc(62px + env(safe-area-inset-top,0px))!important}body.m
 
 @media (orientation:landscape){body.mobile #touch #tMap,body.mobile #touch #tPlace,body.mobile #touch #tHelp{top:calc(66px + env(safe-area-inset-top,0px))!important}
  body.mobile #touch #tPlace{right:calc(60px + env(safe-area-inset-right,0px))!important}body.mobile #touch #tHelp{right:calc(112px + env(safe-area-inset-right,0px))!important}}
+
+/* boutons tactiles : grille espacée pour que boutons et légendes ne se touchent jamais */
+@media (orientation:portrait){
+ body.mobile #touch .tb{width:46px!important;height:46px!important}
+ body.mobile #tBo{right:calc(10px + env(safe-area-inset-right,0px))!important;bottom:calc(18px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tDn{right:calc(10px + env(safe-area-inset-right,0px))!important;bottom:calc(80px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tUp{right:calc(10px + env(safe-area-inset-right,0px))!important;bottom:calc(142px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #touch #tCh{right:calc(68px + env(safe-area-inset-right,0px))!important;bottom:calc(18px + env(safe-area-inset-bottom,0px))!important;width:52px!important;height:52px!important}
+ body.mobile #tBm{right:calc(71px + env(safe-area-inset-right,0px))!important;bottom:calc(98px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tAct{right:calc(132px + env(safe-area-inset-right,0px))!important;bottom:calc(18px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tMhd{right:calc(132px + env(safe-area-inset-right,0px))!important;bottom:calc(80px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tCloud{right:calc(132px + env(safe-area-inset-right,0px))!important;bottom:calc(142px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tRel{right:calc(192px + env(safe-area-inset-right,0px))!important;bottom:calc(18px + env(safe-area-inset-bottom,0px))!important}}
+@media (orientation:landscape){
+ body.mobile #tBo{bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tDn{bottom:calc(82px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tUp{bottom:calc(148px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tAct{bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tMhd{bottom:calc(82px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tCloud{bottom:calc(148px + env(safe-area-inset-bottom,0px))!important}
+ body.mobile #tBm{bottom:calc(118px + env(safe-area-inset-bottom,0px))!important}}
 </style>
 
 <div id="stage"></div>
@@ -734,7 +755,7 @@ body.mobile #tMap{top:calc(62px + env(safe-area-inset-top,0px))!important}body.m
       </table>
     </div>
     <p>Pour aller plus loin : l'<b>encyclopédie Janus</b> (touche I) explique le modèle avec des schémas, des extraits de l'ouvrage et un quiz. Le <b>programme d'échange</b> : emmenez des humains enlevés à la base de la face cachée de la Lune ou sur Mars (touche Y sur place) ; ils reviendront en ambassadeurs éveiller leur région. Le <b>courrier d'Ummo</b> (touche O) vous confie une quête : contacter des humains, leur transmettre des concepts, annoncer des apparitions, puis voyager jusqu'à IUMMA.</p>
-    <div class="actions"><button class="btn ghost" type="button" data-act="langCycle" data-notr>🌐 Français</button><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button><button class="btn ghost" id="btnLoadList" type="button" hidden>Charger…</button><button class="btn ghost" type="button" data-act="encOpen">📖 Sciences</button><button class="btn ghost" type="button" data-act="achOpen">🏆 Succès</button><button class="btn ghost" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="btn ghost" type="button" data-act="shareGame">📣 Partager le jeu</button><button class="btn ghost" type="button" data-act="linksOpen">🔗 Pour en savoir +</button><button class="btn ghost qBtn" type="button">Graphismes : auto</button><div class="verTag" data-notr>Version 93 · 19/10/2026</div></div>
+    <div class="actions"><button class="btn ghost" type="button" data-act="langCycle" data-notr>🌐 Français</button><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button><button class="btn ghost" id="btnLoadList" type="button" hidden>Charger…</button><button class="btn ghost" type="button" data-act="encOpen">📖 Sciences</button><button class="btn ghost" type="button" data-act="achOpen">🏆 Succès</button><button class="btn ghost" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="btn ghost" type="button" data-act="shareGame">📣 Partager le jeu</button><button class="btn ghost" type="button" data-act="linksOpen">🔗 Pour en savoir +</button><button class="btn ghost qBtn" type="button">Graphismes : auto</button><div class="verTag" data-notr>Version 94 · 19/10/2026</div></div>
   </div>
 </div>
 
@@ -4165,21 +4186,20 @@ function touchHelp(force){if(!isTouch||!document.body.classList.contains('mobile
     h+=`<div class="thBadge" style="left:${Math.round(r.left+r.width/2)}px;top:${Math.round(r.top+r.height/2)}px">${n}</div>`;rows+=`<div class="thRow"><b>${n}</b><span>${T.d[id]}</span></div>`;}
   h+=`<div class="thCard"><div class="thTitle">${T.t}</div>${rows}<div class="thClose">${T.close}</div></div>`;
   o.innerHTML=h;o.hidden=false;paused=true;o.onclick=()=>{o.hidden=true;paused=false;};}
-const TKEY={fr:{Y:'Agir',E:'Rayon',G:'Relâcher',B:'🧭',M:'🗺 Carte',V:'Nuage',H:'MHD',L:'☰ Labo',J:'☰ Missions',U:'☰ Améliorations',T:'☰ Réseaux',I:'☰ Sciences',O:'☰ Ummo',P:'☰',X:'Stabiliser','Espace':'Disparaître','Maj':'Boost','R / F':'▲ / ▼','R/F':'▲/▼'},
- en:{Y:'Act',E:'Beam',G:'Release',B:'🧭',M:'🗺 Map',V:'Cloud',H:'MHD',L:'☰ Lab',J:'☰ Missions',U:'☰ Upgrades',T:'☰ Social',I:'☰ Science',O:'☰ Ummo',P:'☰',X:'Stabilise','Space':'Vanish','Shift':'Boost','R / F':'▲ / ▼','R/F':'▲/▼'},
- es:{Y:'Actuar',E:'Rayo',G:'Soltar',B:'🧭',M:'🗺 Mapa',V:'Nube',H:'MHD',L:'☰ Laboratorio',J:'☰ Misiones',U:'☰ Mejoras',T:'☰ Redes',I:'☰ Ciencias',O:'☰ Ummo',P:'☰',X:'Estabilizar','Espacio':'Desaparecer','Mayús':'Boost','R / F':'▲ / ▼','R/F':'▲/▼'}};
+const TKEY={fr:{Y:'Agir',E:'Rayon',G:'Relâcher',B:'🧭',M:'🗺 Carte',V:'Nuage',H:'MHD',L:'☰ Labo',J:'☰ Missions',U:'☰ Améliorations',T:'☰ Réseaux',I:'☰ Sciences',O:'☰ Ummo',P:'☰',X:'Stabiliser','Espace':'Disparaître','Maj':'Boost',F:'▼ Descendre',R:'▲ Monter','R / F':'▲ / ▼','R/F':'▲/▼'},
+ en:{Y:'Act',E:'Beam',G:'Release',B:'🧭',M:'🗺 Map',V:'Cloud',H:'MHD',L:'☰ Lab',J:'☰ Missions',U:'☰ Upgrades',T:'☰ Social',I:'☰ Science',O:'☰ Ummo',P:'☰',X:'Stabilise','Space':'Vanish','Shift':'Boost',F:'▼ Descend',R:'▲ Climb','R / F':'▲ / ▼','R/F':'▲/▼'},
+ es:{Y:'Actuar',E:'Rayo',G:'Soltar',B:'🧭',M:'🗺 Mapa',V:'Nube',H:'MHD',L:'☰ Laboratorio',J:'☰ Misiones',U:'☰ Mejoras',T:'☰ Redes',I:'☰ Ciencias',O:'☰ Ummo',P:'☰',X:'Estabilizar','Espacio':'Desaparecer','Mayús':'Boost',F:'▼ Bajar',R:'▲ Subir','R / F':'▲ / ▼','R/F':'▲/▼'}};
 const TKRE={};function tkRe(lang){if(TKRE[lang])return TKRE[lang];const M=TKEY[lang]||TKEY.fr;const ks=Object.keys(M).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\\/]/g,'\\$&')).join('|');
-  return TKRE[lang]={M,par:new RegExp('\\((?:touche |key |tecla )?('+ks+')\\)','g'),verb:new RegExp('(\\b(?:la touche|les touches|touche|Touche|appuyez sur|Appuyez sur|maintenez|Maintenez|the key|key|press|Press|hold|Hold|la tecla|tecla|pulsa|Pulsa|mantén|Mantén))\\s+('+ks+')(?![\\wÀ-ÿ])','g'),lead:new RegExp('^(\\s*)('+ks+')(\\s?:)')};}
+  return TKRE[lang]={M,par:new RegExp('\\((?:touche |key |tecla )?('+ks+')\\)','g'),verb:new RegExp('(\\b(?:la touche|les touches|touche|Touche|appuyez sur|Appuyez sur|maintenez|Maintenez|the key|key|press|Press|hold|Hold|la tecla|tecla|pulsa|Pulsa|mantén|Mantén))\\s+('+ks+')(?![\\wÀ-ÿ])','g'),lead:new RegExp('^(\\s*)('+ks+')(?=\\s?[:(])'),hold:new RegExp('\\b(ou|or|o) ([A-Z]) (maintenu|held|mantenid[oa])','g')};}
 function touchifyText(t,lang){const R=tkRe(lang);const lab=k=>R.M[k]||k;
-  let o=t.replace(R.par,(m,k)=>'('+lab(k)+')').replace(R.verb,(m,v,k)=>{const vv=/^(la touche|touche|Touche|les touches)$/.test(v)?(v[0]==='T'?'Bouton':'le bouton'):/^(the key|key)$/.test(v)?'the button':/^(la tecla|tecla)$/.test(v)?'el botón':({'appuyez sur':'touchez','Appuyez sur':'Touchez','press':'tap','Press':'Tap','pulsa':'toca','Pulsa':'Toca'})[v]||v;return vv+' '+lab(k);}).replace(R.lead,(m,a,k,c)=>a+lab(k)+c);
+  let o=t.replace(R.par,(m,k)=>'('+lab(k)+')').replace(R.verb,(m,v,k)=>{const vv=/^(la touche|touche|Touche|les touches)$/.test(v)?(v[0]==='T'?'Bouton':'le bouton'):/^(the key|key)$/.test(v)?'the button':/^(la tecla|tecla)$/.test(v)?'el botón':({'appuyez sur':'touchez','Appuyez sur':'Touchez','press':'tap','Press':'Tap','pulsa':'toca','Pulsa':'Toca'})[v]||v;return vv+' '+lab(k);}).replace(R.lead,(m,a,k)=>a+lab(k)).replace(R.hold,(m,o,k,h)=>o+' '+lab(k)+' '+h);
   return o;}
 function touchifyNode(root){if(!isTouch||!document.body.classList.contains('mobile')||!root)return;const lang=thLang();const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null);let n;
   while((n=w.nextNode())){const p=n.parentElement;if(!p||p.closest('input,textarea,script,style,[data-notr],#touchHelpOv,kbd'))continue;const v=n.nodeValue;if(!v||v.length<2)continue;const nv=touchifyText(v,lang);if(nv!==v)n.nodeValue=nv;}}
 {let pend=new Set(),raf=0;const TGT=['toasts','ctxHint','tutoCard','misPanel','ovMis','ovLab','ovPause','ovMap','ovTgt','opsChip','introChip'];
  const flush=()=>{raf=0;pend.forEach(el=>touchifyNode(el));pend.clear();};
- const mo=new MutationObserver(ms=>{for(const m of ms){let el=m.target.nodeType===3?m.target.parentElement:m.target;const host=el&&el.closest&&el.closest(TGT.map(i=>'#'+i).join(','));if(host)pend.add(host);}if(pend.size&&!raf)raf=requestAnimationFrame(()=>requestAnimationFrame(flush));});
- addEventListener('load',()=>{if(isTouch)mo.observe(document.body,{subtree:true,childList:true,characterData:true});});
- if(isTouch&&document.readyState==='complete')mo.observe(document.body,{subtree:true,childList:true,characterData:true});}
+ const mo=new MutationObserver(ms=>{for(const m of ms){let el=m.target.nodeType===3?m.target.parentElement:m.target;const host=el&&el.closest&&el.closest(TGT.map(i=>'#'+i).join(','));if(host)pend.add(host);}if(pend.size&&!raf)raf=setTimeout(flush,60);});
+ if(isTouch)mo.observe(document.body,{subtree:true,childList:true,characterData:true});}
 
 /* ---------- installation sur l'appareil (PWA) ---------- */
 const PUBLIC_URL='https://soucoupejanus.github.io/soucoupe-janus/';
