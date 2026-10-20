@@ -937,7 +937,7 @@ body.mobile #touch #tFig{left:calc(12px + env(safe-area-inset-left,0px))!importa
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 119 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 120 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -2221,24 +2221,34 @@ function apToggle(force){const on=force!=null?force:!AP.on;if(on===AP.on)return;
   if(on){if(!started||S.dead||S.landed||S.cine||HU.out){if(S.landed)toast('Décollez d\'abord (Monter).','');return;}AP.on=true;AP.name=apTargetName();toast('🛸 Pilote automatique : cap sur <b>'+AP.name+'</b>. Touchez le joystick pour reprendre la main.','');buzz(25);}
   else apStop('');}
 function apStop(msg){AP.on=false;AP.x=AP.y=AP.z=0;AP.boost=false;if(AP.mhd&&S.mhd){S.mhd=false;}AP.mhd=false;S.autoB=0;if(msg)toast(msg,'score');}
-function apStep(dt){if(!AP.on)return;
+function apStep(dt){AP.wp=null;if(!AP.on)return;
   if(S.dead||S.cine||S.jump||S.landed){apStop('');return;}
-  if(TOUCH.x||TOUCH.y||TOUCH.up||TOUCH.dn||K.KeyW||K.KeyS||K.KeyA||K.KeyD||K.KeyZ||K.KeyQ||K.KeyR||K.KeyF){apStop('');toast('Pilote automatique coupé : vous avez la main.','');return;}
+  if(TOUCH.x||TOUCH.y||TOUCH.up||TOUCH.dn||K.KeyW||K.KeyS||K.KeyA||K.KeyD||K.KeyR||K.KeyF){apStop('');toast('Pilote automatique coupé : vous avez la main.','');return;}
   if(apTargetName()!==AP.name)AP.name=apTargetName();
   const tp=_v5.copy(navTargetPos());const isBody=!nav.ext&&nav.city<0;const tb=isBody?nav.list[nav.i]:(()=>{let b=EARTH,bd=1e18;for(const x of BODIES){const d=tp.distanceTo(x.pos)-x.R;if(d<bd){bd=d;b=x;}}return b;})();
   const dist=S.pos.distanceTo(tp);const arc=flightMode==='arcade';S.autoB=.3;AP.x=0;AP.y=0;AP.z=0;AP.boost=false;AP.brake=false;
-  // vol spatial : vitesse visée proportionnelle à la distance restante, freinage si trop vite ou si l'on dérive de côté
-  const space=(shell)=>{const d3=_v2.subVectors(tp,S.pos).normalize();const al=S.fwd.dot(d3);const sp=S.vel.length();const vt=S.vel.dot(d3);const lat=Math.sqrt(Math.max(0,sp*sp-vt*vt));
-    const vdes=clamp((dist-shell)*1.1,70,2600);AP.z=vt<vdes?(al>.9?1:al>.5?.4:0):0;AP.boost=al>.95&&vt<vdes*.8&&vdes>900;AP.brake=vt>vdes*1.15||lat>Math.max(60,.35*sp);};
+  // point de passage : pour une cible en surface de l'autre côté de l'astre, on contourne par le haut (arc de grand cercle) au lieu de piquer à travers la planète
+  let ang=0;const altB=S.pos.distanceTo(tb.pos)-tb.R;
+  if(!isBody){const rs=_v1.subVectors(S.pos,tb.pos).normalize(),rt=_v2.subVectors(tp,tb.pos).normalize();ang=Math.acos(clamp(rs.dot(rt),-1,1));
+    if(ang>.22){const ax=_v3.crossVectors(rs,rt);if(ax.lengthSq()<1e-8)ax.set(0,1,0);ax.normalize();AP.wp=(AP.wpV||(AP.wpV=new V3())).copy(rs).applyAxisAngle(ax,Math.min(ang,.45)).multiplyScalar(tb.R*2.7).add(tb.pos);}}
+  const aim=AP.wp||tp;const aimD=S.pos.distanceTo(aim);
   const bU=_lt.subVectors(S.pos,curBody.pos).normalize();
-  const to=_lp.subVectors(tp,S.pos);if(arc)to.addScaledVector(bU,-to.dot(bU));const hd=to.length();to.normalize();const ali=S.fwd.dot(to);
-  if(S.world<0){AP.z=ali>.8?1:.3;AP.boost=dist>2000;if(dist<(isBody?tb.R*2:120)){apStop('Arrivé près de <b>'+AP.name+'</b> : repassez dans le monde positif (Disparaître).');}return;}
+  const to=_lp.subVectors(aim,S.pos);if(arc)to.addScaledVector(bU,-to.dot(bU));const hd=to.length();to.normalize();const ali=S.fwd.dot(to);
+  const space=(shell)=>{const d3=_v2.subVectors(aim,S.pos).normalize();const al=S.fwd.dot(d3);const sp=S.vel.length();const vt=S.vel.dot(d3);const lat=Math.sqrt(Math.max(0,sp*sp-vt*vt));
+    const vdes=clamp((aimD-(AP.wp?0:shell))*1.1,70,2600);AP.z=vt<vdes?(al>.9?1:al>.5?.4:0):0;AP.boost=al>.95&&vt<vdes*.8&&vdes>900;AP.brake=vt>vdes*1.15||lat>Math.max(60,.35*sp);};
+  // monde négatif : le plus rapide loin des surfaces → on s'élève, on file, puis on redescend près de la cible
+  if(S.world<0){const radial=curBody.type!=='star'&&curAlt<curBody.R*1.5;
+    if(isBody){if(radial&&curBody!==tb){AP.y=1;AP.z=.3;return;}AP.z=ali>.8?1:.3;AP.boost=dist>tb.R*4;if(dist<tb.R*1.8)apStop('Arrivé près de <b>'+AP.name+'</b> : repassez dans le monde positif (Disparaître).');return;}
+    if(AP.wp&&radial){AP.y=1;AP.z=ali>.8?.5:.2;return;} // s'éloigner de la surface pour aller vite
+    AP.z=ali>.85?1:ali>.4?.35:0;AP.boost=aimD>600&&ali>.9;if(!AP.wp&&radial&&curAlt>200)AP.y=-1;
+    const hN=(()=>{const v=_v3.subVectors(aim,S.pos);v.addScaledVector(bU,-v.dot(bU));return v.length();})();
+    if(!AP.wp&&hN<60&&curAlt<260)apStop('Arrivé au-dessus de <b>'+AP.name+'</b> : repassez dans le monde positif (Disparaître).');return;}
   if(isBody){if(arc&&curBody===tb){apStop('Arrivé : <b>'+AP.name+'</b>.');return;}
-    if(arc){AP.y=1;return;} // quitter l'atmosphère d'abord
+    if(arc){AP.y=1;return;}
     space(tb.R*1.25);return;}
   // cible en surface (ville, lieu, labo…) ou ISS
-  if(!arc||curBody!==tb){if(arc){AP.y=1;return;}space(nav.ext&&nav.extName&&/ISS/.test(nav.extName)?20:tb.R*.15);return;}
-  if(hd>900){AP.y=1;AP.z=0;return;} // trop loin : saut par l'espace
+  if(!arc){space(nav.ext&&nav.extName&&/ISS/.test(nav.extName)?20:tb.R*.15);return;}
+  if(curBody!==tb||(AP.wp&&hd>900)||ang>.4){AP.y=1;AP.z=0;return;} // monter dans l'espace pour faire le saut
   if(curAlt>220&&hd<500)AP.y=-1;
   if(hd<9){apStop('Arrivé : <b>'+AP.name+'</b>.');return;}
   AP.z=ali>.85?Math.min(1,hd/30):ali>.4?.25:0;AP.boost=hd>90&&ali>.9;
@@ -2269,7 +2279,7 @@ function updateFlight(dt){
   if(K.ArrowLeft)yaw+=1.7*dt;if(K.ArrowRight)yaw-=1.7*dt;if(K.ArrowUp)pitch+=1.2*dt;if(K.ArrowDown)pitch-=1.2*dt;
   // auto-orientation (B)
   if(S.autoB>0)S.autoB-=dt;
-  if(K.KeyB||S.autoB>0){const tp=navTargetPos();const to=_v2.subVectors(tp,S.pos).normalize();if(arcade){to.addScaledVector(S.up,-to.dot(S.up));if(to.lengthSq()>1e-6)to.normalize();}
+  if(K.KeyB||S.autoB>0){const tp=(AP.on&&AP.wp)?AP.wp:navTargetPos();const to=_v2.subVectors(tp,S.pos).normalize();if(arcade){to.addScaledVector(S.up,-to.dot(S.up));if(to.lengthSq()>1e-6)to.normalize();}
     const cr=_v3.crossVectors(S.fwd,to);const sgn=Math.sign(cr.dot(S.up));const ang=Math.acos(clamp(S.fwd.dot(to),-1,1));yaw+=sgn*Math.min(ang,2.5*dt);if(S.autoB>0&&ang<.03&&(arcade||Math.abs(to.dot(S.up))<.03))S.autoB=0;
     if(!arcade){const pr=Math.sign(_v3.crossVectors(S.fwd,to).dot(S.right));pitch+=pr*Math.min(Math.abs(Math.asin(clamp(to.dot(S.up),-1,1))),2*dt);}}
   S.fwd.applyAxisAngle(S.up,yaw);
