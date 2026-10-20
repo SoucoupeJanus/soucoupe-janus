@@ -917,7 +917,7 @@ body.mobile .gp p{font-size:13px}
     </div>
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 107 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 108 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -2165,16 +2165,21 @@ function updateReentry(dt){const o=$('reOv');if(S.mhd)RE.t=0;if(RE.t<=0){if(reGl
 function updateFlight(dt){
   const inp=inputVec();const boost=!!(K.ShiftLeft||K.ShiftRight||TOUCH.bo);
   curBody=nearestBody();const rel=_v1.subVectors(S.pos,curBody.pos);const dist=rel.length();curAlt=dist-curBody.R;const bUp=rel.divideScalar(dist).clone();
-  const arcade=S.world>0&&curBody.type!=='star'&&curAlt<curBody.R*1.5;
+  // frontière espace / atmosphère avec hystérésis : on n'entre que si l'on plonge vraiment vers la planète (ou si l'on est déjà bas)
+  let arcade=false;if(S.world>0&&curBody.type!=='star'){const R=curBody.R;
+    if(S.prevMode==='arcade'&&S.prevBody===curBody)arcade=curAlt<R*1.6;
+    else if(curAlt<R*1.15)arcade=true;
+    else if(curAlt<R*1.5){const sp=S.vel.length();const vr=S.vel.dot(bUp);arcade=vr<-Math.max(40,.35*sp);}}
+  S.prevBody=curBody;
   flightMode=S.world<0?'neg':arcade?'arcade':'space';
   // arrivée sur une planète : garder la vue tournée vers elle et la direction suivie, puis descendre en douceur
   if(arcade&&S.prevMode==='space'){const sp0=S.vel.length();const dv=sp0>15?_v2.copy(S.vel).divideScalar(sp0):_v2.copy(S.fwd);
     const dn=Math.max(-dv.dot(bUp),-S.fwd.dot(bUp));const h=_v3.copy(dv).addScaledVector(bUp,-dv.dot(bUp));
-    if(dn>.15){if(h.lengthSq()<.04){const tp=navTargetPos&&navTargetPos();if(tp){h.subVectors(tp,S.pos);h.addScaledVector(bUp,-h.dot(bUp));}}
+    if(dn>.3){if(h.lengthSq()<.04){const tp=navTargetPos&&navTargetPos();if(tp){h.subVectors(tp,S.pos);h.addScaledVector(bUp,-h.dot(bUp));}}
       if(h.lengthSq()>1e-6){S.fwd.copy(h.normalize());}
       S.up.copy(bUp);S.right.crossVectors(S.fwd,S.up).normalize();}
     const p0=clamp(-Math.asin(clamp(Math.max(.35,dn),-1,1)),-1.25,-.22);
-    if(dn>.15){S.appr={p0,a0:curAlt,a1:Math.max(30,curBody.R*.035)};{const cap=20+Math.max(0,curAlt-S.appr.a1)*.75;const vr=S.vel.dot(bUp);if(vr<-cap)S.vel.addScaledVector(bUp,-cap-vr);}S.camPitch=p0;msgOnce('appr','Approche de <b>'+curBody.name+'</b><br>La soucoupe descend. Monter / Descendre pour régler l\'altitude.','',60);}
+    if(dn>.3){S.appr={p0,a0:curAlt,a1:Math.max(30,curBody.R*.035)};{const cap=20+Math.max(0,curAlt-S.appr.a1)*.75;const vr=S.vel.dot(bUp);if(vr<-cap)S.vel.addScaledVector(bUp,-cap-vr);}S.camPitch=p0;msgOnce('appr','Approche de <b>'+curBody.name+'</b><br>La soucoupe descend. Monter / Descendre pour régler l\'altitude.','',60);}
     else S.appr=null;}
   if(!arcade)S.appr=null;
   // orientation
