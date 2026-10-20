@@ -919,7 +919,7 @@ body.mobile .gp p{font-size:13px}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 114 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 115 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -4071,15 +4071,28 @@ function pbShopHtml(){return `<h3>Chantiers planétaires</h3><p>Chaque base du s
    HUMANOÏDE : sortie du vaisseau posé, contact télépathique (opération risquée)
    ===================================================================== */
 const HU={out:false,dir:new V3(),hp:100,state:'idle',tgt:null,cT:0,warned:false,lastShot:0,ret:false};
-const huMesh=(function(){const g=new THREE.Group();const skin=new THREE.MeshStandardMaterial({color:0xb9c4cc,roughness:.6,metalness:.1});const suit=new THREE.MeshStandardMaterial({color:0x2c3440,roughness:.4,metalness:.5});const eye=new THREE.MeshBasicMaterial({color:0x05070a});
-  const body=new THREE.Mesh(new THREE.CylinderGeometry(.16,.22,.75,10),suit);body.position.y=.62;g.add(body);
-  [-1,1].forEach(s=>{const leg=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,.42,6),suit);leg.position.set(s*.09,.21,0);g.add(leg);const arm=new THREE.Mesh(new THREE.CylinderGeometry(.045,.04,.6,6),skin);arm.position.set(s*.25,.68,0);arm.rotation.z=s*.12;g.add(arm);});
-  [-1,1].forEach(s=>{const hand=new THREE.Group();hand.position.set(s*.29,.37,0);const palm=new THREE.Mesh(new THREE.SphereGeometry(.05,8,6),skin);palm.scale.set(.8,1,.6);hand.add(palm);
-    [-1,0,1].forEach(k=>{const f=new THREE.Mesh(new THREE.CylinderGeometry(.013,.009,.17,5),skin);f.geometry.translate(0,-.085,0);f.position.set(k*.026,-.03,0);f.rotation.z=k*.2+s*.08;hand.add(f);const tip=new THREE.Mesh(new THREE.SphereGeometry(.016,6,4),skin);tip.position.set(k*.026+Math.sin(k*.2+s*.08)*.17,-.2,0);hand.add(tip);});g.add(hand);
-    const foot=new THREE.Group();foot.position.set(s*.09,.012,.02);const sole=new THREE.Mesh(new THREE.BoxGeometry(.09,.03,.1),skin);foot.add(sole);
-    [-1,0,1].forEach(k=>{const t=new THREE.Mesh(new THREE.CylinderGeometry(.014,.01,.12,5),skin);t.geometry.translate(0,.06,0);t.rotation.x=Math.PI/2;t.rotation.z=0;t.position.set(k*.03,0,.045);t.rotation.y=k*.25;foot.add(t);});g.add(foot);});
-  const head=new THREE.Mesh(new THREE.SphereGeometry(.27,16,12),skin);head.scale.set(1,1.25,1);head.position.y=1.25;g.add(head);
-  [-1,1].forEach(s=>{const e=new THREE.Mesh(new THREE.SphereGeometry(.09,10,8),eye);e.scale.set(1,.55,.5);e.position.set(s*.11,1.27,.22);e.rotation.z=s*.45;g.add(e);});
+const huMesh=(function(){const g=new THREE.Group();const skin=new THREE.MeshStandardMaterial({color:0xb9c4cc,roughness:.55,metalness:.1});const suit=new THREE.MeshStandardMaterial({color:0x2c3440,roughness:.35,metalness:.55});const eye=new THREE.MeshStandardMaterial({color:0x020305,roughness:.08,metalness:.3});
+  const M=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m;};
+  // jambes longues et fines (combinaison)
+  [-1,1].forEach(s=>{M(new THREE.CylinderGeometry(.052,.04,.36,8),suit,s*.07,.46,0);M(new THREE.CylinderGeometry(.04,.032,.32,8),suit,s*.07,.15,0);
+    const knee=M(new THREE.SphereGeometry(.045,8,6),suit,s*.07,.29,0);});
+  // bassin et torse étroits
+  M(new THREE.CylinderGeometry(.1,.085,.16,10),suit,0,.68,0);
+  const torso=M(new THREE.CylinderGeometry(.13,.095,.46,10),suit,0,.92,0);torso.scale.z=.72;
+  [-1,1].forEach(s=>{M(new THREE.SphereGeometry(.05,8,6),suit,s*.13,1.12,0);}); // épaules
+  M(new THREE.CylinderGeometry(.035,.045,.13,8),skin,0,1.2,0); // cou fin
+  // bras très longs et fins
+  [-1,1].forEach(s=>{const up=M(new THREE.CylinderGeometry(.03,.026,.36,7),skin,s*.155,.95,0);up.rotation.z=s*.09;
+    const lo=M(new THREE.CylinderGeometry(.026,.022,.34,7),skin,s*.185,.6,.02);lo.rotation.z=s*.05;
+    const hand=new THREE.Group();hand.position.set(s*.2,.4,.02);const palm=new THREE.Mesh(new THREE.SphereGeometry(.04,8,6),skin);palm.scale.set(.75,1.1,.55);hand.add(palm);
+    [-1,0,1].forEach(k=>{const f=new THREE.Mesh(new THREE.CylinderGeometry(.01,.007,.17,5),skin);f.geometry.translate(0,-.085,0);f.position.set(k*.02,-.03,0);f.rotation.z=k*.16+s*.06;hand.add(f);const tip=new THREE.Mesh(new THREE.SphereGeometry(.013,6,4),skin);tip.position.set(k*.02+Math.sin(k*.16+s*.06)*.17,-.2,0);hand.add(tip);});g.add(hand);
+    const foot=new THREE.Group();foot.position.set(s*.07,.012,.02);const sole=new THREE.Mesh(new THREE.BoxGeometry(.07,.024,.09),skin);foot.add(sole);
+    [-1,0,1].forEach(k=>{const t=new THREE.Mesh(new THREE.CylinderGeometry(.011,.008,.11,5),skin);t.geometry.translate(0,.055,0);t.rotation.x=Math.PI/2;t.position.set(k*.024,0,.04);t.rotation.y=k*.25;foot.add(t);});g.add(foot);});
+  // grande tête en goutte inversée, menton pointu
+  const hg=new THREE.SphereGeometry(.24,28,20);{const P=hg.attributes.position;for(let i=0;i<P.count;i++){let x=P.getX(i),y=P.getY(i),z=P.getZ(i);if(y<0){const k=-y/.24;const f=1-.58*k*k;x*=f;z*=f;y*=1.45;}else{y*=1.02;x*=1.04;z*=1.0;}P.setXYZ(i,x,y,z);}hg.computeVertexNormals();}
+  const head=M(hg,skin,0,1.52,0);
+  // grands yeux en amande, noirs et brillants
+  [-1,1].forEach(s=>{const e=M(new THREE.SphereGeometry(.085,16,12),eye,s*.1,1.47,.19);e.scale.set(1.08,.52,.45);e.rotation.z=s*.32;e.rotation.y=s*.32;});
   const aura=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.glowW,color:0x9ff6ff,transparent:true,opacity:.35,depthWrite:false,blending:THREE.AdditiveBlending}));aura.scale.setScalar(2.4);aura.position.y=1;g.add(aura);g.userData.aura=aura;
   g.scale.setScalar(1.35);g.visible=false;scene.add(g);return g;})();
 const tpRing=new THREE.Mesh(new THREE.TorusGeometry(1,.06,6,32),new THREE.MeshBasicMaterial({color:0x9ff6ff,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));tpRing.visible=false;scene.add(tpRing);
