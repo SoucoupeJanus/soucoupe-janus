@@ -938,7 +938,7 @@ body.mobile #thermBtn,body.mobile #viewBtn,body.mobile #photoBtn{display:none!im
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 121 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 122 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -2201,7 +2201,10 @@ function figOK(){return started&&!S.dead&&!S.cine&&!S.landed&&S.world>0&&flightM
 function figStart(){if(FIG.on)return;if(!figOK()){toast('Figures : volez bas au-dessus de la Terre (monde positif).','');return;}if(S.t<FIG.cd){toast('Figures : encore '+Math.ceil(FIG.cd-S.t)+' s.','');return;}
   if(S.energy<12){toast('Figures : énergie insuffisante.','bad');return;}S.energy-=12;if(AP.on)apStop('');
   const ei=earthInfo();const up=ei.dir.clone();const f=S.fwd.clone().addScaledVector(up,-S.fwd.dot(up)).normalize();
-  Object.assign(FIG,{on:true,t:0,k:-1,dir0:f,up,n:0,pts:0,seen:new Set()});sfx('cloud');}
+  Object.assign(FIG,{on:true,t:0,k:-1,dir0:f,up,n:0,pts:0,seen:new Set(),look:null});
+  {const side=new V3().crossVectors(f,up).normalize();const half=46*.6*.5;const ctr=S.pos.clone().addScaledVector(f,half).addScaledVector(side,half);
+    FIG.cam=ctr.clone().addScaledVector(side,-62).addScaledVector(f,-30).addScaledVector(up,30);}
+  sfx('cloud');}
 function figWitness(){const shipL=earthInfo().local;let n=0;for(const h of HUM){if(!h.alive||h.boat)continue;const d=_v1.set(h.v.x*ER,h.v.y*ER,h.v.z*ER).distanceTo(shipL);if(d>130)continue;h.att=1;h.watching=true;if(!FIG.seen.has(h)){FIG.seen.add(h);n++;}}return n;}
 function figStep(dt){FIG.t+=dt;const up=earthInfo().dir;S.momentumLock=.12;const SEG=.6,SP=46;
   const turn=Math.floor(FIG.t/SEG);
@@ -2211,7 +2214,7 @@ function figStep(dt){FIG.t+=dt;const up=earthInfo().dir;S.momentumLock=.12;const
   else if(FIG.t<SEG*5+1.1){S.vel.copy(up).multiplyScalar(-70);}
   else if(FIG.t<SEG*5+1.6){S.vel.set(0,0,0);if(!FIG.flash){FIG.flash=1;fxBurst(S.pos.clone(),0xbff8ff,20,.6);flash(.25);sfx('flipOut');buzz([20,30,40]);FIG.n+=figWitness();}}
   else figEnd();}
-function figEnd(){FIG.on=false;FIG.flash=0;S.momentumLock=0;S.altT=curAlt;FIG.cd=S.t+18;const n=FIG.seen?FIG.seen.size:0;
+function figEnd(){FIG.on=false;FIG.flash=0;FIG.after=S.t+1.5;S.momentumLock=0;S.altT=curAlt;FIG.cd=S.t+18;const n=FIG.seen?FIG.seen.size:0;
   if(n>0){const tot=Math.round((60+n*22)*comboMult()*ECO);S.score+=tot;S.credits+=tot;ST.turns=(ST.turns||0)+1;awaken(regOfDir(earthInfo().dir),Math.min(4,n*.12));S.alert=Math.min(100,S.alert+2);
     toast('Figures : <b>+'+fmt(tot)+'</b> ('+n+' témoin'+(n>1?'s':'')+' sidéré'+(n>1?'s':'')+')','score');const bw=bestPhoneWitness();if(bw)queuePhoto(bw,'turn',{now:true});mEvent('turn',{n});}
   else toast('Figures réussies… mais personne ne les a vues. Approchez-vous des habitants.','');}
@@ -2377,9 +2380,15 @@ function setView(i){VIEWI=i;try{localStorage.setItem('janus_view2',i);}catch(e){
 function updateCamera(dt){
   const sp=S.vel.length();const extra=S.world>0?Math.min(10,sp*.02):Math.min(14,Math.log10(1+sp)*2.2);
   const VW=VIEWS[VIEWI];const dist=VW.d+extra*VW.d/15,h=VW.h;
-  const ld=_v1.copy(S.fwd).applyAxisAngle(S.right,S.camPitch);
+  // pilote automatique : la caméra regarde vers la destination (lissée), sans balancer avec les corrections de cap
+  let ld=_v1.copy(S.fwd).applyAxisAngle(S.right,S.camPitch);
+  if(AP.on){const aim=AP.wp||navTargetPos();const d=_v4.subVectors(aim,S.pos);if(d.lengthSq()>1){d.normalize();if(flightMode==='arcade'){const u=S.up;const dz=d.dot(u);d.addScaledVector(u,-dz).normalize();d.applyAxisAngle(_v5.crossVectors(d,u).normalize(),-.18+Math.max(-.6,Math.min(.25,dz)));}
+      S.apLd=(S.apLd||new V3().copy(ld));S.apLd.lerp(d,1-Math.exp(-2.2*dt)).normalize();ld=_v1.copy(S.apLd);}}else if(S.apLd)S.apLd=null;
+  // figures : vue extérieure fixe, on voit toute la figure de côté et d'un peu haut
+  if(FIG.on&&FIG.cam){camera.position.lerp(FIG.cam,1-Math.exp(-4*dt));S.camOff.copy(camera.position).sub(S.pos);camera.up.copy(FIG.up);FIG.look=(FIG.look||S.pos.clone()).lerp(S.pos,1-Math.exp(-6*dt));camera.lookAt(FIG.look);
+    const fovT=60;camera.fov+=(fovT-camera.fov)*(1-Math.exp(-3*dt));camera.updateProjectionMatrix();return;}
   const off=_v2.copy(ld).multiplyScalar(-dist).addScaledVector(S.up,h);
-  S.camOff.lerp(off,1-Math.exp(-8*dt));
+  S.camOff.lerp(off,1-Math.exp(-(FIG.after>S.t?2:8)*dt));
   camera.position.copy(S.pos).add(S.camOff);
   // éviter de passer sous le sol (monde +)
   if(S.world>0){const cr=_v3.subVectors(camera.position,curBody.pos);const r=cr.length();const cmin=(S.sub&&curBody===EARTH)?curBody.R-SEAD+1.5:curBody.R+1.5;if(r<cmin&&curBody.type!=='star'){camera.position.copy(curBody.pos).addScaledVector(cr.divideScalar(r),cmin);}}
