@@ -919,7 +919,7 @@ body.mobile .gp p{font-size:13px}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 116 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 117 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -2534,6 +2534,12 @@ function drawSystem(g,W,H,mini){if(!mini){MK=mapK();MKM=Math.max(1,MK*.75);MZ.on
     if(b===tgt){g.strokeStyle=COLM.tgt;g.lineWidth=2;g.beginPath();g.arc(q[0],q[1],mini?6:13,0,7);g.stroke();g.lineWidth=1;}
     if(!mini||b===tgt||b===EARTH){const tx=b.name+(mini?'':'  '+dstr(Math.max(0,S.pos.distanceTo(b.pos)-b.R)));const ty=q[1]-(mini?6:14*KM);if(!mini){g.strokeStyle='#000';g.lineWidth=3*KM;g.strokeText(tx,q[0],ty);g.lineWidth=1;}g.fillStyle=neg?COLM.neg:(b.visited?'#e8f1ff':'#8fa3c4');g.fillText(tx,q[0],ty);}
     MAPHIT.push({x:q[0],y:q[1],body:b});});
+  if(SYS==='sol'&&!mini){const e=sysProj(EARTH.pos,W,H,mini);const d=_v1.subVectors(MOON.pos,EARTH.pos);const ang=Math.atan2(d.z,d.x);const rr0=26*KM;const mx=e[0]+Math.cos(ang)*rr0,my=e[1]+Math.sin(ang)*rr0;
+    g.strokeStyle='rgba(200,214,238,.35)';g.setLineDash([2,3]);g.beginPath();g.arc(e[0],e[1],rr0,0,7);g.stroke();g.setLineDash([]);
+    g.fillStyle='#e6e6dc';g.beginPath();g.arc(mx,my,4*KM,0,7);g.fill();
+    if(MOON===tgt){g.strokeStyle=COLM.tgt;g.lineWidth=2;g.beginPath();g.arc(mx,my,10,0,7);g.stroke();g.lineWidth=1;}
+    if(MZ.z>=2||MOON===tgt){const tx=MZ.z>=2?'Lune  '+dstr(Math.max(0,S.pos.distanceTo(MOON.pos)-MOON.R)):'Lune';g.font='600 '+Math.round(12*K)+'px "Chakra Petch",sans-serif';g.strokeStyle='#000';g.lineWidth=3*KM;g.strokeText(tx,mx,my+16*KM);g.lineWidth=1;g.fillStyle=MOON.visited?'#e8f1ff':'#8fa3c4';g.fillText(tx,mx,my+16*KM);}
+    MAPHIT.push({x:mx,y:my,body:MOON});}
   const s=sysProj(S.pos,W,H,mini);const a=Math.atan2(S.fwd.z,S.fwd.x)+Math.PI/2;shipArrow(g,s[0],s[1],a,S.world>0?COLM.ship:COLM.shipN,mini?6:11*KM);
   if(!mini){MZ.on=false;g.fillStyle='#8fa3c4';g.font=Math.round(11*K)+'px "IBM Plex Mono",monospace';g.textAlign='left';g.fillText(MZ.z>1.01?'Zoom ×'+MZ.z.toFixed(1)+' · échelle logarithmique':'Échelle logarithmique · pincer ou molette pour zoomer',16,H-16);}}
 const MAPHIT=[];
@@ -2582,7 +2588,7 @@ function drawEarthMap(){const g=bctx,W=big.width,H=big.height;MK=mapK();MKM=Math
   CITIES.forEach((c,ci)=>{const q=ll2xy(c.lat,c.lon,W,H);g.fillStyle=nav.city===ci?COLM.tgt:COLM.city;g.strokeStyle='#000';g.lineWidth=3;g.fillRect(q[0]-5*MKM,q[1]-5*MKM,10*MKM,10*MKM);g.strokeText(c.n,q[0],q[1]-10*MKM);g.fillText(c.n,q[0],q[1]-10*MKM);g.lineWidth=1;MAPHIT.push({x:q[0],y:q[1],city:ci});});
   {const hp=(v,n,alt,pf)=>{const ll=vll(v);const q=ll2xy(ll.lat,ll.lon,W,H);if(q[0]<-20||q[0]>W+20||q[1]<-20||q[1]>H+20)return;const P=new V3();MAPHIT.push({x:q[0],y:q[1],n,pos:pf||(()=>P.copy(EC).addScaledVector(v,ER+(alt||40)))});};
    FARMS.forEach(f=>hp(f.v,'Ferme près de '+f.city.n));VILLAGES.forEach(vl=>hp(vl.v,vl.n));RADARS.forEach(r=>hp(r.v,r.base?r.city:'Radar · '+r.city));
-   SECRET.forEach(b=>hp(llv(b.lat,b.lon),b.n));ANC.forEach(a=>hp(a.dir,a.n,a.sea?-20:40));EBASES.forEach(b=>{if(elabVis(b))hp(b.dir,b.n,b.sea?-20:40);});
+   SECRET.forEach(b=>hp(llv(b.lat,b.lon),b.n));ANC.forEach(a=>hp(a.dir,a.n,a.sea?-20:40));EBASES.forEach(b=>{if(elabVis(b)){hp(b.dir,b.n,b.sea?-20:40);const h=MAPHIT[MAPHIT.length-1];if(h&&h.n===b.n)h.pri=1;}});
    FIELDS.forEach(f=>{if(f.pattern)hp(f.v,'Agroglyphe près de '+f.farm.city.n);});if(CRASH)hp(CRASH.v,'Crash');SILOS.forEach(si=>hp(llv(si.lat,si.lon),si.n));
    MIBS.forEach(m=>hp(m.v,'Men in Black',30,()=>_v4.copy(EC).addScaledVector(m.v,ER+30)));NPCS.forEach(n=>hp(n.v,SPECIES[n.sp].n,40,()=>_v4.copy(EC).addScaledVector(n.v,ER+40)));
    if(S.world>0)MIL.forEach(u=>hp(_v5.subVectors(u.pos,EC).normalize(),'Unité militaire',0,()=>u.pos));
@@ -2624,7 +2630,7 @@ function openMap(){if(earthInfo().alt>5000&&!openMap.used)mzSwap('sys');openMap.
 $('tabEarth').addEventListener('click',()=>{mapPlShow(false);mzSwap('earth');drawBigMap();});
 $('tabSys').addEventListener('click',()=>{mapPlShow(false);mzSwap('sys');drawBigMap();});
 big.addEventListener('click',e=>{if(MZ.dragged){MZ.dragged=false;return;}const r=big.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*big.width,y=(e.clientY-r.top)/r.height*big.height;
-  const kk=big.width/Math.max(1,r.width);const hr=Math.max(40,26*kk);let best=null,bd=hr*hr;for(const h of MAPHIT){const d=((h.x-x)**2+(h.y-y)**2)*(h.city!=null||h.body?.45:1);if(d<bd){bd=d;best=h;}}
+  const kk=big.width/Math.max(1,r.width);const hr=Math.max(40,26*kk);let best=null,bd=hr*hr;for(const h of MAPHIT){const d=((h.x-x)**2+(h.y-y)**2)*(h.pri?.3:h.city!=null||h.body?.45:1);if(d<bd){bd=d;best=h;}}
   if(!best)return;if(best.pos){setNavPos(best.pos,best.n);toast('Cible : '+best.n+' — appuyez sur B en vol pour vous orienter.');}else if(best.city!=null){nav.ext=null;nav.extName=null;nav.city=best.city;toast('Ville cible : '+CITIES[best.city].n);}else{nav.ext=null;nav.extName=null;nav.city=-1;const i=nav.list.indexOf(best.body);if(i>=0)nav.i=i;toast('Cible : '+best.body.name);}navGo();drawBigMap();});
 
 (function mapZoom(){const P=new Map();let last=null,pd=0;
