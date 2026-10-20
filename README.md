@@ -73,7 +73,7 @@ Montrez-vous aux témoins, puis disparaissez sous leurs yeux. Tracez des agrogly
 
 ### Sur téléphone et tablette
 
-Un joystick à gauche pour se déplacer, un glissement du doigt sur l'écran pour regarder autour, et des boutons à droite : monter, descendre, boost, charge, rayon, agir, MHD, nuage et relâcher. Le bouton **Carte** ouvre la carte et la liste des lieux (onglet **📍 Lieux**) : touchez un lieu, ou un nom affiché en vol, et la soucoupe s'oriente vers lui. Un bouton **Labo** apparaît quand du bétail ou un humain est à bord, et le menu ☰ regroupe missions, améliorations, sciences et réglages.
+Un joystick à gauche pour se déplacer, un glissement du doigt sur l'écran pour regarder autour, et des boutons à droite : monter, descendre, boost, charge, rayon, agir, MHD, nuage et relâcher. Le bouton **Carte** ouvre la carte et la liste des lieux (onglet **📍 Lieux**) : touchez un lieu, ou un nom affiché en vol, et la soucoupe s'oriente vers lui. Le bouton **Y aller** active un pilote automatique jusqu'à la cible (il passe par l'espace si elle est loin). Les boutons n'apparaissent que lorsqu'ils servent, et le téléphone vibre quand la charge est prête pour disparaître. Un bouton **Labo** apparaît quand du bétail ou un humain est à bord, et le menu ☰ regroupe missions, améliorations, sciences et réglages.
 
 > **Installer le jeu :** le bouton **📲 Installer le jeu** de l'écran d'accueil l'ajoute à l'écran d'accueil du téléphone ou de l'ordinateur. Il s'ouvre ensuite en plein écran, comme une application.
 >
