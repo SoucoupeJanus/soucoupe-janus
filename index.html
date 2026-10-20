@@ -917,7 +917,7 @@ body.mobile .gp p{font-size:13px}
     </div>
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 108 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 109 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -1421,6 +1421,7 @@ const MAXH=1700,MAXC=560;const VISH=IS_MOBILE?3:1.6,VISC=IS_MOBILE?2:1.25,VISV=I
 const humMesh=new THREE.InstancedMesh(humGeo,new THREE.MeshPhongMaterial({flatShading:true}),MAXH);humMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);earthSurf.add(humMesh);
 const cowMesh=new THREE.InstancedMesh(cowGeo,new THREE.MeshPhongMaterial({flatShading:true}),MAXC);cowMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);earthSurf.add(cowMesh);
 humMesh.frustumCulled=false;cowMesh.frustumCulled=false;
+[humMesh,cowMesh].forEach(m=>{m.material.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n#ifdef USE_COLOR\ntotalEmissiveRadiance+=vColor*.42;\n#endif');};m.material.needsUpdate=true;});
 const CLOTH=[[.85,.25,.25],[.2,.45,.85],[.25,.65,.35],[.9,.6,.2],[.6,.3,.7],[.85,.85,.85],[.25,.25,.3],[.15,.6,.7]];
 const NAMES=['Camille','Hugo','Léa','Yanis','Inès','Lucas','Chloé','Malik','Nora','Théo','Sofia','Kenji','Amara','Diego','Olga','Wei','Priya','Ahmed','Lena','Tom'];
 const HUM=[],COWS=[];
@@ -2168,7 +2169,7 @@ function updateFlight(dt){
   // frontière espace / atmosphère avec hystérésis : on n'entre que si l'on plonge vraiment vers la planète (ou si l'on est déjà bas)
   let arcade=false;if(S.world>0&&curBody.type!=='star'){const R=curBody.R;
     if(S.prevMode==='arcade'&&S.prevBody===curBody)arcade=curAlt<R*1.6;
-    else if(curAlt<R*1.15)arcade=true;
+    else if(curAlt<R*.9)arcade=true;
     else if(curAlt<R*1.5){const sp=S.vel.length();const vr=S.vel.dot(bUp);arcade=vr<-Math.max(40,.35*sp);}}
   S.prevBody=curBody;
   flightMode=S.world<0?'neg':arcade?'arcade':'space';
@@ -2222,7 +2223,8 @@ function updateFlight(dt){
     }else{
       let acc=120*P,vmax=900*P;if(boost&&S.energy>0){acc*=3;vmax=2600*P;S.energy-=4*dt;}
       const nearP=curBody.type!=='star'&&curAlt<curBody.R*4;
-      if(nearP){_v4.copy(S.fwd).multiplyScalar(inp.z).addScaledVector(S.right,inp.x);S.vel.addScaledVector(_v4,acc*dt).addScaledVector(bUp,inp.y*acc*3*dt).addScaledVector(grav,dt);
+      if(nearP){_v4.copy(S.fwd).multiplyScalar(inp.z).addScaledVector(S.right,inp.x);S.vel.addScaledVector(_v4,acc*dt).addScaledVector(bUp,inp.y*acc*3*dt);{const gz=grav.dot(bUp);if(inp.y>=0&&gz<0&&curAlt<curBody.R*2.2)S.vel.addScaledVector(grav,dt).addScaledVector(bUp,-gz*dt);else S.vel.addScaledVector(grav,dt);}
+        if(inp.y>=0&&curAlt<curBody.R*1.7){const vr=S.vel.dot(bUp);if(vr<0&&vr>-Math.max(40,.35*S.vel.length()))S.vel.addScaledVector(bUp,-vr*(1-Math.exp(-1.5*dt)));}
         if(!inp.y&&!inp.z&&!inp.x)S.vel.multiplyScalar(Math.exp(-.9*dt)); // stabilisation automatique près des planètes
         const vr=S.vel.dot(bUp);if(inp.y<0&&vr>0)S.vel.addScaledVector(bUp,-vr*(1-Math.exp(-3*dt)));if(inp.y>0&&vr<0)S.vel.addScaledVector(bUp,-vr*(1-Math.exp(-3*dt)));}
       else S.vel.addScaledVector(dir,acc*dt).addScaledVector(grav,dt);
@@ -2315,7 +2317,7 @@ function updatePopulation(dt){
     let hgt=0;
     if(h.lift>0){if(h.dropping){h.lift-=dt*.8;if(h.lift<=0){h.lift=0;h.dropping=false;}}
       const t=Math.max(0,h.lift);const e=t*t*(3-2*t);_lp.copy(h.v).multiplyScalar(ER);_lt.copy(shipL).addScaledVector(ei.dir,-1.6);_lp.lerp(_lt,e);
-      surfMat(h.v,0,S.t*4,1,1,1,_m);_m.setPosition(_lp);humMesh.setMatrixAt(i,_m);
+      surfMat(h.v,0,S.t*4,VISH,VISH,VISH,_m);_m.setPosition(_lp);humMesh.setMatrixAt(i,_m);
       humMesh.setColorAt(i,_c.setRGB(.6,1,.65));return;}
     const homeV=h.motorist?h.motorist.v:homeOf(h);
     if(h.sleep>0){h.sleep-=dt;}
@@ -2326,7 +2328,7 @@ function updatePopulation(dt){
     else{h.dir.applyAxisAngle(h.v,rr(-1,1)*dt*1.2);if(angDeg(h.v,homeV)>homeRad(h)){const back=_v2.subVectors(homeV,h.v);back.addScaledVector(h.v,-back.dot(h.v)).normalize();h.dir.lerp(back,.1).normalize();}
       h.v.addScaledVector(h.dir,h.spd*dt/ER).normalize();if(landScore(h.v)<0){h.v.addScaledVector(h.dir,-2*h.spd*dt/ER).normalize();h.dir.negate();}}
     h.dir.addScaledVector(h.v,-h.dir.dot(h.v)).normalize();
-    const s=(h.watching?1.15:1)*(THERM.on?(IS_MOBILE?1.25:1.9):1)*VISH;if(h.sleep>0&&!THERM.on){surfMat(h.v,.15,0,1,.28,1.4,_m);humMesh.setMatrixAt(i,_m);humMesh.setColorAt(i,_c.setRGB(.55,.6,.75));return;}
+    const s=(h.watching?1.15:1)*(THERM.on?(IS_MOBILE?1.25:1.9):1)*VISH;if(h.sleep>0&&!THERM.on){surfMat(h.v,.15*VISH,0,VISH,.32*VISH,1.4*VISH,_m);humMesh.setMatrixAt(i,_m);humMesh.setColorAt(i,_c.setRGB(.75,.85,1));return;}
     surfMat(h.v,h.boat?.55:0,0,s,s,s,_m);humMesh.setMatrixAt(i,_m);
     let col=h.col;if(THERM.on){humMesh.setColorAt(i,_c.setRGB(1,.95,.75));return;}if(h.contact)col=[.55,.95,1];else if(h.awake)col=[.76,.55,1];else if(h.watching&&h.seeing)col=h.phone?[1,.95,.4]:[1,.82,.2];
     humMesh.setColorAt(i,_c.setRGB(col[0],col[1],col[2]));});
@@ -2334,7 +2336,7 @@ function updatePopulation(dt){
   COWS.forEach((c,i)=>{if(!c.alive){_m.makeScale(0,0,0);cowMesh.setMatrixAt(i,_m);return;}
     if(c.lift>0){if(c.dropping){c.lift-=dt*.8;if(c.lift<=0){c.lift=0;c.dropping=false;}}
       const t=Math.max(0,c.lift);const e=t*t*(3-2*t);_lp.copy(c.v).multiplyScalar(ER);_lt.copy(shipL).addScaledVector(ei.dir,-1.6);_lp.lerp(_lt,e);
-      surfMat(c.v,0,S.t*3,1,1,1,_m);_m.setPosition(_lp);cowMesh.setMatrixAt(i,_m);cowMesh.setColorAt(i,_c.setRGB(.7,1,.7));return;}
+      surfMat(c.v,0,S.t*3,VISC,VISC,VISC,_m);_m.setPosition(_lp);cowMesh.setMatrixAt(i,_m);cowMesh.setColorAt(i,_c.setRGB(.7,1,.7));return;}
     c.dir.applyAxisAngle(c.v,rr(-1,1)*dt*.6);const fv=FARMS[c.farm].v;if(angDeg(c.v,fv)>.7*LK){const back=_v2.subVectors(fv,c.v);back.addScaledVector(c.v,-back.dot(c.v)).normalize();c.dir.lerp(back,.1).normalize();}
     c.v.addScaledVector(c.dir,c.spd*dt/ER).normalize();c.dir.addScaledVector(c.v,-c.dir.dot(c.v)).normalize();
     const east=_lp.set(0,1,0).cross(c.v).normalize();const north=_lt.crossVectors(c.v,east);const hd=Math.atan2(c.dir.dot(north),c.dir.dot(east));
