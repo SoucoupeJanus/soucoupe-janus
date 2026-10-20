@@ -413,7 +413,7 @@ body.mobile #touch .stick{width:104px;height:104px;background:rgba(10,20,40,.2)}
 body.mobile #gauge{width:56px;height:56px}body.mobile .bc .gsub,body.mobile #gHint{display:none}
 body.mobile #ops{display:none!important}
 body.mobile #toasts{top:calc(46px + env(safe-area-inset-top,0px));width:min(330px,42vw);pointer-events:auto}
-body.mobile #toasts>*{font-size:10.5px!important;line-height:1.35;padding:4px 8px!important;background:rgba(8,14,28,.62)!important;backdrop-filter:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;position:relative}body.mobile #toasts>.full{display:block!important;-webkit-line-clamp:unset!important}body.mobile #toasts>.clamp:not(.full){padding-right:22px!important;padding-bottom:0!important;border-bottom-width:4px!important;border-bottom-color:transparent!important}
+body.mobile #toasts>*{font-size:10.5px!important;line-height:1.35;padding:4px 8px!important;background:rgba(8,14,28,.62)!important;backdrop-filter:none;display:block;overflow:visible;position:relative}body.mobile #toasts>.full{display:block!important;-webkit-line-clamp:unset!important}body.mobile #toasts>.clamp:not(.full){padding-right:22px!important;padding-bottom:0!important;border-bottom-width:4px!important;border-bottom-color:transparent!important}
 body.mobile #toasts>*:not(:last-child){display:none!important}
 body.mobile #ctxHint{font-size:9.5px;padding:3px 8px;background:rgba(8,14,28,.55)}
 body.mobile #labels .mk{font-size:8.5px;opacity:.75}
@@ -729,7 +729,7 @@ body.mobile .gp p{font-size:13px}
 body.mobile #touch #tGo{left:calc(12px + env(safe-area-inset-left,0px))!important;right:auto!important;top:calc(286px + env(safe-area-inset-top,0px))!important}
 @media (orientation:landscape){body.mobile #touch #tGo{top:calc(146px + env(safe-area-inset-top,0px))!important;bottom:auto!important;left:calc(16px + env(safe-area-inset-left,0px))!important}}
 
-body.mobile .toast{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;position:relative}
+body.mobile .toast{position:relative}
 body.mobile .toast.full{display:block;-webkit-line-clamp:unset}
 body.mobile .toast.clamp:not(.full){padding-right:26px}body.mobile .toast.clamp:not(.full)::after{content:'▾';position:absolute;right:9px;bottom:6px;font-size:12px;opacity:.75}
 #tFig{left:calc(12px + env(safe-area-inset-left,0px));right:auto!important;top:calc(350px + env(safe-area-inset-top,0px))}
@@ -938,7 +938,7 @@ body.mobile #thermBtn,body.mobile #viewBtn,body.mobile #photoBtn{display:none!im
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 124 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 125 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
