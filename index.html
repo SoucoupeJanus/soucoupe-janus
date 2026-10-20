@@ -919,7 +919,7 @@ body.mobile .gp p{font-size:13px}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 112 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 113 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -1707,7 +1707,7 @@ function onKey(c){
 }
 const OVS=['ovPause','ovLab','ovShop','ovMis','ovMap','ovThread','ovCtx','ovUmmo','ovEnc','ovELab','ovTgt'];
 function anyOverlay(){return OVS.some(id=>!$(id).hidden);}
-function openOv(id,render){OVS.forEach(o=>$(o).hidden=o!==id);if(document.body.classList.contains('mobile')){const o=$(id);if(o&&!o.querySelector(':scope>.ovx'))o.insertAdjacentHTML('afterbegin','<button class="ovx" type="button" data-act="'+(id==='ovELab'?'elabExit':'close')+'" aria-label="Fermer">✕</button>');}if(render)render();$(id).hidden=false;paused=true;if(id==='ovPause'){refreshSaveUI();renderDiff();}if(document.exitPointerLock)document.exitPointerLock();}
+function openOv(id,render){{const o0=$(id);if(o0)o0._openT=performance.now();}OVS.forEach(o=>$(o).hidden=o!==id);if(document.body.classList.contains('mobile')){const o=$(id);if(o&&!o.querySelector(':scope>.ovx'))o.insertAdjacentHTML('afterbegin','<button class="ovx" type="button" data-act="'+(id==='ovELab'?'elabExit':'close')+'" aria-label="Fermer">✕</button>');}if(render)render();$(id).hidden=false;paused=true;if(id==='ovPause'){refreshSaveUI();renderDiff();}if(document.exitPointerLock)document.exitPointerLock();}
 let TGTTAB='city',TGTQ='';
 function tgtPlaces(){const P=[];const ei=earthInfo();const surf=(v,alt)=>{const P0=new V3();return ()=>P0.copy(EC).addScaledVector(v,ER+(alt||40));};
   const dkm=v=>angDeg(ei.dir,v)*D2R*EKM;
@@ -1745,6 +1745,11 @@ ACT.tgtCity=d=>{const c=CITIES[+d.i];if(!c)return;nav.ext=null;nav.extName=null;
 function closeOverlays(){OVS.forEach(o=>$(o).hidden=true);paused=false;const sf=document.querySelector('#encCard .simbox iframe');if(sf)sf.src='about:blank';}
 function toggleOv(id,render){if(!$(id).hidden){closeOverlays();return;}openOv(id,render);}
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeOverlays));
+
+/* anti-clic involontaire : un appui commencé avant l'ouverture d'un menu (ou dans les 300 ms) ne choisit rien dedans */
+let LAST_PD=0;document.addEventListener('pointerdown',()=>{LAST_PD=performance.now();},true);
+new MutationObserver(ms=>{for(const m of ms){const el=m.target;if(el.hidden===false&&el.classList&&(el.classList.contains('ov')||el.id==='feed'))el._openT=performance.now();}}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden']});
+document.addEventListener('click',e=>{const ov=e.target.closest&&e.target.closest('.ov,#feed');if(!ov||!ov._openT||ov.id==='ovStart')return;const now=performance.now();if(now-LAST_PD>1200)return;/* clic clavier ou programmé */if(LAST_PD<ov._openT+40||now-ov._openT<300){e.stopPropagation();e.preventDefault();}},true);
 document.addEventListener('click',e=>{const pp=e.target.closest('[data-post]');if(pp){openThread(+pp.dataset.post);return;}const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;
   if(ACT[a]){ACT[a](t.dataset);return;}
   if(a==='close')closeOverlays();else if(a==='buy')buyUpg(t.dataset.id);else if(a==='lab')labAct(t.dataset.op,+t.dataset.i,t.dataset.tr);});
@@ -4581,8 +4586,14 @@ function labelGo(e){const k=e.dataset.k;let name=(e._t||'').replace(/\s{2,}.*$/,
     else{const id=k.replace(/^[a-z]+_/,'');const mv=k.startsWith('pb_')?PBASES.find(x=>x.id===id):k.startsWith('exb_')?EXB.find(x=>x.id===id):k.startsWith('an_')?ANOM.find(x=>x.id===id):k.startsWith('pr_')?PROBES.find(x=>x.id===id):null;
       if(mv&&mv.pos&&mv.pos.isVector3)setNavPos(()=>mv.pos,name);else{if(!e._p)return;const P=e._p.clone();setNavPos(()=>P,name);}}}
   navGo();toast('Cap sur <b>'+name+'</b>','');}
-(function(){const L=$('labels');let down=null;L.addEventListener('pointerdown',ev=>{const e=ev.target.closest('.mk.go');if(!e)return;ev.preventDefault();ev.stopPropagation();down=e;},true);
-  L.addEventListener('pointerup',ev=>{const e=ev.target.closest('.mk.go');if(e&&e===down&&started&&!paused)labelGo(e);down=null;},true);})();
+(function(){const L=$('labels');let down=null;const act=new Set();let lastMove=0;
+  document.addEventListener('pointerdown',ev=>act.add(ev.pointerId),true);const rm=ev=>{act.delete(ev.pointerId);};document.addEventListener('pointerup',rm,true);document.addEventListener('pointercancel',rm,true);document.addEventListener('touchend',ev=>{if(!ev.touches.length)act.clear();},true);document.addEventListener('touchcancel',ev=>{if(!ev.touches.length)act.clear();},true);
+  document.addEventListener('pointermove',ev=>{if(act.size&&!(down&&ev.pointerId===down.id))lastMove=performance.now();},true);
+  L.addEventListener('pointerdown',ev=>{const e=ev.target.closest('.mk.go');if(!e)return;ev.preventDefault();ev.stopPropagation();
+    // ignoré si un autre doigt pilote déjà (joystick, regard) ou si l'on vient de faire glisser la vue
+    down=(act.size>1||performance.now()-lastMove<350||(TOUCH&&(TOUCH.x||TOUCH.y)))?null:{e,id:ev.pointerId,x:ev.clientX,y:ev.clientY,t:performance.now()};},true);
+  L.addEventListener('pointermove',ev=>{if(down&&ev.pointerId===down.id&&Math.hypot(ev.clientX-down.x,ev.clientY-down.y)>10)down=null;},true);
+  L.addEventListener('pointerup',ev=>{const e=ev.target.closest('.mk.go');if(down&&e&&e===down.e&&ev.pointerId===down.id&&performance.now()-down.t<450&&Math.hypot(ev.clientX-down.x,ev.clientY-down.y)<=10&&started&&!paused)labelGo(e);down=null;},true);})();
 const ldist=p=>S.pos.distanceTo(p);
 
 /* ---------- 1. commandes des bases (rares, facultatives) ---------- */
