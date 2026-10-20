@@ -719,6 +719,7 @@ body.mobile .homeMain{margin:10px 0 6px}body.mobile .homeMain .btn{min-width:0;f
 body.mobile .hbtn{font-size:11.5px;padding:7px 8px}
 body.mobile .langChip{top:8px;right:8px;font-size:10.5px;padding:5px 8px}
 body.mobile .gp p{font-size:13px}
+.homeAlt{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 8px}.abtn{flex:0 1 200px;padding:10px 14px;border-radius:8px;border:1px solid var(--panel-line);background:rgba(79,227,255,.05);color:var(--ink);font:600 13px var(--f-display);letter-spacing:.04em;cursor:pointer}.abtn:hover{border-color:var(--acc)}.abtn[hidden]{display:none}#btnInstall.abtn{border-color:var(--acc);color:var(--acc)}body.mobile .abtn{flex:1 1 140px;font-size:12px;padding:10px 8px}
 </style>
 
 <div id="stage"></div>
@@ -916,8 +917,9 @@ body.mobile .gp p{font-size:13px}
       <div class="ra-dots-nav"><button type="button" class="on" data-ra="0" aria-label="Étape 1"></button><button type="button" data-ra="1" aria-label="Étape 2"></button><button type="button" data-ra="2" aria-label="Étape 3"></button><button type="button" data-ra="3" aria-label="Étape 4"></button><button type="button" data-ra="4" aria-label="Étape 5"></button></div>
     </div>
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
+    <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 110 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 111 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -971,8 +973,6 @@ body.mobile .gp p{font-size:13px}
     <div class="gHead"><h2>Options</h2><button class="btn sm ghost" type="button" data-act="moreClose">✕ Fermer</button></div>
     <div class="moreList">
       <button class="mrow qBtn" type="button">Graphismes : auto</button>
-      <button class="mrow" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button>
-      <button class="mrow" type="button" data-act="shareGame">📣 Partager le jeu</button>
       <button class="mrow" type="button" data-act="linksOpen">🔗 Pour en savoir +</button>
     </div>
   </div>
