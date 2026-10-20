@@ -919,7 +919,7 @@ body.mobile .gp p{font-size:13px}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 113 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 114 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -3670,12 +3670,13 @@ function renderBeamView(){const el=$('beamView');const want=!!(K.KeyE||TOUCH.bm)
 let last=performance.now();
 function loop(now){requestAnimationFrame(loop);let dt=Math.min(.05,(now-last)/1000);last=now;
   if(started&&!paused){S.t+=dt;
+    updateOrbits(); // avant le vol et la caméra : sinon la planète et la soucoupe sont décalées d'une image (tremblement)
     if(S.jump){updateJump(dt);}else if(!S.dead){updateFlight(dt);updateCharge(dt);updateBeam(dt);}
     updateReentry(dt);
     const rep=updateWitnesses(dt);updatePopulation(dt);updateAlert(dt,rep);updateMilitary(dt);updateFX(dt);
     if(!S.dead&&!S.jump)updateCamera(dt);
     flashA=Math.max(0,flashA-dt*2.2);hurtA=Math.max(0,hurtA-dt*1.2);
-    if(SYS==='sol'){updateCrisis(dt);updateBPP(dt);}updateAwake(dt);updateAutoSave(dt);updateFleet(dt);updateExchange(dt);updateBoats(dt);updateWater(dt);updateLanding(dt);updateHumanoid(dt);updateThermal(dt);updateAmnesia();updateOrbits();updateCapsule(dt);updateTuto();updateCampaign();updateRival(dt);updateWeather(dt);updateAch();updateCarcasses();updateISS(dt);if(miniFrame%10===0)renderLandBox();updatePBases(dt);updatePlanOps(dt);updateOrbs(dt);updateELabs();updateAncients();updateTutorial();updateUmmo(dt);updateSilos(dt);updateICBMs(dt);updateMush(dt);renderOps();updateCars(dt);updateCloud(dt);updateMHDVisual(dt);updateMusic();updateSocial(dt);updateHUD();updateAltimeter();if((++miniFrame)%3===0)drawMini();if(!$('ovMap').hidden)drawBigMap();}
+    if(SYS==='sol'){updateCrisis(dt);updateBPP(dt);}updateAwake(dt);updateAutoSave(dt);updateFleet(dt);updateExchange(dt);updateBoats(dt);updateWater(dt);updateLanding(dt);updateHumanoid(dt);updateThermal(dt);updateAmnesia();updateCapsule(dt);updateTuto();updateCampaign();updateRival(dt);updateWeather(dt);updateAch();updateCarcasses();updateISS(dt);if(miniFrame%10===0)renderLandBox();updatePBases(dt);updatePlanOps(dt);updateOrbs(dt);updateELabs();updateAncients();updateTutorial();updateUmmo(dt);updateSilos(dt);updateICBMs(dt);updateMush(dt);renderOps();updateCars(dt);updateCloud(dt);updateMHDVisual(dt);updateMusic();updateSocial(dt);updateHUD();updateAltimeter();if((++miniFrame)%3===0)drawMini();if(!$('ovMap').hidden)drawBigMap();}
   else if(started&&!$('ovMap').hidden&&(++miniFrame)%10===0)drawBigMap();
   else if(!started){attract(dt);}
   if(PHOTO.on){photoKeys(1/60);updatePhotoCam();}updateGfx(now);renderer.render(scene,camera);
