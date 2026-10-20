@@ -917,7 +917,7 @@ body.mobile .gp p{font-size:13px}
     </div>
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 109 · 20/10/2026</div>
+    <div class="verTag" data-notr>Version 110 · 20/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -1429,6 +1429,9 @@ function newHuman(home,v,rural){return {v:v.clone(),dir:randTangent(v),home,rura
 CITIES.forEach((c,ci)=>{c.pop=56;for(let i=0;i<c.pop;i++)HUM.push(newHuman(ci,landOff(c.v,1.6),false));});
 FARMS.forEach((f,fi)=>{for(let i=0;i<3;i++)HUM.push(newHuman(-1-fi,offsetDir(f.v,rr(0,.5)),true));const nc=14;for(let i=0;i<nc;i++){const v=landOff(f.v,.75);COWS.push({v,dir:randTangent(v),farm:fi,alive:true,lift:0,col:[[.95,.95,.92],[.45,.28,.18],[.15,.13,.12],[.85,.7,.5]][i%4],spd:rr(.015,.04)});}});
 VILLAGES.forEach((vl,vi)=>{for(let i=0;i<vl.pop;i++){const h=newHuman(-1000-vi,offsetDir(vl.v,rr(0,.3)),true);h.phone=rnd()<.2;HUM.push(h);}});
+// tampons de couleur alloués à la taille maximale : sinon, quand la population grandit en jeu, le tampon devient trop court et certains GPU mobiles refusent de dessiner les humains (seule l'ombre reste)
+humMesh.instanceColor=new THREE.InstancedBufferAttribute(new Float32Array(MAXH*3).fill(1),3);cowMesh.instanceColor=new THREE.InstancedBufferAttribute(new Float32Array(MAXC*3).fill(1),3);
+humMesh.instanceColor.setUsage(THREE.DynamicDrawUsage);cowMesh.instanceColor.setUsage(THREE.DynamicDrawUsage);
 humMesh.count=HUM.length;cowMesh.count=COWS.length;
 HUM.forEach((h,i)=>{humMesh.setMatrixAt(i,surfMat(h.v,0,0,1,1,1,_m));humMesh.setColorAt(i,_c.setRGB(...h.col));});
 COWS.forEach((c,i)=>{cowMesh.setMatrixAt(i,surfMat(c.v,0,rr(0,6),1,1,1,_m));cowMesh.setColorAt(i,_c.setRGB(...c.col));});
