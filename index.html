@@ -743,7 +743,7 @@ body.mobile #thermBtn,body.mobile #viewBtn,body.mobile #photoBtn{display:none!im
 .nwTxt{font-size:13.5px;line-height:1.45;color:var(--ink)}.nwMeta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;font-size:11px;color:var(--dim)}
 .nwMeta .btn{max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #tNews{top:calc(388px + env(safe-area-inset-top,0px))}body.mobile #tNews{top:calc(186px + env(safe-area-inset-top,0px))!important}
-#tNews .newsB{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:8px;background:#ffb547;color:#1a0d00;font:700 10px/16px sans-serif;font-style:normal;text-align:center;padding:0 3px}#tNews .newsB:empty{display:none}
+#tSoc .newsB,#tNews .newsB{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:8px;background:#ffb547;color:#1a0d00;font:700 10px/16px sans-serif;font-style:normal;text-align:center;padding:0 3px}#tSoc .newsB:empty,#tNews .newsB:empty{display:none}
 body.mobile .nwTxt{font-size:12.5px}body.mobile #newsCard .gHead .btn{display:none}body.mobile #newsCard .gHead{padding-right:48px}
 /* ---- HUD compact mobile (v127) ---- */
 #miniL{display:none}
@@ -752,8 +752,8 @@ body.mobile.hudmini .tc{top:calc(8px + env(safe-area-inset-top,0px))!important;l
 body.mobile.hudmini #worldBadge{padding:5px 12px;border-radius:999px;background:#0b1528;border:1px solid rgba(120,190,255,.22);font:600 11px 'Chakra Petch',sans-serif;color:var(--acc);letter-spacing:.08em;white-space:nowrap}
 body.mobile.hudmini #worldBadge b{font-size:13px}
 body.mobile.hudmini #altm{width:170px!important;max-width:none;padding:5px 10px 7px!important;border-radius:12px!important;background:rgba(6,12,24,.45)!important;border:0!important;box-shadow:none!important;margin:0!important;backdrop-filter:blur(4px)}
-body.mobile.hudmini #altm .altlbl{font-size:9px!important;letter-spacing:.1em}body.mobile.hudmini #altm .altlbl b{font-size:11px!important}body.mobile.hudmini #altm .altbar{height:5px!important;margin-top:3px!important}body.mobile.hudmini #altm .altkeys{display:none!important}
-body.mobile.hudmini #introChip,body.mobile.hudmini #opsChip{margin:0;zoom:.8}body.mobile.hudmini #altm{order:1}body.mobile.hudmini #introChip{order:2}body.mobile.hudmini #opsChip{order:3}body.mobile.hudmini .tc>#landBox,body.mobile.hudmini .tc>#fleetBox{order:4}
+body.mobile.hudmini #altm{display:flex!important;align-items:center;gap:7px;padding:4px 9px!important;width:128px!important}body.mobile.hudmini #altm .altlbl{order:2;font-size:10px!important;flex:none;margin:0}body.mobile.hudmini #altm .altlbl span{display:none}body.mobile.hudmini #altm .altlbl b{font-size:10.5px!important}body.mobile.hudmini #altm .altbar{flex:1;height:5px!important;margin:0!important}body.mobile.hudmini #altm .altkeys{display:none!important}
+body.mobile.hudmini #introChip,body.mobile.hudmini #opsChip{margin:0;zoom:.62}body.mobile.hudmini #introChip .il{max-width:110px}body.mobile.hudmini #introChip .btn{white-space:normal;max-width:100px;line-height:1.2}body.mobile.hudmini .tc{gap:4px}body.mobile.hudmini #altm{order:1}body.mobile.hudmini #introChip{order:2}body.mobile.hudmini #opsChip{order:3}body.mobile.hudmini .tc>#landBox,body.mobile.hudmini .tc>#fleetBox{order:4}
 body.mobile.hudmini #miniL{position:absolute;left:calc(10px + env(safe-area-inset-left,0px));top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:4px;padding:7px 9px;border-radius:12px;background:rgba(6,12,24,.45);backdrop-filter:blur(4px);pointer-events:none;font:600 10px 'Chakra Petch',sans-serif;color:#cfe0f7;letter-spacing:.06em}
 #miniL .g1,#miniL .g2{display:flex;flex-direction:column;gap:4px}#miniL .r{display:flex;align-items:center;gap:6px}#miniL .sep{height:1px;background:rgba(255,255,255,.1);margin:2px 0}
 #miniL .wit b{font:700 13px 'Chakra Petch',sans-serif;color:#ffd24d}#miniL .wit small{font-size:9px;color:#8fa3c4}#miniL .segs{display:flex;gap:3px}#miniL .segs u{display:block;width:14px;height:5px;border-radius:2px;background:rgba(255,255,255,.14)}#miniL .segs u.on{background:#ff5a5a}
@@ -762,7 +762,8 @@ body.mobile.hudmini #miniL{position:absolute;left:calc(10px + env(safe-area-inse
 #miniL .r i{display:block;width:74px;height:4px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}#miniL .r i b{display:block;height:100%;width:0}
 #miniL .sc{font:700 15px 'Chakra Petch',sans-serif;color:#fff}#miniL small{font-size:9px;color:#8fa3c4;margin-left:3px;letter-spacing:.08em}#miniL .aw{font:700 13px 'Chakra Petch',sans-serif;color:#5dff9e}
 @media (orientation:landscape){body.mobile.hudmini #miniL{flex-direction:row;gap:12px}#miniL .sep{display:none}#miniL .g2{padding-left:12px;border-left:1px solid rgba(255,255,255,.1)}}
-@media (orientation:portrait){body.mobile.hudmini .tc{left:calc(134px + env(safe-area-inset-left,0px))!important;transform:none!important;align-items:flex-start}body.mobile.hudmini #altm{width:160px!important}body.mobile.hudmini #introChip,body.mobile.hudmini #opsChip{zoom:.6}body.mobile.hudmini #introChip .il{max-width:110px}body.mobile.hudmini #introChip .btn{white-space:normal;max-width:100px;line-height:1.2}body.mobile.hudmini #tutoCard{top:calc(222px + env(safe-area-inset-top,0px))!important}}
+@media (orientation:portrait){body.mobile.hudmini .tc{left:calc(134px + env(safe-area-inset-left,0px))!important;transform:none!important;align-items:flex-start}body.mobile.hudmini #altm{width:128px!important}body.mobile.hudmini #introChip,body.mobile.hudmini #opsChip{zoom:.6}body.mobile.hudmini #introChip .il{max-width:110px}body.mobile.hudmini #introChip .btn{white-space:normal;max-width:100px;line-height:1.2}body.mobile.hudmini #tutoCard{top:calc(222px + env(safe-area-inset-top,0px))!important}}
+#touch #tNews{display:none!important}body.mobile #touch #tLab{top:calc(186px + env(safe-area-inset-top,0px))!important}@media (orientation:landscape){body.mobile #touch #tLab{top:calc(66px + env(safe-area-inset-top,0px))!important;right:calc(112px + env(safe-area-inset-right,0px))!important}}
 </style>
 
 <div id="stage"></div>
@@ -857,7 +858,7 @@ body.mobile.hudmini #miniL{position:absolute;left:calc(10px + env(safe-area-inse
   <button class="btn ghost sm" id="feedBtn" type="button">Réseaux &amp; médias (T) <span id="feedBadge"></span></button>
 </div>
 <aside id="feed" hidden>
-  <div class="row" style="gap:6px"><div class="tabs"><button class="btn sm" id="fbSoc" type="button">Ciel Ouvert</button><button class="btn sm ghost" id="fbMed" type="button">Médias</button></div><button class="btn ghost sm" id="feedClose" type="button" aria-label="Fermer">✕</button></div>
+  <div class="row" style="gap:6px"><div class="tabs"><button class="btn sm" id="fbSoc" type="button">Ciel Ouvert</button><button class="btn sm ghost" id="fbMed" type="button">Médias</button><button class="btn sm ghost" id="fbNews" type="button">News</button></div><button class="btn ghost sm" id="feedClose" type="button" aria-label="Fermer">✕</button></div>
   <div id="feedBody"></div>
 </aside>
 <div id="flash"></div>
@@ -877,7 +878,7 @@ body.mobile.hudmini #miniL{position:absolute;left:calc(10px + env(safe-area-inse
   <div class="tb tq" id="tFig" title="Figures" aria-label="Figures" style="display:none"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 25V15h9V7h9v10h-6v8"/><path d="M14 22l3 3 3-3"/></svg><span class="tbl">Figures</span></div>
   <div class="tb tq" id="tNews" title="News" aria-label="News"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5a7 7 0 0 0-7 7v5l-2.5 4h19L23 17v-5a7 7 0 0 0-7-7z"/><path d="M13 24.5a3 3 0 0 0 6 0"/></svg><i class="newsB"></i><span class="tbl">News</span></div>
   <div class="tb tq" id="tMap" title="Carte" aria-label="Carte"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 8l7-3 10 3 7-3v19l-7 3-10-3-7 3z"/><path d="M11 5v19M21 8v19"/></svg><span class="tbl">Carte</span></div>
-  <div class="tb tq" id="tSoc" title="Réseaux sociaux et médias" aria-label="Réseaux sociaux et médias"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M6 7h20v13H14l-6 5v-5H6z"/><path d="M11 12h10M11 16h6" stroke-linecap="round"/></svg><span class="tbl">Réseaux</span></div>
+  <div class="tb tq" id="tSoc" title="Réseaux sociaux et médias" aria-label="Réseaux sociaux et médias"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M6 7h20v13H14l-6 5v-5H6z"/><path d="M11 12h10M11 16h6" stroke-linecap="round"/></svg><i class="newsB"></i><span class="tbl">Réseaux</span></div>
   <div class="tb tq" id="tLab" title="Laboratoire" aria-label="Laboratoire" style="display:none"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 4h7M13.5 4v8.5L6.8 24.2A2.6 2.6 0 0 0 9 28h14a2.6 2.6 0 0 0 2.2-3.8L18.5 12.5V4"/><path d="M9.6 19.5h12.8"/><circle cx="14" cy="23.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="18.5" cy="22" r=".9" fill="currentColor" stroke="none"/></svg><i class="labB"></i><span class="tbl">Labo</span></div>
   <div class="tb" id="tMenu" style="right:calc(20px + env(safe-area-inset-right,0px));top:calc(170px + env(safe-area-inset-top,0px));width:46px;height:46px">☰<span class="tbl">Menu</span></div>
 </div>
@@ -966,7 +967,7 @@ body.mobile.hudmini #miniL{position:absolute;left:calc(10px + env(safe-area-inse
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 127 · 21/10/2026</div>
+    <div class="verTag" data-notr>Version 128 · 21/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -1076,7 +1077,7 @@ body.mobile.hudmini #miniL{position:absolute;left:calc(10px + env(safe-area-inse
 <div class="ov" id="ovAch" hidden><div class="card" id="achCard"></div></div>
 <div id="photoUI" hidden></div>
 <div id="mDrawer" hidden><div class="mdg">
- <button type="button" data-act="md" data-k="MAP"><span>🗺</span>Carte</button><button type="button" data-act="md" data-k="KeyJ"><span>🎯</span>Missions</button><button type="button" data-act="newsOpen"><span>🔔</span>News</button><button type="button" data-act="md" data-k="KeyL"><span>🧬</span>Labo</button>
+ <button type="button" data-act="md" data-k="MAP"><span>🗺</span>Carte</button><button type="button" data-act="md" data-k="KeyJ"><span>🎯</span>Missions</button><button type="button" data-act="socOpen"><span>💬</span>Réseaux</button><button type="button" data-act="md" data-k="KeyL"><span>🧬</span>Labo</button>
  <button type="button" data-act="md" data-k="KeyU"><span>⚙</span>Améliorations</button><button type="button" data-act="md" data-k="KeyO"><span>✉</span>Ummo</button><button type="button" data-act="md" data-k="KeyI"><span>📖</span>Sciences</button><button type="button" data-act="md" data-k="Digit5"><span>📷</span>Photo</button>
  <button type="button" data-act="md" data-k="Digit4"><span>🌡</span>Thermique</button><button type="button" data-act="md" data-k="view"><span>🎥</span>Vue</button><button type="button" data-act="hudMode"><span>🖥</span><em id="hudLbl" style="font-style:normal">Affichage : HUD</em></button><button type="button" data-act="md" data-k="sound"><span>🔊</span>Son</button><button type="button" data-act="md" data-k="music"><span>♪</span>Musique</button>
  <button type="button" data-act="tgtMenu"><span>📍</span>Choisir un lieu</button><button type="button" data-act="touchHelp"><span>❓</span>Aide des commandes</button><button type="button" data-act="md" data-k="KeyB"><span>🧭</span>S'orienter</button><button type="button" data-act="md" data-k="Digit6"><span>🔮</span>Orbe</button><button type="button" data-act="evSpd"><span>⏩</span>Événements ×1</button><button type="button" data-act="md" data-k="share"><span>📣</span>Partager</button><button type="button" data-act="md" data-k="pause"><span>⏸</span>Pause · sauver</button>
@@ -1744,7 +1745,7 @@ function onKey(c){
   if(c==='KeyY'&&!paused&&!S.jump){doContext();return;}
   if((c==='Enter'||c==='NumpadEnter')&&started&&!paused){apToggle();return;}
   if(c==='Digit7'&&started&&!paused){figStart();return;}
-  if(c==='Digit8'&&started){if(!$('ovNews').hidden)closeOverlays();else ACT.newsOpen();return;}
+  if(c==='Digit8'&&started){if(feedOpen&&feedTab==='news')toggleFeed();else ACT.newsOpen();return;}
   if(c==='Digit4'||c==='Numpad4'){toggleThermal();return;}if(c==='Digit1'||c==='Numpad1'||c==='Digit2'||c==='Numpad2'){setView(0);return;}if(c==='Digit3'||c==='Numpad3'){setView(1);return;}
   if(c==='KeyK'){cycleMusic();return;}
   if(paused)return;
@@ -2232,17 +2233,19 @@ function newsLog(txt,cls){try{if(!started)return;const plain=String(txt).replace
   const imp=cls==='lore'||cls==='bad'||/<b>/.test(txt)||plain.length>=55;if(!imp||plain.length<18)return;
   if(NEWS[0]&&NEWS[0].plain===plain&&S.t-NEWS[0].t<8)return;
   const e={t:S.t,html:String(txt),plain,cls:cls||''};if(EVN.ext&&EVN.t!=null&&Math.abs(S.t-EVN.t)<1.5)e.nav={fn:EVN.ext,name:EVN.extName};
-  NEWS.unshift(e);if(NEWS.length>40)NEWS.pop();NEWS_UNREAD++;newsBadge();}catch(err){}}
-function newsBadge(){const b=document.querySelector('#tNews .newsB');if(b)b.textContent=NEWS_UNREAD?String(Math.min(9,NEWS_UNREAD)):'';}
+  NEWS.unshift(e);if(NEWS.length>40)NEWS.pop();NEWS_UNREAD++;newsBadge();clearTimeout(newsLog.tm);newsLog.tm=setTimeout(()=>{NEWS_UNREAD=0;newsBadge();},20000);}catch(err){}}
+function newsBadge(){const t=NEWS_UNREAD?String(Math.min(9,NEWS_UNREAD))+(NEWS_UNREAD>9?'+':''):'';document.querySelectorAll('#tSoc .newsB').forEach(b=>{if(b.textContent!==t)b.textContent=t;});const fb=$('feedBadge');if(fb&&fb.textContent!==t)fb.textContent=t;}
 function newsPlace(e){if(e.nav)return e.nav;let best=null;try{const P=tgtPlaces();for(const p of P){if(p.n&&p.n.length>2&&e.plain.includes(p.n)&&(!best||p.n.length>best.p.n.length))best={p};}
     if(!best){for(const si of SILOS){if(e.plain.includes(si.n))return {fn:(()=>{const P0=new V3();return ()=>P0.copy(EC).addScaledVector(llv(si.lat,si.lon),ER+40);})(),name:si.n};}}}catch(err){}
   if(!best)return null;const p=best.p;return p.city!=null?{city:p.city,name:p.n}:{fn:p.pos,name:p.n};}
 function agoStr(dt){dt=Math.max(0,Math.round(dt));return dt<60?'il y a '+dt+' s':'il y a '+Math.round(dt/60)+' min';}
-function renderNews(){NEWS_UNREAD=0;newsBadge();const rows=NEWS.map((e,i)=>{const pl=newsPlace(e);const tone=e.cls==='bad'?'#ff6a6a':e.cls==='score'?'#5dff9e':e.cls==='lore'?'#c38bff':'#4fe3ff';
-    return `<div class="nwRow" style="--c:${tone}"><div class="nwTxt">${e.html}</div><div class="nwMeta"><span>${agoStr(S.t-e.t)}</span>${pl?`<button type="button" class="btn sm" data-act="newsGo" data-i="${i}">Suivre ▸ ${pl.name}</button>`:''}</div></div>`;}).join('');
+function newsRows(){return NEWS.map((e,i)=>{const pl=newsPlace(e);const tone=e.cls==='bad'?'#ff6a6a':e.cls==='score'?'#5dff9e':e.cls==='lore'?'#c38bff':'#4fe3ff';
+    return `<div class="nwRow" style="--c:${tone}"><div class="nwTxt">${e.html}</div><div class="nwMeta"><span>${agoStr(S.t-e.t)}</span>${pl?`<button type="button" class="btn sm" data-act="newsGo" data-i="${i}">Suivre ▸ ${pl.name}</button>`:''}</div></div>`;}).join('');}
+function renderNews(){NEWS_UNREAD=0;newsBadge();const rows=newsRows();
   $('newsCard').innerHTML=`<div class="gHead"><h2>News</h2><button class="btn sm ghost" type="button" data-act="close">✕ Fermer</button></div><p class="nwTip">Les derniers messages du jeu. Touchez « Suivre » pour mettre le cap sur le lieu concerné.</p>${rows||'<p class="nwTip">Aucun message pour l\'instant.</p>'}`;}
-ACT.newsOpen=()=>{if(!started)return;closeDrawer&&closeDrawer();openOv('ovNews',renderNews);};
-ACT.newsGo=d=>{const e=NEWS[+d.i];if(!e)return;const pl=newsPlace(e);if(!pl)return;if(pl.city!=null){nav.ext=null;nav.extName=null;nav.city=pl.city;}else setNavPos(pl.fn,pl.name);closeOverlays();navGo();toast('Cap sur <b>'+pl.name+'</b>','');};
+ACT.newsOpen=()=>{if(!started)return;closeDrawer&&closeDrawer();feedTab='news';if(!feedOpen)toggleFeed();else renderFeed();};
+ACT.socOpen=()=>{if(!started)return;closeDrawer&&closeDrawer();if(!feedOpen)toggleFeed();};
+ACT.newsGo=d=>{const e=NEWS[+d.i];if(!e)return;const pl=newsPlace(e);if(!pl)return;if(pl.city!=null){nav.ext=null;nav.extName=null;nav.city=pl.city;}else setNavPos(pl.fn,pl.name);closeOverlays();if(feedOpen)toggleFeed();navGo();toast('Cap sur <b>'+pl.name+'</b>','');};
 /* ---- Figures : enchaînement automatique de virages à 90° au-dessus des témoins ---- */
 const FIG={on:false,t:0,k:0,cd:0,dir0:null,n:0,pts:0};
 function figOK(){return started&&!S.dead&&!S.cine&&!S.landed&&S.world>0&&flightMode==='arcade'&&curBody===EARTH&&curAlt<160&&!HU.out;}
@@ -2980,16 +2983,16 @@ function updateSocial(dt){processQueue();
   if(feedOpen&&(S.t-(SOC.lastRender||0))>1.2)renderFeed();}
 /* UI */
 let feedOpen=false,feedTab='soc';
-function toggleFeed(){feedOpen=!feedOpen;$('feed').hidden=!feedOpen;if(feedOpen){if(feedTab==='soc')SOC.unread=0;else SOC.mUnread=0;renderFeed();}}
+function toggleFeed(){feedOpen=!feedOpen;$('feed').hidden=!feedOpen;if(feedOpen){if(NEWS_UNREAD>0)feedTab='news';if(feedTab==='soc')SOC.unread=0;else SOC.mUnread=0;renderFeed();}}
 function kfmt(n){n=Math.round(n);return n>=1e6?(n/1e6).toFixed(1).replace('.',',')+' M':n>=1e4?Math.round(n/1e3)+' k':n>=1e3?(n/1e3).toFixed(1).replace('.',',')+' k':String(n);}
 function ago(t){const s=Math.max(0,S.t-t);return s<10?'à l\'instant':s<60?'il y a '+Math.round(s)+' s':'il y a '+Math.round(s/60)+' min';}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function renderFeed(){SOC.lastRender=S.t;
   $('fbSoc').textContent='Ciel Ouvert';$('fbMed').textContent='Médias';
-  $('feedBadge').textContent='';
   if(!feedOpen)return;
-  $('fbSoc').className='btn sm'+(feedTab==='soc'?'':' ghost');$('fbMed').className='btn sm'+(feedTab==='med'?'':' ghost');
-  if(feedTab==='soc'){SOC.unread=0;
+  $('fbSoc').className='btn sm'+(feedTab==='soc'?'':' ghost');$('fbMed').className='btn sm'+(feedTab==='med'?'':' ghost');$('fbNews').className='btn sm'+(feedTab==='news'?'':' ghost');
+  if(feedTab==='news'){NEWS_UNREAD=0;newsBadge();$('feedBody').innerHTML='<p class="nwTip">Les derniers messages du jeu. Touchez « Suivre » pour mettre le cap sur le lieu concerné.</p>'+(newsRows()||'<p class="nwTip">Aucun message pour l\'instant.</p>');}
+  else if(feedTab==='soc'){SOC.unread=0;
     $('feedBody').innerHTML=SOC.posts.length?SOC.posts.map(p=>`<article class="post clk" data-post="${p.id}" title="Voir la discussion"><div class="ph"><b>${esc(p.handle)}</b><span>${esc(p.city)} · ${ago(p.t)}</span></div><p>${esc(p.text)}</p>${p.img?`<div class="pimg"><img src="${p.img}" alt="Photo de l'ovni prise par ${esc(p.handle)}">${p.video?'<i>VIDÉO</i>':''}</div>`:''}<div class="pstats"><span>♥ ${kfmt(p.likes)}</span><span>⇄ ${kfmt(p.shares)}</span><span>${kfmt(p.comments)} commentaires · voir</span></div>${(()=>{const v=visThread(p);const l=v[v.length-1];return l?`<div class="pcom"><b>${esc(l.h)}</b> ${esc(l.txt)}</div>`:'';})()}</article>`).join(''):'<p class="empty">Aucune publication pour l\'instant. Montrez-vous à des passants équipés de téléphones : ils publieront leurs photos ici.</p>';}
   else{SOC.mUnread=0;
     $('feedBody').innerHTML=`<div class="disc"><div class="row lbl"><span>Divulgation</span><span class="mono">${Math.round(disclosure)} %</span></div><div class="bar"><i style="width:${disclosure}%;background:var(--acc)"></i></div><p>Plus le sujet est médiatisé, plus chaque apparition rapporte (×${(1+disclosure/100).toFixed(2)}), mais plus l'armée réagit vite. Viralité actuelle : ${kfmt(recentLikes())} interactions.</p></div>`+
@@ -3018,7 +3021,7 @@ function buildBand(force){const items=[];
   if(!force&&key===bandKey)return;bandKey=key;
   const html=items.join('<span class="sep">◆</span>');const tr=$('bandTrack');tr.innerHTML=html+'<span class="sep">◆</span>'+html+'<span class="sep">◆</span>';
   const len=tr.textContent.length/2;tr.style.animationDuration=Math.max(20,len*.16)+'s';tr.style.animation='none';void tr.offsetWidth;tr.style.animation='';tr.style.animationDuration=Math.max(20,len*.16)+'s';}
-$('fbSoc').addEventListener('click',()=>{feedTab='soc';renderFeed();});
+$('fbSoc').addEventListener('click',()=>{feedTab='soc';renderFeed();});$('fbNews').addEventListener('click',()=>{feedTab='news';renderFeed();});
 $('fbMed').addEventListener('click',()=>{feedTab='med';renderFeed();});
 $('feedBtn').addEventListener('click',toggleFeed);
 $('umBtn').addEventListener('click',()=>toggleOv('ovUmmo',renderUmmo));
@@ -4650,9 +4653,9 @@ function applyMobile(){const m=isTouch&&Math.min(innerWidth,innerHeight)<=1100;d
 {const tc=document.querySelector('.tc');if(tc){tc.appendChild($('fleetBox'));tc.appendChild($('landBox'));}}
 applyMobile();addEventListener('resize',applyMobile);
 /* ---------- aide tactile : légendes, aide-mémoire des boutons, textes adaptés ---------- */
-const TH={fr:{t:'Commandes tactiles',joy:'Joystick : se déplacer',look:'Glisser ailleurs sur l\'écran : regarder autour',close:'Touchez l\'écran pour commencer',d:{tUp:'Monter',tDn:'Descendre (sous la mer : plonger)',tCh:'Maintenir : l\'anneau se remplit, puis relâcher quand il est vert (le téléphone vibre) : disparaître',tBm:'Maintenir : rayon d\'abduction (voler bas)',tBo:'Maintenir : accélérer',tMhd:'Propulsion MHD (très rapide, consomme l\'énergie)',tCloud:'Se camoufler en nuage',tAct:'Agir : se poser, contacter, agroglyphe, escadrille…',tRel:'Relâcher un passager de la soute',tGo:'Y aller : pilote automatique jusqu\'à la cible (touchez le joystick pour reprendre la main)',tFig:'Figures : virages à 90° automatiques au-dessus des témoins',tNews:'News : relire les derniers messages et suivre le lieu concerné',tMap:'Carte et liste des lieux : choisir une destination',tLab:'Labo : apparaît quand du bétail ou un humain est à bord',tSoc:'Réseaux sociaux et médias : ce que les témoins publient sur vous',tMenu:'Menu : labo, missions, sciences, aide des commandes, pause…'}},
- en:{t:'Touch controls',joy:'Joystick: move',look:'Drag elsewhere on the screen: look around',close:'Tap the screen to start',d:{tUp:'Climb',tDn:'Descend (over the sea: dive)',tCh:'Hold: the ring fills, release when it turns green (the phone vibrates): vanish',tBm:'Hold: abduction beam (fly low)',tBo:'Hold: speed up',tMhd:'MHD propulsion (very fast, uses energy)',tCloud:'Disguise as a cloud',tAct:'Act: land, contact, crop circle, squadron…',tRel:'Release a passenger from the hold',tGo:'Go: autopilot to the target (touch the joystick to take over)',tFig:'Stunts: automatic 90° turns above witnesses',tNews:'News: reread the latest messages and head to the place concerned',tMap:'Map and list of places: choose a destination',tLab:'Lab: appears when livestock or a human is on board',tSoc:'Social networks and media: what witnesses post about you',tMenu:'Menu: lab, missions, science, controls help, pause…'}},
- es:{t:'Controles táctiles',joy:'Joystick: moverse',look:'Desliza en otra parte de la pantalla: mirar alrededor',close:'Toca la pantalla para empezar',d:{tUp:'Subir',tDn:'Bajar (sobre el mar: sumergirse)',tCh:'Mantén: el anillo se llena; suelta cuando esté verde (el teléfono vibra): desaparecer',tBm:'Mantén: rayo de abducción (vuela bajo)',tBo:'Mantén: acelerar',tMhd:'Propulsión MHD (muy rápida, gasta energía)',tCloud:'Camuflarse de nube',tAct:'Actuar: aterrizar, contactar, agroglifo, escuadrilla…',tRel:'Soltar a un pasajero de la bodega',tGo:'Ir: piloto automático hasta el objetivo (toca el joystick para retomar el control)',tFig:'Figuras: giros automáticos de 90° sobre los testigos',tNews:'Noticias: relee los últimos mensajes y ve al lugar indicado',tMap:'Mapa y lista de lugares: elegir un destino',tLab:'Laboratorio: aparece cuando hay ganado o un humano a bordo',tSoc:'Redes sociales y medios: lo que los testigos publican sobre ti',tMenu:'Menú: laboratorio, misiones, ciencias, ayuda de controles, pausa…'}}};
+const TH={fr:{t:'Commandes tactiles',joy:'Joystick : se déplacer',look:'Glisser ailleurs sur l\'écran : regarder autour',close:'Touchez l\'écran pour commencer',d:{tUp:'Monter',tDn:'Descendre (sous la mer : plonger)',tCh:'Maintenir : l\'anneau se remplit, puis relâcher quand il est vert (le téléphone vibre) : disparaître',tBm:'Maintenir : rayon d\'abduction (voler bas)',tBo:'Maintenir : accélérer',tMhd:'Propulsion MHD (très rapide, consomme l\'énergie)',tCloud:'Se camoufler en nuage',tAct:'Agir : se poser, contacter, agroglyphe, escadrille…',tRel:'Relâcher un passager de la soute',tGo:'Y aller : pilote automatique jusqu\'à la cible (touchez le joystick pour reprendre la main)',tFig:'Figures : virages à 90° automatiques au-dessus des témoins',tMap:'Carte et liste des lieux : choisir une destination',tLab:'Labo : apparaît quand du bétail ou un humain est à bord',tSoc:'Réseaux : news du jeu (le chiffre = messages récents non lus), publications des témoins et médias',tMenu:'Menu : labo, missions, sciences, aide des commandes, pause…'}},
+ en:{t:'Touch controls',joy:'Joystick: move',look:'Drag elsewhere on the screen: look around',close:'Tap the screen to start',d:{tUp:'Climb',tDn:'Descend (over the sea: dive)',tCh:'Hold: the ring fills, release when it turns green (the phone vibrates): vanish',tBm:'Hold: abduction beam (fly low)',tBo:'Hold: speed up',tMhd:'MHD propulsion (very fast, uses energy)',tCloud:'Disguise as a cloud',tAct:'Act: land, contact, crop circle, squadron…',tRel:'Release a passenger from the hold',tGo:'Go: autopilot to the target (touch the joystick to take over)',tFig:'Stunts: automatic 90° turns above witnesses',tMap:'Map and list of places: choose a destination',tLab:'Lab: appears when livestock or a human is on board',tSoc:'Networks: game news (the number = recent unread messages), witness posts and media',tMenu:'Menu: lab, missions, science, controls help, pause…'}},
+ es:{t:'Controles táctiles',joy:'Joystick: moverse',look:'Desliza en otra parte de la pantalla: mirar alrededor',close:'Toca la pantalla para empezar',d:{tUp:'Subir',tDn:'Bajar (sobre el mar: sumergirse)',tCh:'Mantén: el anillo se llena; suelta cuando esté verde (el teléfono vibra): desaparecer',tBm:'Mantén: rayo de abducción (vuela bajo)',tBo:'Mantén: acelerar',tMhd:'Propulsión MHD (muy rápida, gasta energía)',tCloud:'Camuflarse de nube',tAct:'Actuar: aterrizar, contactar, agroglifo, escuadrilla…',tRel:'Soltar a un pasajero de la bodega',tGo:'Ir: piloto automático hasta el objetivo (toca el joystick para retomar el control)',tFig:'Figuras: giros automáticos de 90° sobre los testigos',tMap:'Mapa y lista de lugares: elegir un destino',tLab:'Laboratorio: aparece cuando hay ganado o un humano a bordo',tSoc:'Redes: noticias del juego (el número = mensajes recientes sin leer), publicaciones de testigos y medios',tMenu:'Menú: laboratorio, misiones, ciencias, ayuda de controles, pausa…'}}};
 function thLang(){try{return (window.I18N&&I18N.st&&I18N.st.lang)||'fr';}catch(e){return 'fr';}}
 function touchHelp(force){if(!isTouch||!document.body.classList.contains('mobile'))return;if(!force){try{if(localStorage.getItem('janus_touchhelp'))return;localStorage.setItem('janus_touchhelp','1');}catch(e){}}
   const T=TH[thLang()]||TH.fr;let o=$('touchHelpOv');if(!o){o=document.createElement('div');o.id='touchHelpOv';o.setAttribute('data-notr','');document.body.appendChild(o);}
