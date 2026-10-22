@@ -799,6 +799,9 @@ body.mobile #touch #tMhd{right:calc(10px + env(safe-area-inset-right,0px))!impor
 #touch .stick.boost::after{border:2px solid #ffb547;box-shadow:0 0 14px rgba(255,181,71,.7),inset 0 0 10px rgba(255,181,71,.35)}
 #touch .stick.boost::before{color:#ffd27a;text-shadow:0 0 6px #ffb547}
 #touch .stick.boost .knob{background:rgba(255,181,71,.75);box-shadow:0 0 14px #ffb547}
+/* ---- v135 : Rayon/Agir au-dessus de Disparaître, Relâcher à sa place ---- */
+@media (orientation:portrait){body.mobile #touch #tAct{right:calc(71px + env(safe-area-inset-right,0px))!important;bottom:calc(98px + env(safe-area-inset-bottom,0px))!important}body.mobile #touch #tRel{right:calc(132px + env(safe-area-inset-right,0px))!important;bottom:calc(18px + env(safe-area-inset-bottom,0px))!important}}
+@media (orientation:landscape){body.mobile #touch #tAct{right:calc(78px + env(safe-area-inset-right,0px))!important;bottom:calc(118px + env(safe-area-inset-bottom,0px))!important}body.mobile #touch #tRel{right:calc(156px + env(safe-area-inset-right,0px))!important;bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}}
 </style>
 
 <div id="stage"></div>
@@ -1002,7 +1005,7 @@ body.mobile #touch #tMhd{right:calc(10px + env(safe-area-inset-right,0px))!impor
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 134 · 22/10/2026</div>
+    <div class="verTag" data-notr>Version 135 · 22/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -1335,6 +1338,17 @@ function lsAt(lat,lon){return geoAt(lat,lon);
   const X=v=>((v%360)+360)%360;const a=LS[y0*360+X(x0)],b=LS[y0*360+X(x0+1)],c=LS[(y0+1)*360+X(x0)],d=LS[(y0+1)*360+X(x0+1)];const t=a+(b-a)*tx,bo=c+(d-c)*tx;return t+(bo-t)*ty;}
 const EARTH_SUN={value:new THREE.Vector3(1,0,0)};let EARTH_CANVAS=null,EARTH_EMI=null,earthClouds=null;
 function canvasTex(cv,srgb){const t=new THREE.CanvasTexture(cv);t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return t;}
+// relief des chaînes de montagnes : hauteur aux sommets de la sphère terrestre, interpolée pour le jeu (collisions, altitude, objets)
+const EH={W:0,H:0,h:null},MTNMAX=18;
+function mtnH(d){if(!EH.h)return 0;const L=Math.hypot(d.x,d.y,d.z)||1;const v=Math.acos(clamp(d.y/L,-1,1))/Math.PI;let u=Math.atan2(d.z,-d.x)/(2*Math.PI);if(u<0)u+=1;
+  const fx=u*EH.W,fy=v*EH.H;const x0=Math.min(EH.W-1,Math.floor(fx)),y0=Math.min(EH.H-1,Math.floor(fy));const tx=fx-x0,ty=fy-y0,W1=EH.W+1,A=EH.h;
+  const a=A[y0*W1+x0],b=A[y0*W1+x0+1],c=A[(y0+1)*W1+x0],e=A[(y0+1)*W1+x0+1];if(!(a||b||c||e))return 0;return (a*(1-tx)+b*tx)*(1-ty)+(c*(1-tx)+e*tx)*ty;}
+function earthRelief(o){const g=o.mesh.geometry;const Wn=g.parameters.widthSegments,Hn=g.parameters.heightSegments;const P=g.attributes.position;const hs=new Float32Array((Wn+1)*(Hn+1));
+  for(let iy=1;iy<Hn;iy++){const v=iy/Hn,lat=90-v*180;for(let ix=0;ix<=Wn;ix++){const u=ix/Wn,lon=20+u*360;const mm=clAt(CLM,lat,lon);if(mm<.02)continue;const sl=lsAt(lat,lon);if(sl<=0)continue;
+    const n3=nTile(u*9+.5,v*4.5+.2),n4=nTile(u*30+.21,v*15+.63);const r=1-Math.abs(2*n3-1);const m=clamp(mm*(.3+.9*r*r)+(n4-.5)*.12*mm,0,1)*smooth(0,.1,sl);if(m<=0)continue;
+    const h=MTNMAX*Math.pow(m,1.25);const i=iy*(Wn+1)+ix;hs[i]=h;const k=(o.R+h)/o.R;P.setXYZ(i,P.getX(i)*k,P.getY(i)*k,P.getZ(i)*k);}}
+  g.computeVertexNormals();const N=g.attributes.normal;for(let iy=0;iy<=Hn;iy++){const a=iy*(Wn+1),b=a+Wn;const x=N.getX(a)+N.getX(b),y=N.getY(a)+N.getY(b),z=N.getZ(a)+N.getZ(b);const l=Math.hypot(x,y,z)||1;N.setXYZ(a,x/l,y/l,z/l);N.setXYZ(b,x/l,y/l,z/l);}
+  P.needsUpdate=true;N.needsUpdate=true;g.computeBoundingSphere();EH.W=Wn;EH.H=Hn;EH.h=hs;}
 function buildEarth(o){
   for(let y=0;y<180;y++)for(let x=0;x<360;x++)LS[y*360+x]=geoAt(90-(y+.5),-180+(x+.5));
   const W=TEXW,H=W/2;const cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');const img=g.createImageData(W,H);const D=img.data;
@@ -1365,7 +1379,7 @@ function buildEarth(o){
   dg.putImageData(di,0,0);const detail=new THREE.CanvasTexture(dc);detail.wrapS=detail.wrapT=THREE.RepeatWrapping;
   const mat=new THREE.MeshStandardMaterial({map:tex,roughnessMap:rt,roughness:1,metalness:0,bumpMap:bt,bumpScale:.9,emissive:0xffc77a,emissiveMap:et,emissiveIntensity:1.25});
   mat.onBeforeCompile=sh=>{sh.uniforms.uSunView=EARTH_SUN;sh.uniforms.uDetail={value:detail};sh.fragmentShader='uniform vec3 uSunView;\nuniform sampler2D uDetail;\n'+sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n\tdiffuseColor.rgb*=mix(.8,1.2,texture2D(uDetail,vUv*vec2(700.,350.)).r)*mix(.9,1.1,texture2D(uDetail,vUv*vec2(4200.,2100.)).r);').replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n\ttotalEmissiveRadiance*=clamp(smoothstep(.1,-.22,dot(normal,uSunView)),0.,1.);');};
-  o.mesh=new THREE.Mesh(new THREE.SphereGeometry(o.R,IS_MOBILE?192:288,IS_MOBILE?96:144),mat);o.mesh.receiveShadow=true;o.group.add(o.mesh);
+  o.mesh=new THREE.Mesh(new THREE.SphereGeometry(o.R,IS_MOBILE?192:288,IS_MOBILE?96:144),mat);o.mesh.receiveShadow=true;o.group.add(o.mesh);earthRelief(o);
   // couche nuageuse
   const cc=document.createElement('canvas');cc.width=W2;cc.height=H2;const cg=cc.getContext('2d');const ci=cg.createImageData(W2,H2);
   for(let y=0;y<H2;y++){const lat=90-(y+.5)/H2*180;const band=.55+.25*Math.cos(lat*D2R*3);for(let x=0;x<W2;x++){const u=x/W2,v=y/H2;const n=nTile(u*5+.13,v*2.5+.71)*.7+nTile(u*20,v*10)*.3;const a=smooth(.5,.72,n*band+.18);const k=(y*W2+x)*4;ci.data[k]=245;ci.data[k+1]=247;ci.data[k+2]=250;ci.data[k+3]=a*235;}}
@@ -1453,7 +1467,7 @@ const earthSurf=new THREE.Group();EARTH.group.add(earthSurf);
 function surfMat(v,h,heading,sx,sy,sz,out){ // matrice locale (repère Terre)
   const up=v;const east=_v2.set(0,1,0).cross(up);if(east.lengthSq()<1e-6)east.set(1,0,0);east.normalize();const north=_v3.crossVectors(up,east);
   const ch=Math.cos(heading),sh=Math.sin(heading);const ex=_v4.copy(east).multiplyScalar(ch).addScaledVector(north,sh);const nz=_v5.crossVectors(ex,up);
-  out.makeBasis(ex.multiplyScalar(sx),_v1.copy(up).multiplyScalar(sy),nz.multiplyScalar(sz));out.setPosition(v.x*(ER+h),v.y*(ER+h),v.z*(ER+h));return out;}
+  out.makeBasis(ex.multiplyScalar(sx),_v1.copy(up).multiplyScalar(sy),nz.multiplyScalar(sz));if(h>-1)h+=mtnH(v);out.setPosition(v.x*(ER+h),v.y*(ER+h),v.z*(ER+h));return out;}
 // bâtiments
 const bGeo=new THREE.BoxGeometry(1,1,1);bGeo.translate(0,.5,0);
 const BUILD=[];CITIES.forEach(c=>{const n=72;for(let i=0;i<n;i++){let d=0,v=null;for(let t=0;t<12;t++){d=Math.pow(rnd(),.7)*1.7;v=offsetDir(c.v,d);if(landScore(v)>.02)break;}if(landScore(v)<=.02)continue;const tall=(1-d/1.7);BUILD.push({v,city:c,w:rr(2,5),h:rr(3,7)+tall*rr(4,22),d:rr(2,5),rot:rr(0,6.3),col:[.55+rr(-.1,.15),.6+rr(-.1,.12),.68+rr(-.1,.12)]});}});
@@ -2365,7 +2379,7 @@ function apStep(dt){AP.wp=null;if(!AP.on)return;
 function buzz(p){try{if(isTouch&&navigator.vibrate)navigator.vibrate(p);}catch(e){}}
 function updateFlight(dt){
   if(FIG.on)figStep(dt);apStep(dt);const inp=inputVec();const boost=!!(K.ShiftLeft||K.ShiftRight||TOUCH.bo||(AP.on&&AP.boost));
-  curBody=nearestBody();const rel=_v1.subVectors(S.pos,curBody.pos);const dist=rel.length();curAlt=dist-curBody.R;const bUp=rel.divideScalar(dist).clone();
+  curBody=nearestBody();const rel=_v1.subVectors(S.pos,curBody.pos);const dist=rel.length();curAlt=dist-curBody.R-(curBody===EARTH&&S.world>0?mtnH(rel):0);const bUp=rel.divideScalar(dist).clone();
   // frontière espace / atmosphère avec hystérésis : on n'entre que si l'on plonge vraiment vers la planète (ou si l'on est déjà bas)
   let arcade=false;if(S.world>0&&curBody.type!=='star'){const R=curBody.R;
     if(S.prevMode==='arcade'&&S.prevBody===curBody)arcade=curAlt<R*1.6;
@@ -2446,7 +2460,7 @@ function updateFlight(dt){
   S.prevMode=flightMode;
   S.pos.addScaledVector(S.vel,dt);
   // collisions (monde positif seulement : en négatif on traverse la matière positive)
-  if(S.world>0){for(const b of BODIES){const d=_v1.subVectors(S.pos,b.pos);const r=d.length();const minR=(b===EARTH&&S.landed)?b.R+1:(b===EARTH&&seaAt(_v4.subVectors(S.pos,EC).normalize()))?b.R-SEAD+2:b.R+(b.type==='star'?0:3.2);
+  if(S.world>0){for(const b of BODIES){const d=_v1.subVectors(S.pos,b.pos);const r=d.length();const minR=(b===EARTH&&S.landed)?b.R+1+mtnH(d):(b===EARTH&&seaAt(_v4.subVectors(S.pos,EC).normalize()))?b.R-SEAD+2:b.R+(b.type==='star'?0:3.2)+(b===EARTH?mtnH(d):0);
       if(r<minR){d.divideScalar(r);const vin=-S.vel.dot(d);S.pos.copy(b.pos).addScaledVector(d,minR);if(vin>0){S.vel.addScaledVector(d,vin);if(vin>30){hurtA=Math.min(1,hurtA+.25);msgOnce('crash','Contact avec le sol : les champs de la coque amortissent le choc.','',4);}}}}
     const eL=_v1.subVectors(S.pos,EC);const eR=eL.length();if(eR-ER<34){const ed=_v2.copy(eL).divideScalar(eR);for(const bd of BUILD){if(bd.city&&angDeg(ed,bd.city.v)>2.2)continue;const bx=bd.v.x*ER-ed.x*ER,by=bd.v.y*ER-ed.y*ER,bz=bd.v.z*ER-ed.z*ER;const rad=Math.max(bd.w,bd.d)*.6+3;
         if(bx*bx+by*by+bz*bz<rad*rad&&eR-ER<bd.h+1.2){const vin=-S.vel.dot(ed);if(vin>25)msgOnce('bump','Attention aux immeubles !','',4);S.pos.copy(EC).addScaledVector(ed,ER+bd.h+1.2);if(S.altT!=null)S.altT=Math.max(S.altT,bd.h+1.2);if(vin>0)S.vel.addScaledVector(ed,vin);}}}
@@ -2496,7 +2510,7 @@ function updateCamera(dt){
   S.camOff.lerp(off,1-Math.exp(-(FIG.after>S.t?2:AP.on?3:8)*dt));
   camera.position.copy(S.pos).add(S.camOff);
   // éviter de passer sous le sol (monde +)
-  if(S.world>0){const cr=_v3.subVectors(camera.position,curBody.pos);const r=cr.length();const cmin=(S.sub&&curBody===EARTH)?curBody.R-SEAD+1.5:curBody.R+1.5;if(r<cmin&&curBody.type!=='star'){camera.position.copy(curBody.pos).addScaledVector(cr.divideScalar(r),cmin);}}
+  if(S.world>0){const cr=_v3.subVectors(camera.position,curBody.pos);const r=cr.length();const cmin=(S.sub&&curBody===EARTH)?curBody.R-SEAD+1.5:curBody.R+1.5+(curBody===EARTH?mtnH(cr):0);if(r<cmin&&curBody.type!=='star'){camera.position.copy(curBody.pos).addScaledVector(cr.divideScalar(r),cmin);}}
   camera.up.copy(S.up);if(AP.on){camera.lookAt(_v3.copy(S.pos).addScaledVector(ld,60).addScaledVector(S.up,-14));}else{let dn=1.2;if(IS_MOBILE&&S.world>0&&curBody===EARTH&&curAlt<300)dn-=(VIEWI===1?7:3)*(1-smooth(120,300,curAlt));camera.lookAt(_v3.copy(S.pos).addScaledVector(ld,12).addScaledVector(S.up,dn));}
   const fovT=66+(S.world<0?Math.min(14,Math.log10(1+sp)*2.4):Math.min(8,sp*.004));camera.fov+=(fovT-camera.fov)*(1-Math.exp(-3*dt));camera.updateProjectionMatrix();
   // ciel
@@ -4198,7 +4212,7 @@ const legs=(function(){const g=new THREE.Group();const m=new THREE.MeshStandardM
     const f=new THREE.Mesh(new THREE.CylinderGeometry(.32,.32,.08,10),m);f.position.set(Math.cos(a)*2.1,-1.36,Math.sin(a)*2.1);g.add(f);}
   g.visible=false;ship.add(g);return g;})();
 function inIntro(){return S.t<GRACE;}
-function canLand(raw){const ei=earthInfo();return (raw||!inIntro())&&S.world>0&&SYS==='sol'&&curBody===EARTH&&!S.landed&&ei.alt<30&&ei.alt>0&&isLand(ei.dir)&&Math.sqrt(Math.max(0,S.vel.lengthSq()-Math.pow(S.vel.dot(ei.dir),2)))<8&&!S.cloud&&!S.sub&&!S.jump;}
+function canLand(raw){const ei=earthInfo();return (raw||!inIntro())&&S.world>0&&SYS==='sol'&&curBody===EARTH&&!S.landed&&ei.alt<30&&ei.alt>0&&isLand(ei.dir)&&mtnH(ei.dir)<1.2&&Math.sqrt(Math.max(0,S.vel.lengthSq()-Math.pow(S.vel.dot(ei.dir),2)))<8&&!S.cloud&&!S.sub&&!S.jump;}
 function landShip(){const ei=earthInfo();S.landed=true;LAND.t=0;LAND.chk=0;LAND.spawnT=3;LAND.posted=false;LAND.fledMsg=false;LAND.lzMsg=0;LAND.dir=ei.dir.clone();LAND.leaks=0;LAND.postT=rr(10,16);LAND.phase='down';LAND.k=0;LAND.a0=Math.max(1.9,ei.alt);S.vel.set(0,0,0);S.mhd=false;legs.scale.y=.01;
   legs.visible=true;
   if(!ST.landTip){ST.landTip=1;toast('<b>Vaisseau posé.</b> (Pour vous poser : descendez au ras du sol et maintenez F, ou Y.) Restez immobile : des curieux finiront par oser s\'approcher. Quand l\'un d\'eux est tout près, appuyez sur Y pour établir le contact. Le moindre mouvement (Z/Q/S/D, R) vous fait redécoller. Si l\'armée arrive (alerte 2), ils s\'enfuient.','lore',12000);}
