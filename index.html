@@ -1036,7 +1036,7 @@ body.mobile.hudmini #liveBadge{order:5;margin:0;zoom:.85}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 142 · 22/10/2026</div>
+    <div class="verTag" data-notr>Version 143 · 22/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -2661,7 +2661,7 @@ function signTex(txt){const lang=I18N.st.lang;if(CROWD.lang!==lang){for(const k 
   const tx=new THREE.CanvasTexture(c);tx.anisotropy=4;CROWD.tex[txt]=tx;return tx;}
 function crowdInitFx(){if(CROWD.ready)return;CROWD.ready=true;
   for(let i=0;i<20;i++){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.glowW,color:0xffffff,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));sp.visible=false;earthSurf.add(sp);CROWD.flashes.push({sp,t:0});}
-  const poleG=new THREE.BoxGeometry(.08,1.6,.08);poleG.translate(0,.8,0);const poleM=new THREE.MeshLambertMaterial({color:0x8a6a44});const boardG=new THREE.PlaneGeometry(2.6,1.3);boardG.translate(0,2.2,0);
+  const poleG=new THREE.BoxGeometry(.08,1.6,.08);poleG.translate(0,.8,0);const poleM=new THREE.MeshLambertMaterial({color:0x8a6a44});const boardG=new THREE.PlaneGeometry(1.3,.65);boardG.translate(0,1.85,0);
   for(let i=0;i<16;i++){const g=new THREE.Group();g.add(new THREE.Mesh(poleG,poleM));const b=new THREE.Mesh(boardG,new THREE.MeshBasicMaterial({map:signTex(SLOGANS[i%SLOGANS.length]),side:THREE.DoubleSide}));g.add(b);g.matrixAutoUpdate=false;g.visible=false;earthSurf.add(g);CROWD.signs.push({g,b,txt:null});}
   // confettis (fête des éveillés)
   const cm=new THREE.InstancedMesh(new THREE.PlaneGeometry(.22,.13),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}),260);cm.instanceMatrix.setUsage(THREE.DynamicDrawUsage);cm.frustumCulled=false;
