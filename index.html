@@ -802,6 +802,8 @@ body.mobile #touch #tMhd{right:calc(10px + env(safe-area-inset-right,0px))!impor
 /* ---- v135 : Rayon/Agir au-dessus de Disparaître, Relâcher à sa place ---- */
 @media (orientation:portrait){body.mobile #touch #tAct{right:calc(71px + env(safe-area-inset-right,0px))!important;bottom:calc(98px + env(safe-area-inset-bottom,0px))!important}body.mobile #touch #tRel{right:calc(132px + env(safe-area-inset-right,0px))!important;bottom:calc(18px + env(safe-area-inset-bottom,0px))!important}}
 @media (orientation:landscape){body.mobile #touch #tAct{right:calc(78px + env(safe-area-inset-right,0px))!important;bottom:calc(118px + env(safe-area-inset-bottom,0px))!important}body.mobile #touch #tRel{right:calc(156px + env(safe-area-inset-right,0px))!important;bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}}
+/* ---- v137 : commandes du bas un peu remontées en portrait ---- */
+@media (orientation:portrait){body.mobile #touch #stick,body.mobile #touch #tUp,body.mobile #touch #tDn,body.mobile #touch #tMhd,body.mobile #touch #tCh,body.mobile #touch #tAct,body.mobile #touch #tRel,body.mobile #touch #tCloud,body.mobile #touch #tBo,body.mobile #hud .bc,body.mobile #ctxHint{translate:0 -22px}}
 </style>
 
 <div id="stage"></div>
@@ -1005,7 +1007,7 @@ body.mobile #touch #tMhd{right:calc(10px + env(safe-area-inset-right,0px))!impor
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 136 · 22/10/2026</div>
+    <div class="verTag" data-notr>Version 137 · 22/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
