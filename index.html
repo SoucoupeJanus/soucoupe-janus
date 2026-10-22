@@ -836,6 +836,7 @@ body.mobile.hudmini #liveBadge{order:5;margin:0;zoom:.85}
 body #feed .pimg.selfie img,body #ovThread .pimg.selfie img,.pimg.selfie img{max-height:300px!important;width:auto!important;max-width:100%;margin:0 auto;object-fit:contain!important;aspect-ratio:1/1}
 .aprow{display:flex;justify-content:space-between;align-items:center;gap:6px}.apbtn{font:600 10.5px/1 var(--f-display,sans-serif);letter-spacing:.04em;padding:4px 8px;border-radius:12px;border:1px solid var(--acc,#4fe3ff);background:rgba(79,227,255,.12);color:var(--acc,#4fe3ff);cursor:pointer;white-space:nowrap;pointer-events:auto}.apbtn:hover{background:rgba(79,227,255,.25)}.apbtn.on{background:var(--ok,#5dff9e)!important;color:#04121c!important;border-color:var(--ok,#5dff9e)!important;box-shadow:0 0 12px rgba(93,255,158,.45)}
 #opsChip.rdv{font-size:13px!important;padding:6px 12px!important;border:1.5px solid #ffb547!important;background:rgba(48,28,0,.82)!important;color:#ffe2b0!important;box-shadow:0 0 14px rgba(255,181,71,.45)}#opsChip.rdv b{color:#fff}#opsChip.rdv.now{border-color:#5dff9e!important;background:rgba(0,48,24,.85)!important;animation:rdvP 1s ease-in-out infinite}@keyframes rdvP{50%{box-shadow:0 0 22px rgba(93,255,158,.75)}}
+body:not(.mobile) #toasts{top:calc(194px + env(safe-area-inset-top,0px))!important;width:min(520px,44vw)!important;gap:4px}body:not(.mobile) #toasts .toast{padding:5px 12px;font-size:12.5px;line-height:1.3}body:not(.mobile) #toasts .toast:nth-last-child(n+4){display:none}
 </style>
 
 <div id="stage"></div>
@@ -1039,7 +1040,7 @@ body #feed .pimg.selfie img,body #ovThread .pimg.selfie img,.pimg.selfie img{max
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 147 · 22/10/2026</div>
+    <div class="verTag" data-notr>Version 148 · 22/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -1613,7 +1614,7 @@ humMesh.count=HUM.length;cowMesh.count=COWS.length;
 HUM.forEach((h,i)=>{humMesh.setMatrixAt(i,surfMat(h.v,0,0,1,1,1,_m));humMesh.setColorAt(i,_c.setRGB(...h.col));});
 COWS.forEach((c,i)=>{cowMesh.setMatrixAt(i,surfMat(c.v,0,rr(0,6),1,1,1,_m));cowMesh.setColorAt(i,_c.setRGB(...c.col));});
 function homeOf(h){if(h.callV)return h.callV;if(h.home<=-1000)return VILLAGES[-1000-h.home].v;return h.home>=0?CITIES[h.home].v:FARMS[-1-h.home].v;}
-function homeRad(h){if(h.callV)return 11/ER*57.3;if(h.motorist)return .03;return (h.home<=-1000?.4:h.home>=0?1.8:.9)*LK;}
+function homeRad(h){if(h.callV)return 1.6/ER*57.3;if(h.motorist)return .03;return (h.home<=-1000?.4:h.home>=0?1.8:.9)*LK;}
 
 /* ---------- la soucoupe ---------- */
 const ship=new THREE.Group();scene.add(ship);
@@ -2836,7 +2837,7 @@ function callBuild(c){const g=new THREE.Group();const r=ER+mtnH(c.dir);g.positio
   else if(ty==='cercle'){F.s=[];for(const [n,rr_] of [[30,10],[14,5]])for(let k=0;k<n;k++){const a=k/n*Math.PI*2;const s=callSpr(0xffb347,1.3);s.position.set(Math.cos(a)*rr_,.5,Math.sin(a)*rr_);s.userData.ph=Math.random()*7;g.add(s);F.s.push(s);}}
   else if(ty==='message'){const txt=I18N.T(pick(CALLMSG));const cv=document.createElement('canvas');cv.width=1024;cv.height=320;const x=cv.getContext('2d');x.textAlign='center';x.textBaseline='middle';let fs=170;x.font='900 '+fs+'px sans-serif';while(x.measureText(txt).width>960&&fs>60){fs-=8;x.font='900 '+fs+'px sans-serif';}
     x.lineWidth=fs*.16;x.strokeStyle='rgba(30,30,30,.55)';x.strokeText(txt,512,165);x.fillStyle='#fffbe8';x.fillText(txt,512,165);const tx=new THREE.CanvasTexture(cv);F.tx=tx;
-    const m=new THREE.Mesh(new THREE.PlaneGeometry(24,7.5),new THREE.MeshBasicMaterial({map:tx,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-4}));m.rotation.x=-Math.PI/2;m.position.y=.7;g.add(m);F.m=m;}
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(24,7.5),new THREE.MeshBasicMaterial({map:tx,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-4}));m.rotation.x=-Math.PI/2;m.position.y=1.1;const mg=new THREE.Group();mg.add(m);g.add(mg);F.m=m;F.mg=mg;F.ma=null;}
   else if(ty==='lanternes'){F.l=[];for(let k=0;k<36;k++){const s=callSpr(0xffa040,1.5);s.userData={x:rr(-9,9),z:rr(-9,9),y:rr(0,70),v:rr(1.2,2.6),ph:Math.random()*7};g.add(s);F.l.push(s);}}
   else if(ty==='feux'){F.f=[];for(let k=0;k<3;k++){const a=k/3*Math.PI*2+Math.PI/2;const o=callSpr(0xff6a1e,5.5),i=callSpr(0xffe08a,2.6);o.position.set(Math.cos(a)*9,1.6,Math.sin(a)*9);i.position.copy(o.position);i.position.y=1.2;g.add(o);g.add(i);F.f.push(o,i);}}
   else if(ty==='drones'){const d=new THREE.Group();d.position.y=26;g.add(d);F.d=d;F.s=[];const pts=[];for(let k=0;k<28;k++){const a=k/28*Math.PI*2;pts.push([Math.cos(a)*13,Math.sin(a)*3]);}for(let k=1;k<12;k++){const a=k/12*Math.PI;pts.push([Math.cos(a)*5.5,2.6+Math.sin(a)*4.2]);}for(let k=-3;k<=3;k++)pts.push([k*3,-.2]);
@@ -2852,19 +2853,19 @@ function callBuild(c){const g=new THREE.Group();const r=ER+mtnH(c.dir);g.positio
 }
 function callFree(c){if(!c.g)return;c.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==undefined){if(o.material.map&&o.material.map!==TEX.glowW&&c.fx.tx===o.material.map)o.material.map.dispose();o.material.dispose();}});earthSurf.remove(c.g);c.g=null;}
 function callWorld(c,out){return out.copy(c.dir).multiplyScalar(ER+mtnH(c.dir)+4).add(EC);}
-function callSite(cv){const clr=12/ER*57.3;let best=null,bs=-1;
-  for(let t=0;t<60;t++){const o=offsetDir(cv,rr(2.8,5));if(landScore(o)<=.03)continue;let mh=mtnH(o),ok=true;
-    for(let k=0;k<6&&ok;k++){const q=offsetDir2(o,k/6*Math.PI*2,clr*.8);if(landScore(q)<=0)ok=false;mh=Math.max(mh,mtnH(q));}if(!ok)continue;
+function callSite(cv,cu){const clr=(cu||20)/ER*57.3;let best=null,bs=-1;
+  for(let t=0;t<60;t++){const o=offsetDir(cv,rr(2.8,5));if(landScore(o)<=.03)continue;let mh=mtnH(o),mn=mh,ok=true;
+    for(let k=0;k<8&&ok;k++){const q=offsetDir2(o,k/8*Math.PI*2,clr*.8);if(landScore(q)<=0)ok=false;const hq=mtnH(q);mh=Math.max(mh,hq);mn=Math.min(mn,hq);}if(!ok)continue;
     let md=99;for(const b of BUILD){const a=angDeg(o,b.v);if(a<md)md=a;if(md<clr)break;}if(md<clr)continue;
-    const sc=md-mh*.05;if(mh<1.2&&md>clr*1.3)return o;if(sc>bs){bs=sc;best=o;}}
+    const sc=md-mh*.05-(mh-mn)*2;if(mh<1.2&&mh-mn<.5&&md>clr*1.15)return o;if(sc>bs){bs=sc;best=o;}}
   return best;}
 function callSpawn(){const cand=CITIES.map((c,i)=>({c,i,w:5+(REG[i]?REG[i].con:0)})).filter(x=>landScore(x.c.v)>.02||true);let tot=0;cand.forEach(x=>tot+=x.w);let r=Math.random()*tot,ch=cand[0];for(const x of cand){r-=x.w;if(r<=0){ch=x;break;}}
   const ei=earthInfo();if(angDeg(ch.c.v,ei.dir)<3)return false;
-  const tys=Object.keys(CALLT);const ty=pick(tys);const dir=callSite(ch.c.v);if(!dir)return false;const trap=(S.level>=1||globalAw()>8)&&Math.random()<.14;
+  const tys=Object.keys(CALLT);const ty=pick(tys);const dir=callSite(ch.c.v)||callSite(ch.c.v,14);if(!dir)return false;const trap=(S.level>=1||globalAw()>8)&&Math.random()<.14;
   const c={ty,ci:ch.i,city:ch.c.n,dir,t:0,T:rr(190,260),hold:0,trap,org:trap?(Math.random()<.7?null:pick(CALLORG)):pick(CALLORG),hums:[],done:false};
   callBuild(c);CALLS.push(c);
   const hs=HUM.filter(h=>h.alive&&!h.cur&&!h.boat&&!h.lift&&!h.motorist&&h.home===ch.i).sort(()=>Math.random()-.5).slice(0,trap?6:16);
-  hs.forEach((h,k)=>{const a=k/hs.length*Math.PI*2+rr(-.2,.2),rad=rr(4,9)/ER*57.3;h.v.copy(offsetDir2(dir,a,rad));h.callV=dir.clone();h.caller=1;c.hums.push(h);});
+  hs.forEach((h,k)=>{const a=k/hs.length*Math.PI*2+rr(-.12,.12),rad=(ty==='message'?rr(15,18.5):rr(11.5,16))/ER*57.3;h.v.copy(offsetDir2(dir,a,rad));h.callV=h.v.clone();h.caller=1;c.hums.push(h);});
   const T=CALLT[ty];toast(T.ic+' <b>'+T.n+' à '+c.city+'</b> · '+T.d+' Organisé par '+(c.org||'<i>un organisateur inconnu</i> ⚠')+'. Survolez le rassemblement à basse altitude pour répondre à l\'appel.','lore',10000);
   setEvNav(()=>callWorld(c,_cw),T.n+' · '+c.city);mediaEvent('call',{city:c.city});
   addPost({handle:'@'+(c.org?slug(c.org).slice(0,14):'contact')+'_'+slug(c.city).slice(0,8),city:c.city,text:pick(CALLPOST[ty]).replace(/\{c\}/g,c.city),pot:rr(4000,30000),kind:'awake'});
@@ -2905,7 +2906,8 @@ function updateCalls(dt){
     else if(c.ty==='musique'){F.c.forEach((m,k)=>{m.rotation.set(Math.sin(t*1.2+k)*.45,0,Math.cos(t*.9+k*2)*.45);});const b=Math.max(0,Math.sin(t*Math.PI*2*1.1));F.r.scale.setScalar(6+b*8);F.r.material.opacity=.3+b*.5;
       if(soundOn&&AC&&d<220){F.nt-=dt;if(F.nt<=0){F.nt=.42;const sc=[262,294,330,392,440,523,587];const f=sc[Math.floor(Math.random()*sc.length)];tone(f,f,.35,'triangle',.05*(1-d/220));}}}
     else if(c.ty==='piste')F.s.forEach(s=>{const k=s.userData.k;if(k<0){s.scale.setScalar(3+Math.sin(t*3));return;}const ph=((t*6)%14)-k;s.scale.setScalar(ph>=0&&ph<1.5?2.4:1);if(party)s.material.color.setHSL((t*.3+k/12)%1,1,.6);});
-    if(F.bn){const sl=g.worldToLocal(_cw.copy(camera.position));F.bn.rotation.y=Math.atan2(sl.x,sl.z);}}}
+    if(F.bn){const sl=g.worldToLocal(_cw.copy(camera.position));F.bn.rotation.y=Math.atan2(sl.x,sl.z);}
+    if(F.mg){const sl=g.worldToLocal(_cw.copy(camera.position));if(Math.hypot(sl.x,sl.z)>10||F.ma==null){const ta=Math.atan2(sl.x,sl.z);if(F.ma==null)F.ma=ta;let da=ta-F.ma;da=Math.atan2(Math.sin(da),Math.cos(da));F.ma+=da*Math.min(1,dt*1.5);F.mg.rotation.y=F.ma;}}}}
 
 function updatePopulation(dt){
   const ei=earthInfo();const near=ei.alt<2500&&S.world>0;
