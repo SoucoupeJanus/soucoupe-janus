@@ -1066,7 +1066,7 @@ body:not(.mobile) #toasts{top:calc(194px + env(safe-area-inset-top,0px))!importa
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 155 · 23/10/2026</div>
+    <div class="verTag" data-notr>Version 156 · 23/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -3268,7 +3268,7 @@ function seasonsInit(){if(SEAS.init)return;SEAS.init=true;
   setTimeout(()=>{if(!started)return;const n=realSeason(45),s=realSeason(-45);const SN=SEASONS;toast(SEAS_IC[n]+' <b>Saison réelle</b> : '+SN[n]+' dans l\'hémisphère nord, '+SN[s]+' dans l\'hémisphère sud. Arbres, sols et ambiance suivent la date du jour.','lore',8000);},4000);}
 function seasonsTick(dt){if(!SEAS.init){if(started)seasonsInit();return;}const P=SEAS.pts;const ei=earthInfo();const on=SYS==='sol'&&S.world>0&&curBody===EARTH&&ei.alt<260&&!PHOTO.on;
   if(!on){P.visible=false;return;}const lat=vll(ei.dir).lat,se=realSeason(lat),al=Math.abs(lat);const night=ei.dir.dot(sunDirFromEarth())<-.05;
-  let mode=al<18?null:se===0?'petal':se===2?null:se===1?(night?'fly':null):(al>34&&WX.type!=='neige'?'snow':null);if(!mode){P.visible=false;return;}P.visible=true;
+  let mode=al<18?null:se===0?'petal':se===2?'leaf':se===1?(night?'fly':null):(al>34&&WX.type!=='neige'?'snow':null);if(!mode){P.visible=false;return;}P.visible=true;
   const col={petal:0xffb3d1,leaf:0xd9822b,fly:0xd8ff6a,snow:0xffffff}[mode];P.material.color.setHex(col);P.material.size=mode==='leaf'?.32:mode==='fly'?.22:mode==='petal'?.22:.2;const tx=mode==='leaf'?SEAS.tex.leaf:mode==='petal'?SEAS.tex.petal:SEAS.tex.round;if(P.material.map!==tx){P.material.map=tx;P.material.needsUpdate=true;}P.material.blending=mode==='fly'?THREE.AdditiveBlending:THREE.NormalBlending;
   const up=ei.dir,t=_v4.set(0,1,0).cross(up);if(t.lengthSq()<1e-6)t.set(1,0,0);t.normalize();const b=_v5.crossVectors(up,t);const base=_v3.copy(camera.position);const a=P.geometry.attributes.position.array;
   SEAS.p.forEach((q,i)=>{const fall=mode==='fly'?0:mode==='snow'?2.2:1.3;q.o.y-=dt*fall*(.6+q.v);q.o.x+=dt*(mode==='fly'?Math.sin(S.t*2+i)*1.2:Math.sin(S.t*.8+i)*1.4);q.o.z+=dt*(mode==='fly'?Math.cos(S.t*1.7+i)*1.2:.6);
