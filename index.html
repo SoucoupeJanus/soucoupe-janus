@@ -858,6 +858,8 @@ body:not(.mobile) #toasts{top:calc(194px + env(safe-area-inset-top,0px))!importa
 .mcq{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px}.mcq button{flex:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--ink,#e8f1ff);border-radius:12px;padding:3px 9px;font-size:11px;cursor:pointer;white-space:nowrap}
 .mca{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px}.mcs{font-size:12px;color:var(--dim);display:flex;align-items:center;gap:5px}
 .merep{display:flex;gap:6px;align-items:center;margin-top:10px;position:sticky;bottom:0;background:var(--panel,#0b1426);padding:6px 0}.merep input{flex:1;min-width:0;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:var(--ink,#e8f1ff);padding:7px 8px;font-size:13px}
+#touch #tOrb.nofig{top:calc(350px + env(safe-area-inset-top,0px))!important}
+@media (orientation:landscape){body.mobile #touch #tOrb.nofig{left:calc(78px + env(safe-area-inset-left,0px))!important;top:calc(146px + env(safe-area-inset-top,0px))!important}}
 </style>
 
 <div id="stage"></div>
@@ -1064,7 +1066,7 @@ body:not(.mobile) #toasts{top:calc(194px + env(safe-area-inset-top,0px))!importa
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 152 · 23/10/2026</div>
+    <div class="verTag" data-notr>Version 153 · 23/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -2623,7 +2625,7 @@ function updateFlight(dt){
   // en mode radial, avancer suit l'inclinaison de la caméra au-delà d'un seuil
   if(S.world>0){
     if(arcade){
-      const mhdOn=S.mhd&&(hasAtm(curBody)||S.sub)&&S.energy>1;
+      const mhdOn=S.mhd&&S.energy>1;
       let vmax=mhdOn&&S.sub?Math.min(120,45-curAlt*.8)*P*(1+.1*UP.mhd):mhdOn?Math.min(450*(1+.25*md('mars')),(30+curAlt*.6))*P*(1+.1*UP.mhd)*(1+.25*md('mars')):Math.max(6,Math.min(9+curAlt*.05,16))*P;const bk=boost&&S.energy>0?2:1;if(bk>1){vmax*=mhdOn?2:1.6;S.energy-=(mhdOn?3:1)*dt;}
       if(S.cloud)vmax=Math.min(vmax,mhdOn?60:16);
       if(mhdOn){S.energy=Math.max(1,S.energy-(4+S.vel.length()*.09)*(1-.15*UP.mhd)*(1-.4*md('mars'))*(SHIP.mhdEff||1)*dt);if(S.energy<=1){S.mhd=false;toast('Énergie à 1 : MHD coupée. Rechargez au soleil.','bad');sfx('fizz');}}
@@ -2640,7 +2642,7 @@ function updateFlight(dt){
         if(curAlt>2&&!S.sub){const fl=-(8+curAlt*1.1),vr=S.vel.dot(bUp);if(vr<fl)S.vel.addScaledVector(bUp,fl-vr);}}
       S.energy-=.15*dt; // vol stationnaire
     }else{
-      let acc=120*P,vmax=900*P;if(boost&&S.energy>0){acc*=3;vmax=2600*P;S.energy-=4*dt;}
+      let acc=120*P,vmax=900*P;if(boost&&S.energy>0){acc*=3;vmax=2600*P;S.energy-=4*dt;}if(S.mhd&&S.energy>1){acc*=2.4;vmax=Math.max(vmax*2.4,2400*P);S.energy=Math.max(1,S.energy-(2.5+S.vel.length()*.002)*(1-.15*UP.mhd)*dt);if(S.energy<=1){S.mhd=false;toast('Énergie à 1 : MHD coupée. Rechargez au soleil.','bad');}}
       const nearP=curBody.type!=='star'&&curAlt<curBody.R*4;
       if(nearP){_v4.copy(S.fwd).multiplyScalar(inp.z).addScaledVector(S.right,inp.x);S.vel.addScaledVector(_v4,acc*dt).addScaledVector(bUp,inp.y*acc*3*dt);{const gz=grav.dot(bUp);if(inp.y>=0&&gz<0&&curAlt<curBody.R*2.2)S.vel.addScaledVector(grav,dt).addScaledVector(bUp,-gz*dt);else S.vel.addScaledVector(grav,dt);}
         if(inp.y>=0&&curAlt<curBody.R*1.7){const vr=S.vel.dot(bUp);if(vr<0&&vr>-Math.max(40,.35*S.vel.length()))S.vel.addScaledVector(bUp,-vr*(1-Math.exp(-1.5*dt)));}
@@ -3498,7 +3500,7 @@ function updateHUD(){
   const altTxt=curBody.type!=='star'&&curAlt<curBody.R*3?'alt '+fmt(curAlt*30)+' m':'';
   const atmo=flightMode==='arcade'&&hasAtm(curBody);const mach=sp*30/340;
   const vtxt=atmo?(fmt(sp*30*3.6)+' km/h · Mach '+mach.toFixed(1)+(mach>=5?' (hypersonique)':'')):(vc<.001?(sp*30/1000).toFixed(1)+' km/s':vc.toFixed(3)+(S.world>0?' c₊':' c₋'));
-  $('flight').textContent=`${modeTxt}${flightMode==='arcade'?(S.mhd&&hasAtm(curBody)?' · MHD':' · classique'):''} · ${vtxt} · ${curBody.name}${where}${altTxt?' · '+altTxt:''}`;
+  $('flight').textContent=`${modeTxt}${flightMode==='arcade'?(S.mhd?' · MHD':' · classique'):''} · ${vtxt} · ${curBody.name}${where}${altTxt?' · '+altTxt:''}`;
   {const sp=S.vel.length()*30/340;const mc='mtile'+(S.mhd?' mhd':'');if($('modeMHD').className!==mc)$('modeMHD').className=mc;setTxt('mhdState',S.mhd?'MHD':'Classique');setTxt('mhdSub',S.mhd?(S.world<0?'sans effet ici':'Mach '+sp.toFixed(1)+' · très gourmande'):'lente · économe');const fast=S.cloud&&cloudOn()&&(!cloudSlow()||S.level>=3);const cc='mtile'+(S.cloud?' cld':'')+(fast?' fast':'');if($('modeCloud').className!==cc)$('modeCloud').className=cc;setTxt('cloudState',!S.cloud?'Visible':S.cloudK<.85?'Formation…':S.storm>.7?'Nuage · orage':'Nuage');setTxt('cloudSub',!S.cloud?'radars 100 %':S.cloudK<.85?'condensation '+Math.round(S.cloudK/.85*100)+' %':S.level>=3?'inefficace · alerte '+S.level:fast?'trop rapide · radars 55 %':'radars −80 % · armée aveugle');const cb=$('cloudBar');const showB=S.cloud&&S.cloudK<.85;if(cb.hidden===showB)cb.hidden=!showB;if(showB)cb.firstElementChild.style.width=Math.round(S.cloudK/.85*100)+'%';}
   // jauge
   const C2=2*Math.PI*48;const c=S.charge;$('gArc').setAttribute('stroke-dasharray',(c*C2)+' '+C2);
@@ -5379,7 +5381,7 @@ MOON.off0=MOON.pos.clone().sub(EC);NEGS.forEach(n=>{n.off0=n.pos.clone().sub(EC)
 PBASES.forEach(p=>{if(p.sys==='sol'){p.off0=p.pos.clone().sub(p.bodyObj.pos);p.q0=p.mesh.quaternion.clone();}});
 EXB.forEach(b=>{if(b.sys==='sol'){b.off0=b.pos.clone().sub(b.body().pos);b.q0=b.mesh.quaternion.clone();}});
 const _qm=new THREE.Quaternion(),_qt=new THREE.Quaternion();
-function moveBody(b,np){const near=curBody===b&&S.world!==0&&S.pos.distanceTo(b.pos)<b.R*4&&SYS==='sol'&&!S.jump;if(near){_hC.subVectors(np,b.pos);S.pos.add(_hC);}b.pos.copy(np);b.group.position.copy(np);}
+function moveBody(b,np){const near=curBody===b&&S.world!==0&&S.pos.distanceTo(b.pos)<(b.type==='star'?b.R*4:Math.max(b.R*4,b.R+3000))&&SYS==='sol'&&!S.jump;if(near){_hC.subVectors(np,b.pos);S.pos.add(_hC);}b.pos.copy(np);b.group.position.copy(np);}
 function dayT(){return ORB.dFreeze!=null?ORB.dFreeze:S.t+ORB.dOff;}
 function updateOrbits(){if(!ORB.on)return;const t=S.t,td=dayT();ORB.q.setFromAxisAngle(_hY,-2*Math.PI*td/ORB.DAY);ORB.qi.copy(ORB.q).invert();helio(EARTH,t,ORB.eH);
   // Soleil
@@ -6354,9 +6356,9 @@ document.querySelector('#ovMore .moreList').addEventListener('click',e=>{const b
 (function(){const show=(id,v)=>{const b=$(id);if(!b)return;const d=v?'':'none';if(b.style.display!==d){b.style.display=d;if(!v){b.classList.remove('on');if(id==='tBm')TOUCH.bm=false;}}};
   setInterval(()=>{if(!started||!isTouch)return;const pos=S.world>0,arc=flightMode==='arcade';
     show('tBm',pos&&arc&&curBody===EARTH&&curAlt<80);
-    show('tMhd',S.mhd||(pos&&arc&&hasAtm(curBody)));
+    show('tMhd',S.mhd||pos);
     show('tCloud',S.cloud||(pos&&arc&&curBody===EARTH));
-    show('tFig',FIG.on||figOK());show('tOrb',UP.orbs>0&&SYS==='sol');{const o=$('tOrb');if(o&&UP.orbs>0){const n=o.querySelector('.orbN');const t=orbAvail()+'/'+UP.orbs;if(n&&n.textContent!==t)n.textContent=t;o.classList.toggle('cool',!orbAvail());}}{const f=$('tFig');if(f){f.classList.toggle('on',FIG.on);f.classList.toggle('cool',!FIG.on&&S.t<FIG.cd);}}
+    show('tFig',FIG.on||figOK());show('tOrb',UP.orbs>0&&SYS==='sol');{const o=$('tOrb'),f=$('tFig');if(o&&f)o.classList.toggle('nofig',f.style.display==='none');}{const o=$('tOrb');if(o&&UP.orbs>0){const n=o.querySelector('.orbN');const t=orbAvail()+'/'+UP.orbs;if(n&&n.textContent!==t)n.textContent=t;o.classList.toggle('cool',!orbAvail());}}{const f=$('tFig');if(f){f.classList.toggle('on',FIG.on);f.classList.toggle('cool',!FIG.on&&S.t<FIG.cd);}}
     const g=$('tGo');if(g){g.classList.toggle('on',AP.on);const l=g.querySelector('.tbl');const t=AP.on?'Stop':'Y aller';if(l&&l.textContent!==t&&l.dataset.base!==t){l.textContent=t;}}},250);
   const ring=document.querySelector('#tCh .chRing'),arcEl=ring&&ring.querySelector('.chArc');
   (function tick(){requestAnimationFrame(tick);if(!arcEl||!started)return;let v=S.charge||0,win=false,late=false;
