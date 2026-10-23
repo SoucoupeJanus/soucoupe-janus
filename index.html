@@ -1066,7 +1066,7 @@ body:not(.mobile) #toasts{top:calc(194px + env(safe-area-inset-top,0px))!importa
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 153 · 23/10/2026</div>
+    <div class="verTag" data-notr>Version 154 · 23/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -3258,17 +3258,21 @@ function seasonsInit(){if(SEAS.init)return;SEAS.init=true;
     const p=d.clone().multiplyScalar(ER+mtnH(d)+.9);q.setFromUnitVectors(_v1.set(0,1,0),d);sc.set(s*VISH,s*VISH,s*VISH);M.compose(p,q,sc);im.setMatrixAt(i,M);im.setColorAt(i,C.setHex(col));});
   if(im.instanceColor)im.instanceColor.needsUpdate=true;earthSurf.add(im);SEAS.patch=im;
   // particules : pétales, lucioles, feuilles mortes, flocons
-  const PN=140;const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(PN*3),3));
-  const pm=new THREE.PointsMaterial({size:.55,color:0xffffff,transparent:true,opacity:.9,depthWrite:false,sizeAttenuation:true});const pts=new THREE.Points(pg,pm);pts.frustumCulled=false;pts.visible=false;scene.add(pts);
+  const PN=110;const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(PN*3),3));
+  const mkT=(fn)=>{const cv=document.createElement('canvas');cv.width=cv.height=64;const g=cv.getContext('2d');fn(g);const t=new THREE.CanvasTexture(cv);return t;};
+  SEAS.tex={leaf:mkT(g=>{g.fillStyle='#fff';g.beginPath();g.moveTo(32,4);g.bezierCurveTo(58,18,56,46,32,60);g.bezierCurveTo(8,46,6,18,32,4);g.fill();g.strokeStyle='rgba(0,0,0,.35)';g.lineWidth=3;g.beginPath();g.moveTo(32,8);g.lineTo(32,58);g.stroke();}),
+   round:mkT(g=>{const r=g.createRadialGradient(32,32,0,32,32,30);r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(.6,'rgba(255,255,255,.9)');r.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=r;g.beginPath();g.arc(32,32,30,0,7);g.fill();}),
+   petal:mkT(g=>{g.fillStyle='#fff';g.beginPath();g.ellipse(32,32,14,24,.5,0,7);g.fill();})};
+  const pm=new THREE.PointsMaterial({size:.3,color:0xffffff,map:SEAS.tex.leaf,transparent:true,opacity:.95,alphaTest:.25,depthWrite:false,sizeAttenuation:true});const pts=new THREE.Points(pg,pm);pts.frustumCulled=false;pts.visible=false;scene.add(pts);
   SEAS.pts=pts;SEAS.p=[];for(let i=0;i<PN;i++)SEAS.p.push({o:new THREE.Vector3(rr(-40,40),rr(0,30),rr(-40,40)),v:Math.random()});
   setTimeout(()=>{if(!started)return;const n=realSeason(45),s=realSeason(-45);const SN=SEASONS;toast(SEAS_IC[n]+' <b>Saison réelle</b> : '+SN[n]+' dans l\'hémisphère nord, '+SN[s]+' dans l\'hémisphère sud. Arbres, sols et ambiance suivent la date du jour.','lore',8000);},4000);}
 function seasonsTick(dt){if(!SEAS.init){if(started)seasonsInit();return;}const P=SEAS.pts;const ei=earthInfo();const on=SYS==='sol'&&S.world>0&&curBody===EARTH&&ei.alt<260&&!PHOTO.on;
   if(!on){P.visible=false;return;}const lat=vll(ei.dir).lat,se=realSeason(lat),al=Math.abs(lat);const night=ei.dir.dot(sunDirFromEarth())<-.05;
   let mode=al<18?null:se===0?'petal':se===2?'leaf':se===1?(night?'fly':null):(al>34&&WX.type!=='neige'?'snow':null);if(!mode){P.visible=false;return;}P.visible=true;
-  const col={petal:0xffb3d1,leaf:0xd9822b,fly:0xd8ff6a,snow:0xffffff}[mode];P.material.color.setHex(col);P.material.size=mode==='leaf'?.8:mode==='fly'?.45:.5;P.material.blending=mode==='fly'?THREE.AdditiveBlending:THREE.NormalBlending;
+  const col={petal:0xffb3d1,leaf:0xd9822b,fly:0xd8ff6a,snow:0xffffff}[mode];P.material.color.setHex(col);P.material.size=mode==='leaf'?.32:mode==='fly'?.22:mode==='petal'?.22:.2;const tx=mode==='leaf'?SEAS.tex.leaf:mode==='petal'?SEAS.tex.petal:SEAS.tex.round;if(P.material.map!==tx){P.material.map=tx;P.material.needsUpdate=true;}P.material.blending=mode==='fly'?THREE.AdditiveBlending:THREE.NormalBlending;
   const up=ei.dir,t=_v4.set(0,1,0).cross(up);if(t.lengthSq()<1e-6)t.set(1,0,0);t.normalize();const b=_v5.crossVectors(up,t);const base=_v3.copy(camera.position);const a=P.geometry.attributes.position.array;
   SEAS.p.forEach((q,i)=>{const fall=mode==='fly'?0:mode==='snow'?2.2:1.3;q.o.y-=dt*fall*(.6+q.v);q.o.x+=dt*(mode==='fly'?Math.sin(S.t*2+i)*1.2:Math.sin(S.t*.8+i)*1.4);q.o.z+=dt*(mode==='fly'?Math.cos(S.t*1.7+i)*1.2:.6);
-    if(q.o.y<-12||Math.abs(q.o.x)>45||Math.abs(q.o.z)>45){q.o.set(rr(-40,40),mode==='fly'?rr(-8,6):rr(10,30),rr(-40,40));}
+    if(q.o.y<-12||Math.abs(q.o.x)>45||Math.abs(q.o.z)>45||q.o.lengthSq()<64){q.o.set(rr(-40,40),mode==='fly'?rr(-8,6):rr(10,30),rr(-40,40));if(q.o.lengthSq()<100)q.o.setLength(12);}
     const x=base.x+t.x*q.o.x+up.x*q.o.y+b.x*q.o.z,y=base.y+t.y*q.o.x+up.y*q.o.y+b.y*q.o.z,z=base.z+t.z*q.o.x+up.z*q.o.y+b.z*q.o.z;a[i*3]=x;a[i*3+1]=y;a[i*3+2]=z;});
   P.geometry.attributes.position.needsUpdate=true;P.material.opacity=mode==='fly'?.6+.4*Math.sin(S.t*3):.9;}
 
