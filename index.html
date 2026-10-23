@@ -1052,7 +1052,7 @@ body:not(.mobile) #toasts{top:calc(194px + env(safe-area-inset-top,0px))!importa
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 150 · 23/10/2026</div>
+    <div class="verTag" data-notr>Version 151 · 23/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -1628,8 +1628,8 @@ humMesh.instanceColor.setUsage(THREE.DynamicDrawUsage);cowMesh.instanceColor.set
 humMesh.count=HUM.length;cowMesh.count=COWS.length;
 HUM.forEach((h,i)=>{humMesh.setMatrixAt(i,surfMat(h.v,0,0,1,1,1,_m));humMesh.setColorAt(i,_c.setRGB(...h.col));});
 COWS.forEach((c,i)=>{cowMesh.setMatrixAt(i,surfMat(c.v,0,rr(0,6),1,1,1,_m));cowMesh.setColorAt(i,_c.setRGB(...c.col));});
-function homeOf(h){if(h.callV)return h.callV;if(h.home<=-1000)return VILLAGES[-1000-h.home].v;return h.home>=0?CITIES[h.home].v:FARMS[-1-h.home].v;}
-function homeRad(h){if(h.callV)return 1.6/ER*57.3;if(h.motorist)return .03;return (h.home<=-1000?.4:h.home>=0?1.8:.9)*LK;}
+function homeOf(h){if(h.callV)return h.callV;if(h.hwV)return h.hwV;if(h.home<=-1000)return VILLAGES[-1000-h.home].v;return h.home>=0?CITIES[h.home].v:FARMS[-1-h.home].v;}
+function homeRad(h){if(h.callV)return 1.6/ER*57.3;if(h.hwV)return 3.5/ER*57.3;if(h.motorist)return .03;return (h.home<=-1000?.4:h.home>=0?1.8:.9)*LK;}
 
 /* ---------- la soucoupe ---------- */
 const ship=new THREE.Group();scene.add(ship);
@@ -3001,11 +3001,20 @@ const HW_SLOG=['DES BONBONS OU UNE SONDE ?','JOYEUX HALLOWEEN, E.T. !','ON A GAR
 function hwInit(){if(FT.hwInit||!hwOn())return;FT.hwInit=true;
   SLOGANS.push(...HW_SLOG,...HW_SLOG);
   HEAD.sensation.push(v=>`Halloween : farce ou véritable ovni au-dessus de ${v.c} ?`,v=>`Des « aliens » déguisés croisent un vrai ovni à ${v.c}`);HEAD.sceptique.push(v=>`Ovni d'Halloween à ${v.c} : une farce, selon les experts`);
-  const sk=humGeo.attributes.skinCol;const n=Math.min(HUM.length,sk.count);for(let i=0;i<n;i++){const h=HUM[i];if(Math.random()<.12){h.costume=1;sk.setXYZ(i,.42,.86,.35);h.col=pick([[.95,.45,.08],[.25,.08,.35],[.12,.12,.14]]);}}sk.needsUpdate=true;
   // citrouilles dans les fermes et villages
   const geo=new THREE.SphereGeometry(.55,10,7);geo.scale(1,.72,1);const mat=new THREE.MeshLambertMaterial({color:0xff7a1a,emissive:0xff5a00,emissiveIntensity:.55});
-  const spots=[];FARMS.forEach(f=>{for(let k=0;k<7;k++)spots.push(offsetDir(f.v,rr(.08,.5)));});VILLAGES.forEach(v=>{for(let k=0;k<6;k++)spots.push(offsetDir(v.v,rr(.05,.45)));});
-  const N=Math.min(spots.length,600);const im=new THREE.InstancedMesh(geo,mat,N);const M=new THREE.Matrix4(),q=new THREE.Quaternion(),sc=new THREE.Vector3();
+  const spots=[];const clear=(d,r)=>{if(landScore(d)<=.02)return false;for(const b of BUILD){if(angDeg(d,b.v)<r)return false;}return true;};const cr=1.6/ER*57.3;
+  CITIES.forEach(ct=>{let k=0;for(let t=0;t<120&&k<34;t++){const d=offsetDir(ct.v,rr(.9,2.1));if(clear(d,cr)){spots.push(d);k++;}}});
+  VILLAGES.forEach(v=>{let k=0;for(let t=0;t<40&&k<10;t++){const d=offsetDir(v.v,rr(.08,.6));if(clear(d,cr*.8)){spots.push(d);k++;}}});
+  FARMS.forEach(f=>{for(let k=0;k<3;k++)spots.push(offsetDir(f.v,rr(.1,.5)));});
+  // fêtes d'Halloween en bordure de ville : déguisés regroupés autour de carrés de citrouilles
+  const sk=humGeo.attributes.skinCol;const costume=(h)=>{const i=HUM.indexOf(h);if(i<0||i>=sk.count)return;h.costume=1;sk.setXYZ(i,.42,.86,.35);h.col=pick([[.95,.45,.08],[.25,.08,.35],[.12,.12,.14]]);};
+  FT.hwSpots=[];CITIES.forEach((ct,ci)=>{const cl=[];for(let t=0;t<160&&cl.length<4;t++){const d=offsetDir(ct.v,rr(1.85,2.4));if(clear(d,2.2/ER*57.3)&&cl.every(o=>angDeg(o,d)>18/ER*57.3))cl.push(d);}if(!cl.length)return;FT.hwSpots.push(...cl);
+    cl.forEach(d=>{for(let k=0;k<9;k++){const a=k/9*Math.PI*2;spots.push(offsetDir2(d,a,rr(3.5,5.5)/ER*57.3));}});
+    const hs=HUM.filter(h=>h.alive&&h.home===ci&&!h.motorist&&!h.boat&&!h.cur).sort(()=>Math.random()-.5).slice(0,cl.length*5);
+    hs.forEach((h,k)=>{const d=cl[k%cl.length];h.hwV=d;h.v.copy(offsetDir2(d,Math.random()*6.28,rr(.5,3)/ER*57.3));costume(h);});});
+  HUM.forEach(h=>{if(h.home<=-1000&&!h.costume&&!h.motorist&&!h.boat&&Math.random()<.25)costume(h);});sk.needsUpdate=true;
+  const N=Math.min(spots.length,900);const im=new THREE.InstancedMesh(geo,mat,N);const M=new THREE.Matrix4(),q=new THREE.Quaternion(),sc=new THREE.Vector3();
   for(let i=0;i<N;i++){const d=spots[i];const s=rr(1.5,2.6)*VISH*.8;const p=d.clone().multiplyScalar(ER+mtnH(d)+.75+s*.38);q.setFromUnitVectors(new THREE.Vector3(0,1,0),d);sc.set(s,s,s);M.compose(p,q,sc);im.setMatrixAt(i,M);}
   im.frustumCulled=false;earthSurf.add(im);FT.hwMesh=im;
   setTimeout(()=>{if(!started)return;toast('🎃 <b>Événement Halloween</b> jusqu\'au 31 octobre : citrouilles dans les campagnes, humains déguisés en aliens… Défi : faites peur à 30 personnes déguisées en disparaissant sous leurs yeux.','lore',11000);jlog('hw','Événement Halloween : début de la saison des citrouilles');},9000);}
