@@ -860,6 +860,8 @@ body:not(.mobile) #toasts{top:calc(194px + env(safe-area-inset-top,0px))!importa
 .merep{display:flex;gap:6px;align-items:center;margin-top:10px;position:sticky;bottom:0;background:var(--panel,#0b1426);padding:6px 0}.merep input{flex:1;min-width:0;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:var(--ink,#e8f1ff);padding:7px 8px;font-size:13px}
 #touch #tOrb.nofig{top:calc(350px + env(safe-area-inset-top,0px))!important}
 @media (orientation:landscape){body.mobile #touch #tOrb.nofig{left:calc(78px + env(safe-area-inset-left,0px))!important;top:calc(146px + env(safe-area-inset-top,0px))!important}}
+@media (orientation:portrait){body.mobile #ctxHint{left:calc(144px + env(safe-area-inset-left,0px))!important;right:calc(64px + env(safe-area-inset-right,0px))!important;width:auto!important;transform:none!important;translate:none!important;bottom:auto!important;top:calc(166px + env(safe-area-inset-top,0px))!important;max-width:none!important;text-align:left!important;font-size:10.5px!important;line-height:1.3;padding:4px 8px 4px 24px!important}
+body.mobile #ctxHint::before{left:6px;font-size:12px}}
 </style>
 
 <div id="stage"></div>
@@ -1066,7 +1068,7 @@ body:not(.mobile) #toasts{top:calc(194px + env(safe-area-inset-top,0px))!importa
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 156 · 23/10/2026</div>
+    <div class="verTag" data-notr>Version 157 · 23/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -5933,7 +5935,7 @@ function chainDown(c){S.cargo.splice(S.cargo.indexOf(c),1);EX.amb.push({name:c.n
 function astMesh(){const g=new THREE.Group();const geo=new THREE.IcosahedronGeometry(26,1);const pa=geo.attributes.position;for(let i=0;i<pa.count;i++){const k=.75+Math.random()*.5;pa.setXYZ(i,pa.getX(i)*k,pa.getY(i)*k,pa.getZ(i)*k);}geo.computeVertexNormals();
   g.add(new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0x6d625a,roughness:1,flatShading:true})));const s=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.glowW,color:0xff9a50,transparent:true,opacity:.6,depthWrite:false,blending:THREE.AdditiveBlending}));s.scale.setScalar(120);g.add(s);return g;}
 function startAst(){const cs=CITIES.filter(c=>!c.destroyed);if(!cs.length)return;const c=pick(cs);const gr=EC.clone().addScaledVector(c.v,ER);const out=c.v.clone().multiplyScalar(.55).addScaledVector(randTangent(c.v),.85).normalize();
-  POS.ast={c,gr,start:gr.clone().addScaledVector(out,52000),t:0,T:170,hold:0,pos:new V3(),g:astMesh()};POS.ast.pos.copy(POS.ast.start);scene.add(POS.ast.g);setEvNav(()=>POS.ast?POS.ast.pos:EC,'Astéroïde');sfx('alert');
+  POS.ast={c,gr,start:gr.clone().addScaledVector(out,52000),t:0,T:170,hold:0,pos:new V3(),g:astMesh()};POS.ast.pos.copy(POS.ast.start);scene.add(POS.ast.g);setEvNav(()=>POS.ast?POS.ast.pos:EC,'Astéroïde');adoptEv();sfx('alert');
   notifyOps('ALERTE ASTÉROÏDE','La base Janus a repéré un astéroïde qui file vers '+c.n+' (impact dans '+POS.ast.T+' s). Pour le dévier : 1) suivez la flèche orange (Maj+B pour en faire votre cible, puis B pour vous orienter) et sortez dans l\'espace — la MHD ou le monde négatif vont beaucoup plus vite ; 2) approchez-vous à moins de '+dstr(AST_R)+' de l\'astéroïde, dans le monde positif ; 3) maintenez E (rayon tracteur) pendant 5 secondes. Tant que le rayon le tient, il ralentit fortement.','red');}
 function endAst(ok){const A=POS.ast;if(!A)return;scene.remove(A.g);POS.ast=null;POS.astNext=S.t+rr(1800,2700);const reg=REG.findIndex(r=>r.c===A.c);
   if(ok){const p=Math.round(1200*ECO);S.score+=p;S.credits+=p;PO().deflect++;awakenAll(1.2);if(reg>=0)awaken(reg,8);disclosure=Math.min(100,disclosure+6);mEvent('deflect');
@@ -5942,16 +5944,16 @@ function endAst(ok){const A=POS.ast;if(!A)return;scene.remove(A.g);POS.ast=null;
     notifyOps('ASTÉROÏDE DÉVIÉ','L\'astéroïde passe au large de la Terre. Des milliers d\'habitants de '+A.c.n+' ont filmé la scène. +'+p,'green');}
   else{flash(.5);sfx('boom');mediaForce('dement',['Un météore explose au-dessus de '+A.c.n+' : vitres brisées, nombreux blessés légers']);
     notifyOps('IMPACT','L\'astéroïde a explosé dans le ciel de '+A.c.n+' (comme à Tcheliabinsk en 2013) : vitres brisées, panique. La propagande parle d\'un « phénomène naturel imprévisible ».','red');}}
-const AST_R=200000/30;// portée du rayon sur l'astéroïde : 200 km
+const AST_R=400000/30;// portée du rayon sur l'astéroïde : 200 km
 function astHint(){const A=POS.ast;if(!A||SYS!=='sol')return '';const d=ldist(A.pos);
-  if(d>=AST_R)return '☄ Astéroïde à '+dstr(d)+' : suivez la flèche orange et approchez à moins de '+dstr(AST_R)+' (MHD ou monde négatif pour aller vite)';
+  if(A.lock)return '☄ Verrouillé · déviation '+Math.min(100,Math.round(A.hold/5*100))+' %';if(d>=AST_R)return '☄ Astéroïde à '+dstr(d)+' : touchez « Y aller » ou suivez la flèche orange';
   if(S.world<0)return '☄ Astéroïde à portée : repassez dans le monde positif (Espace) pour utiliser le rayon';
   if(S.energy<=2)return '☄ Plus d\'énergie pour le rayon : rechargez au soleil puis maintenez E';
   return A.hold>0?'☄ Déviation '+Math.min(100,Math.round(A.hold/5*100))+' % — gardez E enfoncé !':'☄ Astéroïde à portée : maintenez E (rayon tracteur) pendant 5 s pour le dévier';}
 function updateAst(dt){
   if(!POS.ast){if(poSpace()&&!inIntro()&&S.t>Math.max(POS.astNext,GRACE+1500)&&evOK()){evMark();startAst();}return;}
   const A=POS.ast;if(SYS!=='sol'){endAst(false);return;}const held=A.heldF;A.heldF=false;
-  A.t+=dt*(held?.15:1);const f=Math.min(1,A.t/A.T);A.pos.lerpVectors(A.start,A.gr,f*f*(.4+.6*f)+(1-f)*0);A.g.position.copy(A.pos);A.g.rotation.x+=dt*.4;A.g.rotation.y+=dt*.3;
+  A.t+=dt*(held||A.lock?.15:1);const f=Math.min(1,A.t/A.T);const _ap=A.pos.clone();A.pos.lerpVectors(A.start,A.gr,f*f*(.4+.6*f)+(1-f)*0);A.g.position.copy(A.pos);{const dd=A.pos.distanceTo(S.pos);const can=S.world>0&&!S.dead&&!S.jump&&SYS==='sol';if(can&&dd<AST_R*(A.lock?1.6:1)){if(!A.lock){A.lock=true;if(AP.on)apStop('');sfx('grab');toast('☄ <b>Verrouillé sur l\'astéroïde</b> : la soucoupe le suit toute seule et le rayon tracteur le dévie.','score',5000);}S.pos.add(_v4.subVectors(A.pos,_ap));A.hold+=dt;A.heldF=true;if(!A.bm){A.bm=1;}beam.visible=true;const dv=_v5.subVectors(S.pos,A.pos);const len=Math.max(1,dv.length());dv.divideScalar(len);beam.position.copy(S.pos);beam.scale.set(5,len,5);_q.setFromUnitVectors(_v2.set(0,1,0),dv);beam.quaternion.copy(_q);beam.material.opacity=.2+.07*Math.sin(S.t*12);if(A.hold>=5){endAst(true);return;}}else if(A.lock&&!can){A.lock=false;}else if(A.lock){A.lock=false;toast('☄ Verrouillage perdu : rapprochez-vous de l\'astéroïde.','bad');}}A.g.rotation.x+=dt*.4;A.g.rotation.y+=dt*.3;
   if(f>=1){endAst(false);return;}}
 
 /* ---------- rayon E dans l'espace : interception, déviation, scan, récolte ---------- */
