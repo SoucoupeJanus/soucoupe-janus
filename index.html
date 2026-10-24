@@ -925,6 +925,13 @@ body.mobile #ovStart .homeCard{padding-top:calc(14px + env(safe-area-inset-top,0
 @keyframes htw{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1.4)}}
 @keyframes hfw{0%{transform:scale(.1);opacity:0}15%{opacity:1}100%{transform:scale(1.15);opacity:0}}
 @media (prefers-reduced-motion:reduce){.hp{animation:none!important;display:none}}
+
+body.mobile #touch .tb.tuto-hl,body.mobile #touch #stick.tuto-hl{z-index:25;outline:none!important;border:2px solid #ffb547!important;animation:tbBlink .9s ease-in-out infinite!important}
+body.mobile #touch .tb.tuto-hl svg,body.mobile #touch .tb.tuto-hl .tbl{color:#ffe2a8!important}
+body.mobile:not(.pcui) #touch .tb.tuto-hl::after,body.mobile #touch #stick.tuto-hl::after{content:'👇';position:absolute;left:50%;top:-34px;transform:translateX(-50%);font-size:24px;animation:tbArrow .9s ease-in-out infinite;filter:drop-shadow(0 0 6px #ffb547);pointer-events:none}
+body.mobile #touch #stick.tuto-hl::after{top:-40px}
+@keyframes tbBlink{0%,100%{background:rgba(255,181,71,.12);box-shadow:0 0 0 0 rgba(255,181,71,.7),0 0 10px rgba(255,181,71,.4);transform:scale(1)}50%{background:rgba(255,181,71,.55);box-shadow:0 0 0 14px rgba(255,181,71,0),0 0 28px rgba(255,181,71,.95);transform:scale(1.14)}}
+@keyframes tbArrow{0%,100%{translate:0 0}50%{translate:0 8px}}
 </style>
 
 <div id="stage"></div>
@@ -1131,7 +1138,7 @@ body.mobile #ovStart .homeCard{padding-top:calc(14px + env(safe-area-inset-top,0
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 161 · 24/10/2026</div>
+    <div class="verTag" data-notr>Version 162 · 24/10/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
