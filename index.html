@@ -945,6 +945,7 @@ body.mobile #touch #stick.tuto-hl::after{top:-40px}
 @media (orientation:landscape){body.mobile:not(.pcui) #touch #tCloud{right:calc(78px + env(safe-area-inset-right,0px))!important;bottom:calc(190px + env(safe-area-inset-bottom,0px))!important;left:auto!important;top:auto!important}}
 body.mobile:not(.pcui) #hud .bc{opacity:0;visibility:hidden;transition:opacity .2s,visibility 0s .2s}
 body.mobile:not(.pcui).gshow #hud .bc,body.mobile:not(.pcui) #hud .bc:has(.tuto-hl),body.mobile:not(.pcui) #hud .bc.tuto-hl{opacity:1;visibility:visible;transition:opacity .15s}
+#opsChip.go{pointer-events:auto;cursor:pointer}#opsChip.go::after{content:' ›';font-weight:700}
 </style>
 
 <div id="stage"></div>
@@ -1151,7 +1152,7 @@ body.mobile:not(.pcui).gshow #hud .bc,body.mobile:not(.pcui) #hud .bc:has(.tuto-
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 170 · 05/11/2026</div>
+    <div class="verTag" data-notr>Version 171 · 06/11/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -3650,7 +3651,9 @@ function updateAlert(dt,reports){awTension();
 
 /* ---------- HUD ---------- */
 const labelEls=new Map();
-const GO_RE=/^(c\d|vil|sec|silo|el_|an2_|exb_|pb_|iss$|nasca$|pr_|an_|ord$|orb\d)/;
+function opsGo(){const el=$('opsChip');if(!el||!el._go||!started||paused)return;if(el._go==='call'&&CALLS[0]){const c=CALLS[0],v=new V3(),T=CALLT[c.ty];setNavPos(()=>callWorld(c,v),T.n+' · '+c.city);navGo();if(!AP.on)apToggle(true);else{AP.name=apTargetName();toast('🛸 Pilote automatique : cap sur <b>'+esc(AP.name)+'</b>','');}}}
+setTimeout(()=>{const el=$('opsChip');if(el)el.addEventListener('click',opsGo);},0);
+const GO_RE=/^(call\d|devt$|hunt$|n10$|pkg$|rdv$|ast$|esc$|wish\d|c\d|vil|sec|silo|el_|an2_|exb_|pb_|iss$|nasca$|pr_|an_|ord$|orb\d)/;
 function mk(key,cls){let e=labelEls.get(key);if(!e){e=document.createElement('div');e.className='mk '+cls;e.dataset.k=key;if(GO_RE.test(key)||BODIES.some(b=>b.key===key)||NEGS.some(n=>n.key===key)){e._go=1;e.classList.add('go');}$('labels').appendChild(e);labelEls.set(key,e);}e.dataset.used='1';return e;}
 function place(e,p,txt){if(e._go){(e._p||(e._p=new V3())).copy(p);}_v1.copy(p).project(camera);const behind=_v1.z>1;if(behind||Math.abs(_v1.x)>1.05||Math.abs(_v1.y)>1.05){e.style.display='none';return false;}
   e.style.display='block';e.style.left=((_v1.x+1)/2*innerWidth)+'px';e.style.top=((1-_v1.y)/2*innerHeight)+'px';if(e._t!==txt){e.textContent=txt;e._t=txt;}return true;}
@@ -6035,7 +6038,14 @@ function poSpace(){return SYS==='sol'&&!S.dead&&!S.jump;}
 function setNavPos(fn,name){nav.ext=fn;nav.extName=name;nav.city=-1;}
 function navGo(){if(started&&!S.dead)S.autoB=3.5;}
 
-function labelGo(e){const k=e.dataset.k;let name=(e._t||'').replace(/\s{2,}.*$/,'').replace(/^[✓▲⌂⚙🛰✦🔮📦]\s*/u,'').replace(/ · .*$/,'').trim();
+function labelGo(e){const k=e.dataset.k;
+  if(/^(call\d|devt$|hunt$|n10$|pkg$|rdv$|ast$|esc$|wish\d)/.test(k)){let fn=null,nm=(e._t||'').replace(/^[^\p{L}\d]+/u,'').replace(/\s{2,}.*$/,'').trim();const v=new V3();
+    if(/^call\d/.test(k)){const c=CALLS[+k.slice(4)];if(c){fn=()=>callWorld(c,v);const T=CALLT[c.ty];nm=T.n+' · '+c.city;}}
+    else if(k==='devt'&&DV.ev){const E=DV.ev;fn=()=>devWorld(E,v);nm=E.n+' · '+E.city;}
+    if(!fn){if(!e._p)return;const P=e._p;fn=()=>P;}
+    nm=nm.replace(/ · \d+:\d+.*$/,'').replace(/ · (REC|étape).*$/,'');
+    setNavPos(fn,nm);navGo();if(!AP.on)apToggle(true);else{AP.name=apTargetName();toast('🛸 Pilote automatique : cap sur <b>'+esc(AP.name)+'</b>','');}return;}
+  let name=(e._t||'').replace(/\s{2,}.*$/,'').replace(/^[✓▲⌂⚙🛰✦🔮📦]\s*/u,'').replace(/ · .*$/,'').trim();
   if(/^c\d+$/.test(k)){nav.ext=null;nav.extName=null;nav.city=+k.slice(1);name=CITIES[nav.city].n;}
   else if(k==='iss'){setNavPos(()=>ISS.pos,'Station spatiale (ISS)');name='Station spatiale (ISS)';}
   else{const i=nav.list.findIndex(b=>b.key===k);if(i>=0){nav.ext=null;nav.extName=null;nav.city=-1;nav.i=i;name=nav.list[i].name;}
@@ -6237,11 +6247,11 @@ function mmss(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s
 function rdvChip(){const r=UMO.rdv;if(!r||r.done)return '';if(S.t<r.at-30)return '📣 Apparition annoncée · <b>'+esc(r.city.n)+'</b> · dans <b>'+mmss(r.at-30-S.t)+'</b>';
   const ei=earthInfo();const near=curBody===EARTH&&angDeg(ei.dir,r.city.v)<3.5;const n=parseInt(($('wit')||{}).textContent)||0;
   return '📣 <b>C\'est l\'heure !</b> '+esc(r.city.n)+' · reste <b>'+mmss(r.at+r.win-S.t)+'</b>'+(near?' · 👁 '+n+'/5 témoins'+(n>=5?' → disparaissez !':''):' · rejoignez la ville');}
-function updOpsChip(){const el=$('opsChip');if(!el)return;let h='';
+function updOpsChip(){const el=$('opsChip');if(!el)return;let h='';let go=null;
   if(UMO.rdv&&!UMO.rdv.done)h=rdvChip();
   else if(POS.ast)h='☄ Astéroïde → <b>'+esc(POS.ast.c.n)+'</b> · impact <b>'+mmss((POS.ast.T-POS.ast.t)/(POS.ast.heldF?.15:1))+'</b>'+(POS.ast.hold>0?' · déviation '+Math.min(100,Math.round(POS.ast.hold/5*100))+' %':'');
   else if(ORBD.length)h=orbChip();
-  else if(CALLS.length&&!CALLS[0].done)h=callChip();
+  else if(CALLS.length&&!CALLS[0].done){h=callChip();go='call';}
   else if(featChip())h=featChip();
   else if(POS.escort)h=POS.escort.int&&POS.escort.int.latched?'▲ MJ-12 accroché à l\'ambassadeur · capture <b>'+Math.min(100,Math.round(POS.escort.cap/18*100))+' %</b>':POS.escort.phase==='wait'?'⌂ Escorte : rejoignez l\'ambassadeur · <b>'+mmss(POS.escort.until-S.t)+'</b>':'⌂ Escorte en cours · restez près de l\'ambassadeur';
   else if(POS.race)h='⏱ '+esc(POS.race.r.n)+' · <b>'+(S.t-POS.race.t0).toFixed(1)+' s</b> / '+POS.race.r.par+' s';
@@ -6249,7 +6259,7 @@ function updOpsChip(){const el=$('opsChip');if(!el)return;let h='';
   else if(POS.scanId&&anomNear())h='✦ Étude en cours · <b>'+Math.min(100,Math.round(POS.scanT/6*100))+' %</b>';
   else if(POS.order)h='📦 Commande '+esc(POS.order.base.n)+' · <b>'+mmss(POS.order.until-S.t)+'</b>';
   {const rv=!!(UMO.rdv&&!UMO.rdv.done);el.classList.toggle('rdv',rv);el.classList.toggle('now',rv&&S.t>=UMO.rdv.at-30);}
-  if(h!==POS.chip){POS.chip=h;el.innerHTML=h;el.hidden=!h;}}
+  el._go=go;if(el.classList.contains('go')!==!!go)el.classList.toggle('go',!!go);if(h!==POS.chip){POS.chip=h;el.innerHTML=h;el.hidden=!h;}}
 function updatePlanOps(dt){updateOrders();updateRace();updateEscort(dt);updateProbes(dt);updateAnoms();updateChain();updateAst(dt);if((++POS.fr||(POS.fr=1))%6===0)updOpsChip();}
 function poPanel(){const o=POS.order,r=PO().res;
   return `<h3>Opérations planétaires</h3><div class="grid2">
