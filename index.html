@@ -956,7 +956,7 @@ body.pcui #touch #tCtx{right:304px!important;bottom:148px!important}
 #touch #tCtx[hidden]{display:none!important}
 
 /* ---- v174 : stats du vaisseau compactes (mobile), détail au toucher pendant 2 s ---- */
-#hud #miniL{pointer-events:auto!important;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s}
+#hud #miniL{pointer-events:auto!important;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .25s}
 #miniL.cmp{width:auto!important;min-width:0!important;max-width:none!important;flex-direction:column!important;gap:3px!important;padding:6px 9px!important;border-radius:12px;transform:scale(1.12)!important}
 #miniL.cmp .g1{flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:7px;row-gap:5px;width:100px}
 #miniL.cmp .awp,#miniL.cmp .alt2,#miniL.cmp .cargo,#miniL.cmp .wit small,#miniL.cmp .sc small,#miniL.cmp .aw small{display:none!important}
@@ -995,7 +995,7 @@ body.pcui #touch #tCtx{right:304px!important;bottom:148px!important}
   <div class="panel" id="tutoCard" hidden></div>
   <div class="panel" id="fleetBox" hidden></div>
   <div class="panel" id="landBox" hidden></div>
-  <div id="miniL" class="cmp" title="Toucher pour voir le détail"><div class="g1"><div class="sc"><span id="mlSc">0</span><small>PTS</small></div><div class="aw"><span id="mlAw">0 %</span><small>ÉVEIL</small></div><div class="awp"><i><b id="mlAwP"></b><u style="right:-1px"></u></i><small id="mlAwN"></small></div><div class="r">⚡<i><b id="mlEn" style="background:#ffb547"></b></i></div><div class="r">🛡<i><b id="mlSh" style="background:#5aa8ff"></b></i></div><div class="r">✚<i><b id="mlHu" style="background:#e8f1ff"></b></i></div></div><div class="g2"><div class="sep"></div><div class="r wit">👁 <b id="mlWit">0</b><small>témoins</small></div><div class="r"><span class="segs" id="mlSeg"><u></u><u></u><u></u><u></u><u></u></span></div><div class="alt2" id="mlAl"></div><div class="cargo" id="mlCg"></div></div></div>
+  <div id="miniL" class="cmp" title="Toucher pour déployer ou réduire"><div class="g1"><div class="sc"><span id="mlSc">0</span><small>PTS</small></div><div class="aw"><span id="mlAw">0 %</span><small>ÉVEIL</small></div><div class="awp"><i><b id="mlAwP"></b><u style="right:-1px"></u></i><small id="mlAwN"></small></div><div class="r">⚡<i><b id="mlEn" style="background:#ffb547"></b></i></div><div class="r">🛡<i><b id="mlSh" style="background:#5aa8ff"></b></i></div><div class="r">✚<i><b id="mlHu" style="background:#e8f1ff"></b></i></div></div><div class="g2"><div class="sep"></div><div class="r wit">👁 <b id="mlWit">0</b><small>témoins</small></div><div class="r"><span class="segs" id="mlSeg"><u></u><u></u><u></u><u></u><u></u></span></div><div class="alt2" id="mlAl"></div><div class="cargo" id="mlCg"></div></div></div>
   <div class="tc">
     <div class="world" id="worldBadge"><b>g<sub>μν</sub></b> &nbsp;Monde positif</div>
     <div class="sub" id="flight">—</div>
@@ -1177,7 +1177,7 @@ body.pcui #touch #tCtx{right:304px!important;bottom:148px!important}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 175 · 06/11/2026</div>
+    <div class="verTag" data-notr>Version 176 · 06/11/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -6656,12 +6656,17 @@ document.querySelector('#ovMore .moreList').addEventListener('click',e=>{const b
     if(v>=1){win=true;const w=phaseWin();const left=Math.max(0,1-(S.phaseT||0)/w);v=left;late=left<.35;}
     {const gs=!!(TOUCH.ch||K.Space||(S.charge||0)>.01||S.phaseT>0&&S.charge>=1||S.residual>0);if(document.body.classList.contains('gshow')!==gs)document.body.classList.toggle('gshow',gs);}arcEl.style.strokeDasharray=(v*100).toFixed(1)+' 100';ring.classList.toggle('win',win&&!late);ring.classList.toggle('late',late);})();})();
 
-/* v175 : stats compactes ; un toucher ouvre le détail, qui se replie après 2 s */
-(function(){let tm=0;const E=()=>document.getElementById('miniL');
-  const sync=()=>{const el=E();if(!el||!el.classList.contains('cmp'))return;[['mlEn'],['mlSh'],['mlHu']].forEach(([id])=>{const b=document.getElementById(id);if(b)b.style.setProperty('--h',b.style.width||'0%');});};
-  
-  const tog=()=>{const el=E();if(!el)return;clearTimeout(tm);if(el.classList.contains('cmp')){el.classList.remove('cmp');el.classList.add('open');tm=setTimeout(()=>{const el=E();if(!el)return;el.classList.add('cmp');el.classList.remove('open');sync();},2000);}else{el.classList.add('cmp');el.classList.remove('open');sync();}};
+/* v176 : stats compactes ; un toucher déploie / replie le détail, avec transition */
+(function(){const E=()=>document.getElementById('miniL');let busy=false;
+  const sync=()=>{[['mlEn'],['mlSh'],['mlHu']].forEach(([id])=>{const b=document.getElementById(id);if(b)b.style.setProperty('--h',b.style.width||'0%');});};
+  const save=o=>{try{localStorage.setItem('janus_mlopen',o?'1':'0');}catch(e){}};
+  const R0='inset(0 0 0 0 round 12px)',RS='inset(0 45% 78% 0 round 12px)';
+  const open=(el)=>{el.classList.remove('cmp');el.classList.add('open');if(el.animate){busy=true;const a=el.animate([{clipPath:RS,opacity:.35},{clipPath:R0,opacity:1}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'});a.onfinish=a.oncancel=()=>busy=false;}};
+  const close=(el)=>{const fin=()=>{el.classList.add('cmp');el.classList.remove('open');sync();if(el.animate){const b=el.animate([{opacity:.3,clipPath:'inset(0 0 0 0 round 999px)'},{opacity:1,clipPath:R0}],{duration:200,easing:'ease-out'});b.onfinish=b.oncancel=()=>busy=false;}else busy=false;};
+    if(el.animate){busy=true;const a=el.animate([{clipPath:R0,opacity:1},{clipPath:RS,opacity:.35}],{duration:240,easing:'cubic-bezier(.5,0,.8,.4)'});a.onfinish=fin;a.oncancel=fin;}else fin();};
+  const tog=()=>{const el=E();if(!el||busy)return;if(el.classList.contains('cmp')){open(el);save(true);}else{close(el);save(false);}};
   window.addEventListener('pointerdown',e=>{if(e.target&&e.target.closest&&e.target.closest('#miniL')){e.stopPropagation();e.preventDefault();tog();}},true);
+  setTimeout(()=>{let o=false;try{o=localStorage.getItem('janus_mlopen')==='1';}catch(e){}const el=E();if(el&&o){el.classList.remove('cmp');el.classList.add('open');}},0);
 })();
 </script>
 
