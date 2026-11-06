@@ -1161,7 +1161,7 @@ body.pcui #touch #tCtx{right:304px!important;bottom:148px!important}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 172 · 06/11/2026</div>
+    <div class="verTag" data-notr>Version 173 · 06/11/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -1380,7 +1380,7 @@ const DIFFS=[{n:'Découverte',d:'Armée lente, pertes réduites, inversion facil
  {n:'Difficile',d:'Peu de points, améliorations hors de prix, armée agressive, fenêtre de phase étroite.',pts:.55,cost:3.6,alert:1.35,dmg:1.4,phase:.8,prop:1.3},
  {n:'Légende',d:'Pour les pilotes aguerris : chaque erreur se paie, la propagande est féroce.',pts:.4,cost:5,alert:1.7,dmg:1.8,phase:.65,prop:1.6}];
 let DIFFI=1;try{const r=localStorage.getItem('janus_diff');if(r!==null&&+r>=0&&+r<=3)DIFFI=+r;}catch(e){}const DF=()=>DIFFS[DIFFI];const ORB={DAY:1200,YEAR:3600,MONTH:4800,on:true,dOff:0,dFreeze:null,q:new THREE.Quaternion(),qi:new THREE.Quaternion(),eH:new THREE.Vector3()};const MOD={};const md=k=>MOD[k]||0;let GRACE=300;const LK=.6;const VSHORT=['normale','loin'];let VIEWI=1;const VIEWS=[{d:15,h:3.5,n:'normale'},{d:38,h:11,n:'éloignée'}];VIEWI=0;try{const r=localStorage.getItem('janus_view2');if(r==='1')VIEWI=1;else if(r!=='0'&&matchMedia('(pointer:coarse)').matches)VIEWI=1;}catch(e){if(matchMedia('(pointer:coarse)').matches)VIEWI=1;}
-const D2R=Math.PI/180, AU=50000, CPLUS=30000, CMINUS=CPLUS*10;
+const UNI=1.5,ER0=1000;const D2R=Math.PI/180, AU=50000*UNI, CPLUS=30000*UNI, CMINUS=CPLUS*10;
 const $=id=>document.getElementById(id);
 const V3=THREE.Vector3;
 const _v1=new V3(),_v2=new V3(),_v3=new V3(),_v4=new V3(),_v5=new V3(),_lp=new V3(),_lt=new V3(),_m=new THREE.Matrix4(),_q=new THREE.Quaternion(),_c=new THREE.Color();
@@ -1396,9 +1396,9 @@ function vn(x,y,z){const xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z);let 
 function fbm(x,y,z,o){let s=0,a=.5,f=1,n=0;for(let i=0;i<o;i++){s+=a*vn(x*f,y*f,z*f);n+=a;a*=.5;f*=2.03;}return s/n;}
 function llv(lat,lon){const la=lat*D2R,lo=(lon-20)*D2R;return new V3(-Math.cos(la)*Math.cos(lo),Math.sin(la),Math.cos(la)*Math.sin(lo));}
 function vll(v){return {lat:Math.asin(clamp(v.y,-1,1))/D2R,lon:Math.atan2(v.z,-v.x)/D2R+20};}
-function angDeg(a,b){return Math.acos(clamp(a.dot(b),-1,1))/D2R;}
+function angDeg(a,b){return Math.acos(clamp(a.dot(b),-1,1))/D2R*UNI;} // degrés « équivalents » (Terre de 1000 u), pour garder les distances au sol
 function randTangent(v){_v1.set(rr(-1,1),rr(-1,1),rr(-1,1));return new V3().crossVectors(v,_v1).normalize();}
-function offsetDir(v,deg){const t=randTangent(v);const a=deg*LK*D2R;return v.clone().multiplyScalar(Math.cos(a)).addScaledVector(t,Math.sin(a)).normalize();}
+function offsetDir(v,deg){const t=randTangent(v);const a=deg*LK*D2R/UNI;return v.clone().multiplyScalar(Math.cos(a)).addScaledVector(t,Math.sin(a)).normalize();}
 
 /* ---------- textures ---------- */
 function glowTex(stops,size=128){const c=document.createElement('canvas');c.width=c.height=size;const g=c.getContext('2d');const gr=g.createRadialGradient(size/2,size/2,0,size/2,size/2,size/2);stops.forEach(s=>gr.addColorStop(s[0],s[1]));g.fillStyle=gr;g.fillRect(0,0,size,size);return new THREE.CanvasTexture(c);}
@@ -1607,7 +1607,7 @@ function earthColor(v,c){const L=landScore(v);const lat=Math.abs(Math.asin(v.y)/
 function noisyCol(base,var_,f,o){return (v,c)=>{const n=fbm(v.x*f+3,v.y*f,v.z*f,o||3);c.setRGB(...base).multiplyScalar(1-var_+n*var_*2);};}
 function bands(cols,freq,turb){return (v,c)=>{const n=fbm(v.x*3,v.y*3,v.z*3,3);let t=(Math.sin(v.y*freq+n*turb)+1)/2;const i=Math.min(cols.length-2,Math.floor(t*(cols.length-1)));mix(c,cols[i],cols[i+1],t*(cols.length-1)-i);};}
 
-const SUN={key:'soleil',name:'Soleil',pos:new V3(0,0,0),R:3000,g:60,type:'star',lore:'Le Soleil recharge vos cellules (photons d\'énergie positive). Inversé, vous ne le voyez plus et il vous repousse violemment : masses de signes opposés.'};
+const SUN={key:'soleil',name:'Soleil',pos:new V3(0,0,0),R:3000*UNI,g:60,type:'star',lore:'Le Soleil recharge vos cellules (photons d\'énergie positive). Inversé, vous ne le voyez plus et il vous repousse violemment : masses de signes opposés.'};
 makeBody(SUN);
 SUN.mesh=new THREE.Mesh(new THREE.SphereGeometry(SUN.R,48,32),new THREE.MeshBasicMaterial({color:0xffd27a}));SUN.group.add(SUN.mesh);
 SUN.glow=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.sun,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));SUN.glow.scale.setScalar(SUN.R*9);SUN.group.add(SUN.glow);
@@ -1622,9 +1622,9 @@ const PL=[
  {key:'uranus',name:'Uranus',d:960000,a:160,R:1100,g:9,atm:0xa8f0f0,colorFn:bands([hx(0x8fd8dc),hx(0xa9ece9),hx(0x9fe3e6)],6,1),lore:'Uranus : glacée, couchée sur le côté. Si loin du Soleil que vos capteurs ne rechargent presque plus.'},
  {key:'neptune',name:'Neptune',d:1450000,a:248,R:1050,g:11,atm:0x6d8cff,colorFn:bands([hx(0x2c50b8),hx(0x3f6fe0),hx(0x5a86f0)],9,3),lore:'Neptune : la dernière planète. Dans le monde négatif, c₋ ≈ 10 c₊ et les distances sont contractées : le trajet devient une affaire de secondes.'},
 ];
-PL.forEach(p=>{p.pos=polar(p.d,p.a);p.type=p.R>1000?'gas':'rock';makeBody(p);});
+PL.forEach(p=>{if(p.key!=='terre')p.d*=UNI;p.R*=UNI;p.pos=polar(p.d,p.a);p.type=p.R>1000*UNI?'gas':'rock';makeBody(p);});
 const EARTH=BODIES.find(b=>b.key==='terre');
-const MOON=makeBody({key:'lune',name:'Lune',pos:EARTH.pos.clone().add(new V3(-7000,900,9000)),R:165,g:2,type:'rock',colorFn:(v,c)=>{const n=fbm(v.x*7,v.y*7,v.z*7,4);const k=vn(v.x*14,v.y*14,v.z*14);c.setRGB(.6,.6,.62).multiplyScalar(.75+n*.4-(k>.78?.25:0));},lore:'La Lune : aucun témoin, aucun radar. L\'endroit idéal pour souffler et préparer la prochaine apparition.'});
+const MOON=makeBody({key:'lune',name:'Lune',pos:EARTH.pos.clone().add(new V3(-7000,900,9000).multiplyScalar(UNI)),R:165*UNI,g:2,type:'rock',colorFn:(v,c)=>{const n=fbm(v.x*7,v.y*7,v.z*7,4);const k=vn(v.x*14,v.y*14,v.z*14);c.setRGB(.6,.6,.62).multiplyScalar(.75+n*.4-(k>.78?.25:0));},lore:'La Lune : aucun témoin, aucun radar. L\'endroit idéal pour souffler et préparer la prochaine apparition.'});
 // anneaux de Saturne
 (function(){const S=BODIES.find(b=>b.key==='saturne');const inR=S.R*1.3,outR=S.R*2.3;const g=new THREE.RingGeometry(inR,outR,128,1);const p=g.attributes.position,uv=g.attributes.uv;
   for(let i=0;i<p.count;i++){const r=Math.hypot(p.getX(i),p.getY(i));uv.setXY(i,(r-inR)/(outR-inR),.5);}
@@ -1633,8 +1633,8 @@ const MOON=makeBody({key:'lune',name:'Lune',pos:EARTH.pos.clone().add(new V3(-70
   const gr=new THREE.Mesh(new THREE.RingGeometry(inR,outR,48,2),ghostMat);gr.rotation.copy(m.rotation);gr.visible=false;S.group.add(gr);S.ringGhost=gr;})();
 // conglomérats de masse négative (visibles seulement dans le monde négatif)
 const NEGS=[];
-[[1.65e6,2.2e5,4.2e5],[-1.25e6,-1.2e5,1.5e6],[2.4e5,3.4e5,-2.05e6]].forEach((p,i)=>{
-  const o={key:'neg'+i,name:'Conglomérat négatif '+['Α','Β','Γ'][i],pos:new V3(...p),R:28000,g:30,neg:true,visited:false};o.GM=o.g*o.R*o.R;
+[[1.65e6,2.2e5,4.2e5],[-1.25e6,-1.2e5,1.5e6],[2.4e5,3.4e5,-2.05e6]].map(p=>p.map(x=>x*UNI)).forEach((p,i)=>{
+  const o={key:'neg'+i,name:'Conglomérat négatif '+['Α','Β','Γ'][i],pos:new V3(...p),R:28000*UNI,g:30,neg:true,visited:false};o.GM=o.g*o.R*o.R;
   o.group=new THREE.Group();o.group.position.copy(o.pos);scene.add(o.group);
   o.mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(o.R,3),new THREE.MeshBasicMaterial({color:0x5a0618}));o.group.add(o.mesh);
   const gl=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.red,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));gl.scale.setScalar(o.R*5);o.group.add(gl);
@@ -1687,7 +1687,7 @@ TREES.forEach((v,i)=>{const s=rr(.7,1.5);trees.setMatrixAt(i,surfMat(v,-.2,0,s,s
 const POIREG=[];var _FLD=null;
 function poiFree(v,minC,minP){if(nearestCity(v).a<minC)return false;for(const p of POIREG)if(angDeg(p,v)<minP)return false;if(_FLD)for(const f of _FLD)if(angDeg(f.v,v)<1.3)return false;return true;}
 function spreadSpot(v0,r,minC,minP){const B=tanBasis(v0);const fp=(v,mc,mp)=>{if(!isLand(v)||!poiFree(v,mc,mp))return false;const b=tanBasis(v);for(let i=0;i<8;i++){const t=i/8*Math.PI*2;if(!isLand(surfPt(v,b,Math.cos(t)*r,Math.sin(t)*r,0).normalize()))return false;}return true;};
-  const ring=(k,j,n)=>{const ang=k*.25*D2R,t=j/n*Math.PI*2+k*.37;return v0.clone().multiplyScalar(Math.cos(ang)).addScaledVector(B.e,Math.sin(ang)*Math.cos(t)).addScaledVector(B.n,Math.sin(ang)*Math.sin(t)).normalize();};
+  const ring=(k,j,n)=>{const ang=k*.25*D2R/UNI,t=j/n*Math.PI*2+k*.37;return v0.clone().multiplyScalar(Math.cos(ang)).addScaledVector(B.e,Math.sin(ang)*Math.cos(t)).addScaledVector(B.n,Math.sin(ang)*Math.sin(t)).normalize();};
   let out=null;for(const f of [1,.7,.45]){for(let k=0;k<=32&&!out;k++){const n=k?16:1;for(let j=0;j<n;j++){const v=k?ring(k,j,n):v0;if(fp(v,minC*f,minP*f)){out=v;break;}}}if(out)break;}
   out=out||v0;POIREG.push(out);clearSite(out,r);return out;}
 function setLL(o,v){const l=vll(v);o.lat=l.lat;o.lon=l.lon;}
@@ -1739,7 +1739,7 @@ humMesh.count=HUM.length;cowMesh.count=COWS.length;
 HUM.forEach((h,i)=>{humMesh.setMatrixAt(i,surfMat(h.v,0,0,1,1,1,_m));humMesh.setColorAt(i,_c.setRGB(...h.col));});
 COWS.forEach((c,i)=>{cowMesh.setMatrixAt(i,surfMat(c.v,0,rr(0,6),1,1,1,_m));cowMesh.setColorAt(i,_c.setRGB(...c.col));});
 function homeOf(h){if(h.callV)return h.callV;if(h.n10V)return h.n10V;if(h.evV)return h.evV;if(h.hwV)return h.hwV;if(h.home<=-1000)return VILLAGES[-1000-h.home].v;return h.home>=0?CITIES[h.home].v:FARMS[-1-h.home].v;}
-function homeRad(h){if(h.callV)return 1.6/ER*57.3;if(h.n10V)return 2.5/ER*57.3;if(h.evV)return 3/ER*57.3;if(h.hwV)return 3.5/ER*57.3;if(h.motorist)return .03;return (h.home<=-1000?.4:h.home>=0?1.8:.9)*LK;}
+function homeRad(h){if(h.callV)return 1.6/ER0*57.3;if(h.n10V)return 2.5/ER0*57.3;if(h.evV)return 3/ER0*57.3;if(h.hwV)return 3.5/ER0*57.3;if(h.motorist)return .03;return (h.home<=-1000?.4:h.home>=0?1.8:.9)*LK;}
 
 /* ---------- la soucoupe ---------- */
 const ship=new THREE.Group();scene.add(ship);
@@ -2018,7 +2018,7 @@ function anyOverlay(){return OVS.some(id=>!$(id).hidden);}
 function openOv(id,render){{const o0=$(id);if(o0)o0._openT=performance.now();}OVS.forEach(o=>$(o).hidden=o!==id);if(document.body.classList.contains('mobile')){const o=$(id);if(o&&!o.querySelector(':scope>.ovx'))o.insertAdjacentHTML('afterbegin','<button class="ovx" type="button" data-act="'+(id==='ovELab'?'elabExit':'close')+'" aria-label="Fermer">✕</button>');}if(render)render();$(id).hidden=false;paused=true;if(id==='ovPause'){refreshSaveUI();renderDiff();}if(document.exitPointerLock)document.exitPointerLock();}
 let TGTTAB='city',TGTQ='';
 function tgtPlaces(){const P=[];const ei=earthInfo();const surf=(v,alt)=>{const P0=new V3();return ()=>P0.copy(EC).addScaledVector(v,ER+(alt||40));};
-  const dkm=v=>angDeg(ei.dir,v)*D2R*EKM;
+  const dkm=v=>angDeg(ei.dir,v)/UNI*D2R*EKM;
   CITIES.forEach((c,i)=>{if(!c.destroyed)P.push({cat:'city',ic:'🏙',n:c.n,sub:c.pop?'':'',v:c.v,city:i});});
   EBASES.forEach(b=>{if(elabVis(b))P.push({cat:'lab',ic:'⚗',n:b.n,v:b.dir,col:(ELTH[b.id]||[])[0],pos:surf(b.dir,b.sea?-20:40)});});
   ANC.forEach(a=>{if(a.dir)P.push({cat:'site',ic:'🗿',n:a.n,sub:a.pl||'',v:a.dir,pos:surf(a.dir,a.sea?-20:40)});});
@@ -2984,7 +2984,7 @@ function callBuild(c){const g=new THREE.Group();const r=ER+mtnH(c.dir);g.positio
 }
 function callFree(c){if(!c.g)return;c.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==undefined){if(o.material.map&&o.material.map!==TEX.glowW&&c.fx.tx===o.material.map)o.material.map.dispose();o.material.dispose();}});earthSurf.remove(c.g);c.g=null;}
 function callWorld(c,out){return out.copy(c.dir).multiplyScalar(ER+mtnH(c.dir)+4).add(EC);}
-function callSite(cv,cu){const clr=(cu||20)/ER*57.3;let best=null,bs=-1;
+function callSite(cv,cu){const clr=(cu||20)/ER0*57.3;let best=null,bs=-1;
   for(let t=0;t<60;t++){const o=offsetDir(cv,rr(2.8,5));if(landScore(o)<=.03)continue;let mh=mtnH(o),mn=mh,ok=true;
     for(let k=0;k<8&&ok;k++){const q=offsetDir2(o,k/8*Math.PI*2,clr*.8);if(landScore(q)<=0)ok=false;const hq=mtnH(q);mh=Math.max(mh,hq);mn=Math.min(mn,hq);}if(!ok)continue;
     let md=99;for(const b of BUILD){const a=angDeg(o,b.v);if(a<md)md=a;if(md<clr)break;}if(md<clr)continue;
@@ -2996,12 +2996,12 @@ function callSpawn(){const cand=CITIES.map((c,i)=>({c,i,w:5+(REG[i]?REG[i].con:0
   const c={ty,ci:ch.i,city:ch.c.n,dir,t:0,T:rr(190,260),hold:0,trap,org:trap?(Math.random()<.7?null:pick(CALLORG)):pick(CALLORG),hums:[],done:false};
   callBuild(c);CALLS.push(c);
   const hs=HUM.filter(h=>h.alive&&!h.cur&&!h.boat&&!h.lift&&!h.motorist&&h.home===ch.i).sort(()=>Math.random()-.5).slice(0,trap?6:16);
-  hs.forEach((h,k)=>{const a=k/hs.length*Math.PI*2+rr(-.12,.12),rad=(ty==='message'?rr(15,18.5):rr(11.5,16))/ER*57.3;h.v.copy(offsetDir2(dir,a,rad));h.callV=h.v.clone();h.caller=1;c.hums.push(h);});
+  hs.forEach((h,k)=>{const a=k/hs.length*Math.PI*2+rr(-.12,.12),rad=(ty==='message'?rr(15,18.5):rr(11.5,16))/ER0*57.3;h.v.copy(offsetDir2(dir,a,rad));h.callV=h.v.clone();h.caller=1;c.hums.push(h);});
   const T=CALLT[ty];toast(T.ic+' <b>'+T.n+' à '+c.city+'</b> · '+T.d+' Organisé par '+(c.org||'<i>un organisateur inconnu</i> ⚠')+'. Survolez le rassemblement à basse altitude pour répondre à l\'appel.','lore',10000);
   setEvNav(()=>callWorld(c,_cw),T.n+' · '+c.city);mediaEvent('call',{city:c.city});
   addPost({handle:'@'+(c.org?slug(c.org).slice(0,14):'contact')+'_'+slug(c.city).slice(0,8),city:c.city,text:pick(CALLPOST[ty]).replace(/\{c\}/g,c.city),pot:rr(4000,30000),kind:'awake'});
   return true;}
-function offsetDir2(v,a,deg){const t=_cl.set(0,1,0).cross(v);if(t.lengthSq()<1e-6)t.set(1,0,0);t.normalize();const b=new THREE.Vector3().crossVectors(v,t);const r=deg*D2R;return v.clone().multiplyScalar(Math.cos(r)).addScaledVector(t,Math.sin(r)*Math.cos(a)).addScaledVector(b,Math.sin(r)*Math.sin(a)).normalize();}
+function offsetDir2(v,a,deg){const t=_cl.set(0,1,0).cross(v);if(t.lengthSq()<1e-6)t.set(1,0,0);t.normalize();const b=new THREE.Vector3().crossVectors(v,t);const r=deg*D2R/UNI;return v.clone().multiplyScalar(Math.cos(r)).addScaledVector(t,Math.sin(r)*Math.cos(a)).addScaledVector(b,Math.sin(r)*Math.sin(a)).normalize();}
 function callEnd(c,msg){const i=CALLS.indexOf(c);if(i>=0)CALLS.splice(i,1);callFree(c);c.hums.forEach(h=>{h.callV=null;h.caller=0;});if(msg)toast(msg,'');}
 function callAnswer(c){c.done=true;const T=CALLT[c.ty];
   if(c.trap){c.t=c.T-10;c.g&&c.g.traverse(o=>{if(o.material&&o.material.color)o.material.color.setHex(0xff2a2a);});
@@ -3118,16 +3118,16 @@ function hwInit(){if(FT.hwInit||!hwOn())return;FT.hwInit=true;
   HEAD.sensation.push(v=>`Halloween : farce ou véritable ovni au-dessus de ${v.c} ?`,v=>`Des « aliens » déguisés croisent un vrai ovni à ${v.c}`);HEAD.sceptique.push(v=>`Ovni d'Halloween à ${v.c} : une farce, selon les experts`);
   // citrouilles dans les fermes et villages
   const geo=new THREE.SphereGeometry(.55,10,7);geo.scale(1,.72,1);const mat=new THREE.MeshLambertMaterial({color:0xff7a1a,emissive:0xff5a00,emissiveIntensity:.55});
-  const spots=[];const clear=(d,r)=>{if(landScore(d)<=.02)return false;for(const b of BUILD){if(angDeg(d,b.v)<r)return false;}return true;};const cr=1.6/ER*57.3;
+  const spots=[];const clear=(d,r)=>{if(landScore(d)<=.02)return false;for(const b of BUILD){if(angDeg(d,b.v)<r)return false;}return true;};const cr=1.6/ER0*57.3;
   CITIES.forEach(ct=>{let k=0;for(let t=0;t<120&&k<34;t++){const d=offsetDir(ct.v,rr(.9,2.1));if(clear(d,cr)){spots.push(d);k++;}}});
   VILLAGES.forEach(v=>{let k=0;for(let t=0;t<40&&k<10;t++){const d=offsetDir(v.v,rr(.08,.6));if(clear(d,cr*.8)){spots.push(d);k++;}}});
   FARMS.forEach(f=>{for(let k=0;k<3;k++)spots.push(offsetDir(f.v,rr(.1,.5)));});
   // fêtes d'Halloween en bordure de ville : déguisés regroupés autour de carrés de citrouilles
   const sk=humGeo.attributes.skinCol;const costume=(h)=>{const i=HUM.indexOf(h);if(i<0||i>=sk.count)return;h.costume=1;sk.setXYZ(i,.42,.86,.35);h.col=pick([[.95,.45,.08],[.25,.08,.35],[.12,.12,.14]]);};
-  FT.hwSpots=[];CITIES.forEach((ct,ci)=>{const cl=[];for(let t=0;t<160&&cl.length<4;t++){const d=offsetDir(ct.v,rr(1.85,2.4));if(clear(d,2.2/ER*57.3)&&cl.every(o=>angDeg(o,d)>18/ER*57.3))cl.push(d);}if(!cl.length)return;FT.hwSpots.push(...cl);
-    cl.forEach(d=>{for(let k=0;k<9;k++){const a=k/9*Math.PI*2;spots.push(offsetDir2(d,a,rr(3.5,5.5)/ER*57.3));}});
+  FT.hwSpots=[];CITIES.forEach((ct,ci)=>{const cl=[];for(let t=0;t<160&&cl.length<4;t++){const d=offsetDir(ct.v,rr(1.85,2.4));if(clear(d,2.2/ER0*57.3)&&cl.every(o=>angDeg(o,d)>18/ER0*57.3))cl.push(d);}if(!cl.length)return;FT.hwSpots.push(...cl);
+    cl.forEach(d=>{for(let k=0;k<9;k++){const a=k/9*Math.PI*2;spots.push(offsetDir2(d,a,rr(3.5,5.5)/ER0*57.3));}});
     const hs=HUM.filter(h=>h.alive&&h.home===ci&&!h.motorist&&!h.boat&&!h.cur).sort(()=>Math.random()-.5).slice(0,cl.length*5);
-    hs.forEach((h,k)=>{const d=cl[k%cl.length];h.hwV=d;h.v.copy(offsetDir2(d,Math.random()*6.28,rr(.5,3)/ER*57.3));costume(h);});});
+    hs.forEach((h,k)=>{const d=cl[k%cl.length];h.hwV=d;h.v.copy(offsetDir2(d,Math.random()*6.28,rr(.5,3)/ER0*57.3));costume(h);});});
   HUM.forEach(h=>{if(h.home<=-1000&&!h.costume&&!h.motorist&&!h.boat&&Math.random()<.25)costume(h);});sk.needsUpdate=true;
   const N=Math.min(spots.length,900);const im=new THREE.InstancedMesh(geo,mat,N);const M=new THREE.Matrix4(),q=new THREE.Quaternion(),sc=new THREE.Vector3();
   for(let i=0;i<N;i++){const d=spots[i];const s=rr(1.5,2.6)*VISH*.8;const p=d.clone().multiplyScalar(ER+mtnH(d)+.75+s*.38);q.setFromUnitVectors(new THREE.Vector3(0,1,0),d);sc.set(s,s,s);M.compose(p,q,sc);im.setMatrixAt(i,M);}
@@ -3302,7 +3302,7 @@ function devBuild(E){const g=new THREE.Group();g.position.copy(E.dir).multiplySc
 function devFree(E){if(!E||!E.g)return;E.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});earthSurf.remove(E.g);E.g=null;}
 function devStart(){const p=devPick();const c=CITIES[p.ci];const dir=callSite(c.v,20)||callSite(c.v,14);if(!dir)return;const T=DEVT[p.ty];const E=DV.ev={ty:p.ty,ci:p.ci,city:c.n,dir,hold:0,done:devDone(),ic:T[0],n:T[1],d:T[2],hums:[]};devBuild(E);
   const hs=HUM.filter(h=>h.alive&&h.home===p.ci&&!h.motorist&&!h.boat&&!h.cur&&!h.hwV&&!h.callV).sort(()=>Math.random()-.5).slice(0,22);
-  hs.forEach((h,k)=>{const a=k/hs.length*Math.PI*2;const d=offsetDir2(dir,a,rr(8,15)/ER*57.3);h.evV=d;h.v.copy(d);E.hums.push(h);});
+  hs.forEach((h,k)=>{const a=k/hs.length*Math.PI*2;const d=offsetDir2(dir,a,rr(8,15)/ER0*57.3);h.evV=d;h.v.copy(d);E.hums.push(h);});
   setTimeout(()=>{if(!started||!DV.ev)return;toast(E.ic+' <b>Événement du jour : '+E.n+' près de '+E.city+'</b>. '+E.d+(E.done?' Vous leur avez déjà fait la surprise aujourd\'hui.':' Survolez la foule à basse altitude pour leur faire la surprise !'),'lore',10000);if(!E.done)setEvNav(()=>devWorld(E,_v4),E.n+' · '+E.city);},1500);
   jlog('call','Événement du jour : '+E.n+' près de '+E.city);}
 function devWorld(E,out){return out.copy(E.dir).multiplyScalar(ER+mtnH(E.dir)+6).add(EC);}
@@ -3411,7 +3411,7 @@ const WISHES={show:['C\'est mon anniversaire aujourd\'hui. J\'aimerais tellement
 const WSH={list:[],t:0};
 function wishNear(){if(SYS!=='sol'||curBody!==EARTH||S.world<0)return null;const ei=earthInfo();if(ei.alt>45)return null;let best=null,bd=30;for(const h of HUM){if(!h.wish||!h.alive)continue;const d=_v1.set(h.v.x*ER,h.v.y*ER,h.v.z*ER).distanceTo(ei.local);if(d<bd){bd=d;best=h;}}return best;}
 function wishTick(dt){WSH.t+=dt;if(WSH.t<20)return;WSH.t=0;if(SYS!=='sol'||curBody!==EARTH)return;const ei=earthInfo();if(ei.alt>400||HUM.filter(h=>h.wish).length>=4)return;
-  const cand=HUM.filter(h=>h.alive&&!h.wish&&!h.cur&&!h.boat&&!h.contact&&!h.n10V&&h.lift<=0&&angDeg(h.v,ei.dir)<12/ER*57.3*20);if(!cand.length)return;const h=pick(cand);const ty=pick(['show','show','trip','crop']);
+  const cand=HUM.filter(h=>h.alive&&!h.wish&&!h.cur&&!h.boat&&!h.contact&&!h.n10V&&h.lift<=0&&angDeg(h.v,ei.dir)<12/ER0*57.3*20);if(!cand.length)return;const h=pick(cand);const ty=pick(['show','show','trip','crop']);
   const c=cityOf(h);let t=null;if(ty==='trip'){const ts=CITIES.filter(x=>x.n!==c&&!x.destroyed);t=pick(ts).n;}h.wish={ty,c,t,txt:pick(WISHES[ty]).replace(/\{c\}/g,c).replace(/\{t\}/g,t||'')};}
 function wishOpen(h){const w=h.wish;$('wishCard').innerHTML=`<h2>💭 Un souhait capté</h2><p class="nwTip">Les capteurs de la soucoupe perçoivent les pensées de ${esc(h.name)} (${esc(w.c)}) :</p><blockquote class="wishq">« ${esc(w.txt)} »</blockquote>
   <p>${w.ty==='show'?'Mission : disparaître devant au moins 10 témoins au-dessus de '+esc(w.c)+'.':w.ty==='trip'?'Mission : enlever '+esc(h.name)+' avec le rayon, puis le relâcher près de '+esc(w.t)+'.':'Mission : tracer un agroglyphe près de '+esc(w.c)+'.'}</p>
@@ -3496,8 +3496,8 @@ const N10_SLOG=['10 ANS ✋','JOYEUX ANNIVERSAIRE MARIA','MERCI LES ANCÊTRES','
 const N10={site:null,g:null,fx:null,hums:[],st:0,hold:0,init:false,musT:0,glow:0,nearMsg:false,posted:false,confT:0};
 function n10Load(){try{const v=JSON.parse(localStorage.getItem('janus_n10')||'{}');N10.st=v.st||0;N10.done=!!v.done;}catch(e){}}
 function n10Save(){try{localStorage.setItem('janus_n10',JSON.stringify({st:N10.st,done:N10.done}));}catch(e){}}
-function n10Site(){const base=llv(-14.83,-75.06);let best=null,bs=-1;const clr=10/ER*57.3;const jb=EBASES.find(b=>b.id==='jumana');
-  for(let t=0;t<120;t++){const d=offsetDir2(base,Math.random()*6.28,rr(14,26)/ER*57.3);if(landScore(d)<=.03||!isLand(d))continue;if(jb&&angDeg(d,jb.dir)<14/ER*57.3)continue;let mh=mtnH(d),mn=mh,ok=true;for(let k=0;k<8&&ok;k++){const q=offsetDir2(d,k/8*6.28,clr*.9);if(landScore(q)<=0)ok=false;const h=mtnH(q);mh=Math.max(mh,h);mn=Math.min(mn,h);}if(!ok)continue;
+function n10Site(){const base=llv(-14.83,-75.06);let best=null,bs=-1;const clr=10/ER0*57.3;const jb=EBASES.find(b=>b.id==='jumana');
+  for(let t=0;t<120;t++){const d=offsetDir2(base,Math.random()*6.28,rr(14,26)/ER0*57.3);if(landScore(d)<=.03||!isLand(d))continue;if(jb&&angDeg(d,jb.dir)<14/ER0*57.3)continue;let mh=mtnH(d),mn=mh,ok=true;for(let k=0;k<8&&ok;k++){const q=offsetDir2(d,k/8*6.28,clr*.9);if(landScore(q)<=0)ok=false;const h=mtnH(q);mh=Math.max(mh,h);mn=Math.min(mn,h);}if(!ok)continue;
     let md=99;for(const b of BUILD){const a=angDeg(d,b.v);if(a<md)md=a;}const sc=md*2-(mh-mn)*3-mh*.2;if(sc>bs){bs=sc;best=d;}}
   return best||base;}
 function n10GlyphTex(){const cv=document.createElement('canvas');cv.width=cv.height=512;const g=cv.getContext('2d');g.strokeStyle='#fff';g.lineCap='round';g.lineJoin='round';g.lineWidth=9;
@@ -3512,8 +3512,8 @@ function n10GlyphTex(){const cv=document.createElement('canvas');cv.width=cv.hei
   return new THREE.CanvasTexture(cv);}
 function n10Build(){const d=N10.site;const g=new THREE.Group();g.position.copy(d).multiplyScalar(ER+mtnH(d));g.quaternion.setFromUnitVectors(_v1.set(0,1,0),d);earthSurf.add(g);N10.g=g;const F=N10.fx={lan:[],fw:[],cand:[]};
   const L=(c,e,ei)=>new THREE.MeshLambertMaterial({color:c,emissive:e||0,emissiveIntensity:ei||0});
-  let gd=null,gb=-1e9;for(let k=0;k<24;k++){for(const rd of [30,36,42]){const c=offsetDir2(d,k/24*6.28,rd/ER*57.3);if(landScore(c)<=.03||!isLand(c))continue;let ok=true,mn=1e9,mx=-1e9;for(let j=0;j<12&&ok;j++){const q=offsetDir2(c,j/12*6.28,25/ER*57.3);if(landScore(q)<=.02||!isLand(q))ok=false;const h=mtnH(q);mn=Math.min(mn,h);mx=Math.max(mx,h);}if(!ok)continue;const sc=-(mx-mn)-rd*.05;if(sc>gb){gb=sc;gd=c;}}}
-  gd=gd||offsetDir2(d,0,30/ER*57.3);N10.gd=gd;const gg=new THREE.Group();gg.position.copy(gd).multiplyScalar(ER+mtnH(gd));gg.quaternion.setFromUnitVectors(_v1.set(0,1,0),gd);gg.updateMatrixWorld(true);earthSurf.add(gg);N10.gg=gg;
+  let gd=null,gb=-1e9;for(let k=0;k<24;k++){for(const rd of [30,36,42]){const c=offsetDir2(d,k/24*6.28,rd/ER0*57.3);if(landScore(c)<=.03||!isLand(c))continue;let ok=true,mn=1e9,mx=-1e9;for(let j=0;j<12&&ok;j++){const q=offsetDir2(c,j/12*6.28,25/ER0*57.3);if(landScore(q)<=.02||!isLand(q))ok=false;const h=mtnH(q);mn=Math.min(mn,h);mx=Math.max(mx,h);}if(!ok)continue;const sc=-(mx-mn)-rd*.05;if(sc>gb){gb=sc;gd=c;}}}
+  gd=gd||offsetDir2(d,0,30/ER0*57.3);N10.gd=gd;const gg=new THREE.Group();gg.position.copy(gd).multiplyScalar(ER+mtnH(gd));gg.quaternion.setFromUnitVectors(_v1.set(0,1,0),gd);gg.updateMatrixWorld(true);earthSurf.add(gg);N10.gg=gg;
   const ggeo=new THREE.PlaneGeometry(46,46,16,16);ggeo.rotateX(-Math.PI/2);{const P=ggeo.attributes.position,v=new THREE.Vector3(),inv=new THREE.Matrix4().copy(gg.matrix).invert();for(let i=0;i<P.count;i++){v.set(P.getX(i),0,P.getZ(i)).applyMatrix4(gg.matrix);const dd=v.clone().normalize();v.copy(dd).multiplyScalar(ER+mtnH(dd)+.8).applyMatrix4(inv);P.setXYZ(i,v.x,v.y,v.z);}P.needsUpdate=true;}
   const gl=new THREE.Mesh(ggeo,new THREE.MeshBasicMaterial({map:n10GlyphTex(),transparent:true,color:0xffe7b0,opacity:.35,depthWrite:false,blending:THREE.AdditiveBlending,polygonOffset:true,polygonOffsetFactor:-4}));gg.add(gl);F.gl=gl;
   // gâteau à 3 étages et 10 bougies
@@ -3526,7 +3526,7 @@ function n10Build(){const d=N10.site;const g=new THREE.Group();g.position.copy(d
   // feux d'artifice
   const COL=[0xffd54a,0xff4fa3,0x4fe3ff,0x7dff8a,0xff7a1a];for(let k=0;k<4;k++){const grp=new THREE.Group();g.add(grp);const sps=[];for(let j=0;j<16;j++){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.glowW,color:COL[(k+j)%5],transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));sp.scale.setScalar(1.3);grp.add(sp);sps.push({sp,d:new THREE.Vector3(rr(-1,1),rr(-1,1),rr(-1,1)).normalize()});}F.fw.push({grp,sps,t:-k*.8,c:new THREE.Vector3()});}}
 function n10Crowd(){const site=N10.site;const hs=HUM.filter(h=>h.alive&&!h.cur&&!h.boat&&!h.motorist&&!h.callV&&!h.evV&&!h.hwV&&h.lift<=0).sort(()=>Math.random()-.5).slice(0,42);
-  hs.forEach((h,k)=>{const a=k/hs.length*6.28+rr(-.1,.1);const d=offsetDir2(site,a,rr(9,17)/ER*57.3);h.v.copy(d);h.n10V=d;h.awake=h.awake||(k%3===0?'n10':null);N10.hums.push(h);});}
+  hs.forEach((h,k)=>{const a=k/hs.length*6.28+rr(-.1,.1);const d=offsetDir2(site,a,rr(9,17)/ER0*57.3);h.v.copy(d);h.n10V=d;h.awake=h.awake||(k%3===0?'n10':null);N10.hums.push(h);});}
 function n10Init(){if(N10.init||!n10On()||SYS!=='sol')return;N10.init=true;n10Load();N10.site=n10Site();n10Build();n10Crowd();
   HEAD.sensation.push(v=>`Il y a 10 ans, la découverte des momies tridactyles de Nasca`,v=>`Nasca fête les 10 ans de « Maria » : une foule immense dans le désert`);HEAD.prudent.push(v=>`10 ans d'enquête sur les momies de Nasca : ce que révèlent les analyses`);
   setTimeout(()=>{if(!started)return;toast('✋ <b>10 ans des momies tridactyles de Nasca</b> (2016 – 2026) : une grande fête a lieu dans le désert de Nasca, au Pérou. '+(N10.done?'Vous avez déjà fêté l\'anniversaire : revenez quand vous voulez !':'Une mission spéciale vous attend (Missions).'),'lore',10000);
@@ -3590,10 +3590,10 @@ function nlTex(kind){const cv=document.createElement('canvas');cv.width=cv.heigh
   else if(kind==='trapeze'){g.lineWidth=3;P([[100,10],[156,10],[226,250],[30,250],[100,10]]);}
   else if(kind==='ligne'){g.lineWidth=4;P([[128,0],[128,256]]);}
   return new THREE.CanvasTexture(cv);}
-function nlOk(d,half,maxR){if(landScore(d)<=.03||!isLand(d))return false;let mn=1e9,mx=-1e9;for(let k=0;k<12;k++){const q=offsetDir2(d,k/12*6.28,half/ER*57.3);if(landScore(q)<=.02||!isLand(q))return false;const h=mtnH(q);mn=Math.min(mn,h);mx=Math.max(mx,h);}const h0=mtnH(d);mn=Math.min(mn,h0);mx=Math.max(mx,h0);if(mx-mn>(maxR||12))return false;
-  const jb=EBASES.find(b=>b.id==='jumana');if(jb&&angDeg(d,jb.dir)<(half+8)/ER*57.3)return false;if(N10.site&&angDeg(d,N10.site)<(half+30)/ER*57.3)return false;if(N10.gd&&angDeg(d,N10.gd)<(half+26)/ER*57.3)return false;for(const o of NL.g){if(angDeg(d,o.d)<(half+o.half+1)/ER*57.3)return false;}return {mx};}
+function nlOk(d,half,maxR){if(landScore(d)<=.03||!isLand(d))return false;let mn=1e9,mx=-1e9;for(let k=0;k<12;k++){const q=offsetDir2(d,k/12*6.28,half/ER0*57.3);if(landScore(q)<=.02||!isLand(q))return false;const h=mtnH(q);mn=Math.min(mn,h);mx=Math.max(mx,h);}const h0=mtnH(d);mn=Math.min(mn,h0);mx=Math.max(mx,h0);if(mx-mn>(maxR||12))return false;
+  const jb=EBASES.find(b=>b.id==='jumana');if(jb&&angDeg(d,jb.dir)<(half+8)/ER0*57.3)return false;if(N10.site&&angDeg(d,N10.site)<(half+30)/ER0*57.3)return false;if(N10.gd&&angDeg(d,N10.gd)<(half+26)/ER0*57.3)return false;for(const o of NL.g){if(angDeg(d,o.d)<(half+o.half+1)/ER0*57.3)return false;}return {mx};}
 function nlBuild(){if(NL.init)return;NL.init=true;const C=llv(-14.75,-75.1);const kinds=['singe','araignee','condor','baleine','astronaute','chien','arbre','mains','lezard','spirale','trapeze','trapeze','ligne','ligne','ligne','ligne'];
-  kinds.forEach((k,i)=>{const lin=k==='ligne'||k==='trapeze';const sz=lin?rr(34,56):rr(16,26);const hf=k==='ligne'?sz*.3:sz*.55;for(let t=0;t<260;t++){const d=offsetDir2(C,Math.random()*6.28,rr(12,105)/ER*57.3);const r=nlOk(d,hf,lin?5:12);if(!r)continue;
+  kinds.forEach((k,i)=>{const lin=k==='ligne'||k==='trapeze';const sz=lin?rr(34,56):rr(16,26);const hf=k==='ligne'?sz*.3:sz*.55;for(let t=0;t<260;t++){const d=offsetDir2(C,Math.random()*6.28,rr(12,105)/ER0*57.3);const r=nlOk(d,hf,lin?5:12);if(!r)continue;
     const g=new THREE.Group();const h0=mtnH(d);g.position.copy(d).multiplyScalar(ER+h0);g.quaternion.setFromUnitVectors(_v1.set(0,1,0),d);g.rotateY(Math.random()*6.28);g.updateMatrixWorld(true);
     const geo=new THREE.PlaneGeometry(lin&&k==='ligne'?6:sz,sz,14,14);geo.rotateX(-Math.PI/2);{const P=geo.attributes.position,v=new THREE.Vector3(),inv=new THREE.Matrix4().copy(g.matrix).invert();for(let i=0;i<P.count;i++){v.set(P.getX(i),0,P.getZ(i)).applyMatrix4(g.matrix);const dd=v.clone().normalize();v.copy(dd).multiplyScalar(ER+mtnH(dd)+.6).applyMatrix4(inv);P.setXYZ(i,v.x,v.y,v.z);}P.needsUpdate=true;}
     const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:nlTex(k),transparent:true,color:0xfff3d6,opacity:.75,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-4}));g.add(m);earthSurf.add(g);NL.g.push({g,d,half:hf,k});break;}});}
@@ -3673,8 +3673,8 @@ function dstrP(p,d){if(SYS==='sol'&&p){const a=_dpa.subVectors(p,EC),b=_dpb.subV
 const _dpa=new THREE.Vector3(),_dpb=new THREE.Vector3();
 // distances affichées à l'échelle réelle : le système solaire du jeu est comprimé.
 // repères : rayon terrestre (1000 u = 6 371 km), Terre-Lune (≈11 440 u = 384 400 km), 1 UA (50 000 u = 149,6 M km)
-const KM_AU=149.6e6,MOOND=11437;
-function realKm(d){d=Math.max(0,d);if(d<=ER)return d*6.371;const li=(d,a,b,ka,kb)=>ka*Math.pow(kb/ka,Math.log(d/a)/Math.log(b/a));
+const KM_AU=149.6e6,MOOND=11437*UNI;
+function realKm(d){d=Math.max(0,d);if(d<=ER)return d*6371/ER;const li=(d,a,b,ka,kb)=>ka*Math.pow(kb/ka,Math.log(d/a)/Math.log(b/a));
   if(d<=MOOND)return li(d,ER,MOOND,6371,384400);if(d<=AU)return li(d,MOOND,AU,384400,KM_AU);return d/AU*KM_AU;}
 function dstr(d){const k=realKm(d);if(k>=5e6){const ua=k/KM_AU;return ua.toFixed(ua>=10?1:ua>=1?2:3).replace('.',',')+' UA';}return (k<10?k.toFixed(1).replace('.',','):fmt(k<1e5?Math.round(k):Math.round(k/100)*100))+' km';}
 const setTxt=(id,t)=>{const e=$(id);if(e&&e.textContent!==t)e.textContent=t;};
@@ -3810,7 +3810,7 @@ function drawMini(){
     shipArrow(g,cx,cy,0,S.world>0?COLM.ship:COLM.shipN,7);
     g.fillStyle='rgba(232,241,255,.7)';g.font='10px "IBM Plex Mono",monospace';g.textAlign='left';g.fillText('↕ '+kmStr(range*2*EKM/ER),5,H-5);
   }else{$('mmTitle').textContent='Système solaire';drawSystem(g,W,H,true);}}
-const _sp=new THREE.Vector3();function sysProj(p,W,H,mini){if(SYS!=='ummo'){p=_sp.copy(p).sub(EC).applyQuaternion(ORB.qi).add(ORB.eH);}const o=SYS==='ummo'?UMMO_O:{x:0,z:0};const px=p.x-o.x,pz=p.z-o.z;const d=Math.hypot(px,pz);const R=Math.min(W,H)/2-(mini?8:30);const r=d<1?0:Math.log10(1+d/4000)/Math.log10(1+2.3e6/4000)*R;const a=Math.atan2(pz,px);const x=W/2+Math.cos(a)*r,y=H/2+Math.sin(a)*r;return (!mini&&MZ.on)?[mzX(x/W,W),mzY(y/H,H)]:[x,y];}
+const _sp=new THREE.Vector3();function sysProj(p,W,H,mini){if(SYS!=='ummo'){p=_sp.copy(p).sub(EC).applyQuaternion(ORB.qi).add(ORB.eH);}const o=SYS==='ummo'?UMMO_O:{x:0,z:0};const px=p.x-o.x,pz=p.z-o.z;const d=Math.hypot(px,pz);const R=Math.min(W,H)/2-(mini?8:30);const r=d<1?0:Math.log10(1+d/(4000*UNI))/Math.log10(1+2.3e6/4000)*R;const a=Math.atan2(pz,px);const x=W/2+Math.cos(a)*r,y=H/2+Math.sin(a)*r;return (!mini&&MZ.on)?[mzX(x/W,W),mzY(y/H,H)]:[x,y];}
 function drawSystem(g,W,H,mini){if(!mini){MK=mapK();MKM=Math.max(1,MK*.75);MZ.on=true;}const K=mini?1:MK,KM=mini?1:MKM;
   const C=(!mini&&MZ.on)?[mzX(.5,W),mzY(.5,H)]:[W/2,H/2];
   g.fillStyle=COLM.bg;g.fillRect(0,0,W,H);
@@ -4294,9 +4294,9 @@ function resetSocial(){SOC.posts.length=0;SOC.queue.length=0;SOC.unread=SOC.mUnr
 const ROADS=[];
 function gcPath(a,b,step){const ang=Math.acos(clamp(a.dot(b),-1,1));const n=Math.max(2,Math.ceil(ang/D2R/step));const pts=[];for(let i=0;i<=n;i++){const t=i/n;const s1=Math.sin((1-t)*ang),s2=Math.sin(t*ang),so=Math.sin(ang)||1;pts.push(new V3().addScaledVector(a,s1/so).addScaledVector(b,s2/so).normalize());}return pts;}
 CITIES.forEach(c=>{const nb=4+Math.floor(rnd()*3);const e=_v1.set(0,1,0).cross(c.v).normalize().clone(),nn=new V3().crossVectors(c.v,e);
-  for(let k=0;k<nb;k++){const b=k/nb*Math.PI*2+rr(-.3,.3);const t=e.clone().multiplyScalar(Math.cos(b)).addScaledVector(nn,Math.sin(b));const end=c.v.clone().multiplyScalar(Math.cos(2.6*D2R)).addScaledVector(t,Math.sin(2.6*D2R)).normalize();ROADS.push({pts:gcPath(c.v,end,.12),city:c});}});
+  for(let k=0;k<nb;k++){const b=k/nb*Math.PI*2+rr(-.3,.3);const t=e.clone().multiplyScalar(Math.cos(b)).addScaledVector(nn,Math.sin(b));const end=c.v.clone().multiplyScalar(Math.cos(2.6*D2R/UNI)).addScaledVector(t,Math.sin(2.6*D2R/UNI)).normalize();ROADS.push({pts:gcPath(c.v,end,.12),city:c});}});
 FARMS.forEach(f=>{ROADS.push({pts:gcPath(f.city.v,f.v,.15),city:f.city,farm:f});});
-VILLAGES.forEach(vl=>{const t=randTangent(vl.v);const end=vl.v.clone().multiplyScalar(Math.cos(1.1*D2R)).addScaledVector(t,Math.sin(1.1*D2R)).normalize();ROADS.push({pts:gcPath(vl.v,end,.1),city:vl,village:true});});
+VILLAGES.forEach(vl=>{const t=randTangent(vl.v);const end=vl.v.clone().multiplyScalar(Math.cos(1.1*D2R/UNI)).addScaledVector(t,Math.sin(1.1*D2R/UNI)).normalize();ROADS.push({pts:gcPath(vl.v,end,.1),city:vl,village:true});});
 // pas de route (ni de voiture) sur l'eau : on coupe chaque route au premier point en mer, et une route de ferme doit être entièrement sur terre
 for(let i=ROADS.length-1;i>=0;i--){const r=ROADS[i];const dry=v=>landScore(v)>.03;
   if(r.farm){if(!r.pts.every(dry)){ROADS.splice(i,1);continue;}}
@@ -4898,10 +4898,10 @@ function renderUmmo(){UMO.unread=0;updUmmoBadge();const contacts=HUM.filter(h=>h
   $('ummoCard').innerHTML=h;}
 /* système d'IUMMA */
 let SYS='sol';const UMMO_O=new V3(6.2e8,9e7,-4.1e8);
-var IUMMA_READY=true;const IUMMA={key:'iumma',name:'IUMMA (Wolf 424)',pos:UMMO_O.clone(),R:2600,g:45,type:'star',sys:'ummo',lore:'IUMMA, l\'étoile des Ummites : une naine rouge que vos astronomes nomment Wolf 424.'};
+var IUMMA_READY=true;const IUMMA={key:'iumma',name:'IUMMA (Wolf 424)',pos:UMMO_O.clone(),R:2600*UNI,g:45,type:'star',sys:'ummo',lore:'IUMMA, l\'étoile des Ummites : une naine rouge que vos astronomes nomment Wolf 424.'};
 makeBody(IUMMA);IUMMA.mesh=new THREE.Mesh(new THREE.SphereGeometry(IUMMA.R,48,32),new THREE.MeshBasicMaterial({color:0xff8a4a,fog:false}));IUMMA.group.add(IUMMA.mesh);
 IUMMA.glow=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.sun,color:0xff7a3a,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}));IUMMA.glow.scale.setScalar(IUMMA.R*9);IUMMA.group.add(IUMMA.glow);
-const UMMO=makeBody({key:'ummo',name:'UMMO',pos:UMMO_O.clone().add(new V3(34000,0,9000)),R:640,g:11,type:'rock',sys:'ummo',atm:0x8fd0ff,
+const UMMO=makeBody({key:'ummo',name:'UMMO',pos:UMMO_O.clone().add(new V3(34000,0,9000).multiplyScalar(UNI)),R:640*UNI,g:11,type:'rock',sys:'ummo',atm:0x8fd0ff,
   colorFn:(v,c)=>{const lat=Math.asin(v.y)/D2R;const n=fbm(v.x*3+5,v.y*3,v.z*3,4);const land=n+.28-Math.abs(lat)/90*.5-(Math.abs(v.z+.3)>.9?.2:0);
     if(Math.abs(lat)>70){c.setRGB(.9,.93,.96);return;}if(land>.62){const k=fbm(v.x*9,v.y*9,v.z*9,3);c.setRGB(.42+k*.15,.46+k*.1,.34);if(land>.75)c.setRGB(.55,.5,.45);}else{const t=smooth(.45,.62,land);c.setRGB(.06+.1*t,.2+.25*t,.36+.2*t);}},
   lore:'UMMO : une seule grande masse continentale, des océans froids. Les Ummites y vivent en sociétés très organisées.'});
@@ -5235,7 +5235,7 @@ function spawnFleet(anchor){let v=anchor||null;FL.mission=!!anchor;for(let k=0;k
   const nc=nearestCity(v);EVN.ext=()=>_v4.copy(EC).addScaledVector(fleetCenterDir(),ER+70);EVN.extName='Escadrille amie';
   notifyOps('ESCADRILLE AMIE','Un groupe de '+n+' ovnis patrouille non loin de '+nc.c.n+'. Approchez-vous puis appuyez sur Y pour le rejoindre : en formation, vos apparitions marquent bien plus les esprits. Vous pourrez ensuite fusionner pour former un seul grand vaisseau.','green');}
 function fleetCenterDir(){const v=FL.anchor;const t=_v5.set(0,1,0).cross(v);if(t.lengthSq()<1e-6)t.set(1,0,0);t.normalize();const b=_lt.crossVectors(v,t);const a=FL.ang;
-  const r=1.4*D2R;return _lp.copy(v).multiplyScalar(Math.cos(r)).addScaledVector(t,Math.sin(r)*Math.cos(a)).addScaledVector(b,Math.sin(r)*Math.sin(a)).normalize();}
+  const r=1.4*D2R/UNI;return _lp.copy(v).multiplyScalar(Math.cos(r)).addScaledVector(t,Math.sin(r)*Math.cos(a)).addScaledVector(b,Math.sin(r)*Math.sin(a)).normalize();}
 const _fq=new THREE.Quaternion();
 function updateFleet(dt){
   if(FL.state==='none'){if(SYS==='sol'&&S.t>FL.next&&S.world>0&&earthInfo().alt<1500){if(!evOK(1))FL.next=S.t+45;else{FL.next=S.t+rr(600,900);evMark(1);spawnFleet();}}return;}
@@ -5447,7 +5447,7 @@ function updateLanding(dt){
   LAND.chk-=dt;if(LAND.chk<=0){LAND.chk=2.5;const sl=_v2.copy(LAND.dir).multiplyScalar(ER);const reg=REG[regOfDir(LAND.dir)];
     for(const h of HUM){if(curCount()>=4)break;if(!h.alive||h.cur||h.boat||h.motorist||h.lift>0||h.flee>0)continue;const d=_v1.copy(h.v).multiplyScalar(ER).distanceTo(sl);if(d>85||d<6)continue;
       const p=(.06+(h.awake?.35:0)+(h.contact?.5:0)+(reg?reg.con/250:0)+Math.min(.25,LAND.t/200))*(1-.3*S.level);if(Math.random()<p){h.cur=true;h.spd=lzOn?rr(1,1.3):rr(.55,.75);}}
-    LAND.spawnT-=2.5;if(lzOn){HUM.forEach(h=>{if(h.cur&&h.alive&&h.spd<1)h.spd=rr(1,1.3);});const near=HUM.filter(h=>h.cur&&h.alive&&angDeg(h.v,LAND.dir)*D2R*ER<30).length;if(LAND.spawnT<=0&&near<2&&curCount()<6){LAND.spawnT=rr(6,10);spawnCurious(1);}}else if(LAND.spawnT<=0&&curCount()<2){LAND.spawnT=rr(14,24);spawnCurious();if(rnd()<.4)spawnCurious();}}
+    LAND.spawnT-=2.5;if(lzOn){HUM.forEach(h=>{if(h.cur&&h.alive&&h.spd<1)h.spd=rr(1,1.3);});const near=HUM.filter(h=>h.cur&&h.alive&&angDeg(h.v,LAND.dir)*D2R*ER0<30).length;if(LAND.spawnT<=0&&near<2&&curCount()<6){LAND.spawnT=rr(6,10);spawnCurious(1);}}else if(LAND.spawnT<=0&&curCount()<2){LAND.spawnT=rr(14,24);spawnCurious();if(rnd()<.4)spawnCurious();}}
   // premier curieux tout près : photo
   if(!LAND.posted){const sl=_v2.copy(LAND.dir).multiplyScalar(ER);const h=HUM.find(x=>x.cur&&x.alive&&x.phone&&_v1.copy(x.v).multiplyScalar(ER).distanceTo(sl)<20);
     if(h&&hasLOS(h)){LAND.posted=true;const vid=Math.random()<.5;const ph=takePhoto(h,vid);const c=cityOf(h);
@@ -5456,7 +5456,7 @@ function updateLanding(dt){
 function landLeak(p){if(!S.landed||LAND.phase!=='on')return;if(!p.img&&p.kind!=='land')return;LAND.leaks++;const k=(p.video?16:10)*(S.t<GRACE?.3:1);S.alert=Math.min(100,S.alert+k);
   if(LAND.leaks===1)notifyOps('POSITION ÉVENTÉE','Des '+(p.video?'vidéos':'photos')+' de votre vaisseau posé circulent sur Ciel Ouvert. L\'armée a localisé l\'endroit : hélicoptères puis chasseurs vont arriver. Établissez vite le contact, puis redécollez.','amber');
   else if(LAND.leaks===3)toast('Les vidéos de l\'atterrissage deviennent virales : la traque s\'intensifie.','bad');}
-function curMove(h,dt){const tgt=LAND.dir;const d=angDeg(h.v,tgt)*D2R*ER;if(d>9){const dir=_v2.subVectors(tgt,h.v);dir.addScaledVector(h.v,-dir.dot(h.v));if(dir.lengthSq()>1e-12){dir.normalize();h.dir.lerp(dir,.25).normalize();}h.v.addScaledVector(h.dir,h.spd*dt/ER).normalize();if(landScore(h.v)<0){h.v.addScaledVector(h.dir,-2*h.spd*dt/ER).normalize();}}
+function curMove(h,dt){const tgt=LAND.dir;const d=angDeg(h.v,tgt)*D2R*ER0;if(d>9){const dir=_v2.subVectors(tgt,h.v);dir.addScaledVector(h.v,-dir.dot(h.v));if(dir.lengthSq()>1e-12){dir.normalize();h.dir.lerp(dir,.25).normalize();}h.v.addScaledVector(h.dir,h.spd*dt/ER).normalize();if(landScore(h.v)<0){h.v.addScaledVector(h.dir,-2*h.spd*dt/ER).normalize();}}
   else{h.att=1;h.watching=true;}}
 
 /* =====================================================================
@@ -5563,7 +5563,7 @@ function updateHumanoid(dt){
   const hp=huWorld(_v3.clone());
   // déplacement
   let goal=null;if(HU.state==='return'){goal=hatchFootDir();}else if(HU.state==='walk'){if(!HU.tgt||!HU.tgt.alive||HU.tgt.flee>0)HU.tgt=huNearTarget();if(HU.tgt)goal=HU.tgt.v;}
-  if(goal&&HU.state!=='contact'){const d=angDeg(HU.dir,goal)*D2R*ER;const stop=HU.state==='return'?1.2:3.2;if(d>stop){const dir=_v2.subVectors(goal,HU.dir);dir.addScaledVector(HU.dir,-dir.dot(HU.dir));if(dir.lengthSq()>1e-14){dir.normalize();HU.dir.addScaledVector(dir,(HU.state==='return'?1.3:.38)*dt/ER).normalize();HU.face=dir.clone();}}
+  if(goal&&HU.state!=='contact'){const d=angDeg(HU.dir,goal)*D2R*ER0;const stop=HU.state==='return'?1.2:3.2;if(d>stop){const dir=_v2.subVectors(goal,HU.dir);dir.addScaledVector(HU.dir,-dir.dot(HU.dir));if(dir.lengthSq()>1e-14){dir.normalize();HU.dir.addScaledVector(dir,(HU.state==='return'?1.3:.38)*dt/ER).normalize();HU.face=dir.clone();}}
     else if(HU.state==='return'){HU.state='ascend';HU.k=0;return;}}
   // pose du modèle
   const p=huWorld(_v4);huMesh.position.copy(p);_q.setFromUnitVectors(_v1.set(0,1,0),HU.dir);huMesh.quaternion.copy(_q);if(HU.face){const loc=_v1.copy(HU.face).applyQuaternion(_q.clone().invert());huMesh.rotateY(Math.atan2(loc.x,loc.z));}
@@ -5728,7 +5728,7 @@ function phxHint(){if(!PHX||CAMP.state!=='active'||CAMP.ch!==2||SYS!=='sol'||cur
   return witnessesNow>=10?'Phoenix : '+witnessesNow+' témoins vous regardent — disparaissez maintenant (Espace) !':'Phoenix : '+witnessesNow+' / 10 témoins vous regardent — restez visible au-dessus de la foule';}
 let LZ=null;const LZR=16;
 function lzCreate(lat,lon){lzClear();let v0=llv(lat,lon),v=null;const B=tanBasis(v0);const ok=d=>{if(!isLand(d)||nearestCity(d).a<2.3||VILLAGES.some(vl=>angDeg(vl.v,d)<1.3)||HUM.some(h=>h.alive&&angDeg(h.v,d)<1.2))return false;const b=tanBasis(d);for(let i=0;i<12;i++){const t=i/12*Math.PI*2;if(!isLand(surfPt(d,b,Math.cos(t)*LZR*1.6,Math.sin(t)*LZR*1.6,0).normalize()))return false;}return true;};
-  for(let k=0;k<=60&&!v;k++)for(let j=0;j<(k?16:1)&&!v;j++){const a=k*.1*D2R,t=j/16*Math.PI*2;const d=v0.clone().multiplyScalar(Math.cos(a)).addScaledVector(B.e,Math.sin(a)*Math.cos(t)).addScaledVector(B.n,Math.sin(a)*Math.sin(t)).normalize();if(ok(d))v=d;}
+  for(let k=0;k<=60&&!v;k++)for(let j=0;j<(k?16:1)&&!v;j++){const a=k*.1*D2R/UNI,t=j/16*Math.PI*2;const d=v0.clone().multiplyScalar(Math.cos(a)).addScaledVector(B.e,Math.sin(a)*Math.cos(t)).addScaledVector(B.n,Math.sin(a)*Math.sin(t)).normalize();if(ok(d))v=d;}
   v=v||v0;clearSite(v,LZR*1.4);const g=new THREE.Group();g.matrixAutoUpdate=false;surfMat(v,0,0,1,1,1,g.matrix);
   const ring=new THREE.Mesh(new THREE.RingGeometry(LZR-1.6,LZR,64),new THREE.MeshBasicMaterial({color:0x5dff9e,transparent:true,opacity:.85,side:THREE.DoubleSide,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-6}));ring.rotation.x=-Math.PI/2;ring.position.y=.35;g.add(ring);
   const disc=new THREE.Mesh(new THREE.CircleGeometry(LZR-1.6,48),new THREE.MeshBasicMaterial({color:0x5dff9e,transparent:true,opacity:.14,side:THREE.DoubleSide,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-5}));disc.rotation.x=-Math.PI/2;disc.position.y=.3;g.add(disc);
@@ -6201,7 +6201,7 @@ function chainDown(c){S.cargo.splice(S.cargo.indexOf(c),1);EX.amb.push({name:c.n
 function astMesh(){const g=new THREE.Group();const geo=new THREE.IcosahedronGeometry(26,1);const pa=geo.attributes.position;for(let i=0;i<pa.count;i++){const k=.75+Math.random()*.5;pa.setXYZ(i,pa.getX(i)*k,pa.getY(i)*k,pa.getZ(i)*k);}geo.computeVertexNormals();
   g.add(new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0x6d625a,roughness:1,flatShading:true})));const s=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.glowW,color:0xff9a50,transparent:true,opacity:.6,depthWrite:false,blending:THREE.AdditiveBlending}));s.scale.setScalar(120);g.add(s);return g;}
 function startAst(){const cs=CITIES.filter(c=>!c.destroyed);if(!cs.length)return;const c=pick(cs);const gr=EC.clone().addScaledVector(c.v,ER);const out=c.v.clone().multiplyScalar(.55).addScaledVector(randTangent(c.v),.85).normalize();
-  POS.ast={c,gr,start:gr.clone().addScaledVector(out,52000),t:0,T:170,hold:0,pos:new V3(),g:astMesh()};POS.ast.pos.copy(POS.ast.start);scene.add(POS.ast.g);setEvNav(()=>POS.ast?POS.ast.pos:EC,'Astéroïde');adoptEv();sfx('alert');
+  POS.ast={c,gr,start:gr.clone().addScaledVector(out,52000*UNI),t:0,T:170,hold:0,pos:new V3(),g:astMesh()};POS.ast.pos.copy(POS.ast.start);scene.add(POS.ast.g);setEvNav(()=>POS.ast?POS.ast.pos:EC,'Astéroïde');adoptEv();sfx('alert');
   notifyOps('ALERTE ASTÉROÏDE','La base Janus a repéré un astéroïde qui file vers '+c.n+' (impact dans '+POS.ast.T+' s). Pour le dévier : 1) suivez la flèche orange (Maj+B pour en faire votre cible, puis B pour vous orienter) et sortez dans l\'espace — la MHD ou le monde négatif vont beaucoup plus vite ; 2) approchez-vous à moins de '+dstr(AST_R)+' de l\'astéroïde, dans le monde positif ; 3) maintenez E (rayon tracteur) pendant 5 secondes. Tant que le rayon le tient, il ralentit fortement.','red');}
 function endAst(ok){const A=POS.ast;if(!A)return;scene.remove(A.g);POS.ast=null;POS.astNext=S.t+rr(1800,2700);const reg=REG.findIndex(r=>r.c===A.c);
   if(ok){const p=Math.round(1200*ECO);S.score+=p;S.credits+=p;PO().deflect++;awakenAll(1.2);if(reg>=0)awaken(reg,8);disclosure=Math.min(100,disclosure+6);mEvent('deflect');
@@ -6299,7 +6299,7 @@ function launchOrb(){if(!UP.orbs){toast('Orbes-sondes non disponibles : achetez 
   if(SYS!=='sol'||S.world<0||curBody!==EARTH||earthInfo().alt>1500){toast('Les orbes se lâchent dans l\'atmosphère terrestre, dans le monde positif.','bad');return;}
   if(!orbAvail()){toast(orbLost?'Aucun orbe disponible. Reconstruisez les orbes perdus au labo (L).':'Tous vos orbes sont déjà en mission.','');return;}
   const ei=earthInfo();const ci=nav.city>=0&&CITIES[nav.city]&&!CITIES[nav.city].destroyed?nav.city:CITIES.indexOf(nearestCity(ei.dir).c);const c=CITIES[ci];
-  const tgt=c.v.clone().applyAxisAngle(randTangent(c.v),rr(.004,.012)).normalize();
+  const tgt=c.v.clone().applyAxisAngle(randTangent(c.v),rr(.004,.012)/UNI).normalize();
   const o={g:orbMesh(),dir:ei.dir.clone(),alt:Math.max(8,ei.alt),tgt,ci,city:c.n,phase:'go',t:0,hover:0};ORBS.push(o);sfx('fizz');fxRing(S.pos.clone(),0x9ff6ff,20,.8);ST.orbs=(ST.orbs||0)+1;
   if(!ST.orbTip){ST.orbTip=1;toast('<b>Orbe-sonde lâché.</b> Il file vers '+c.n+' (votre cible de ville, sinon la ville la plus proche) et flotte au-dessus des habitants pour les éveiller. Attention : l\'armée peut l\'abattre, et il peut tomber en panne. S\'il s\'écrase, récupérez-le avant les militaires.','lore',11000);}
   else toast('Orbe-sonde lâché vers '+c.n+'.','score');}
@@ -6320,7 +6320,7 @@ function orbDebrisEnd(d,who){if(ORBREC===d)ORBREC=null;const i=ORBD.indexOf(d);i
 let ORBREC=null;function orbNearDebris(){if(S.world<0||SYS!=='sol'||curBody!==EARTH)return null;const ei=earthInfo();if(ei.alt>60)return null;for(const d of ORBD){if(orbPos(d.dir,0,_pv).distanceTo(S.pos)<ei.alt+50)return d;}return null;}
 function updateOrbs(dt){
   for(let i=ORBS.length-1;i>=0;i--){const o=ORBS[i];o.t+=dt;if(SYS!=='sol'){o.g.visible=false;continue;}o.g.visible=S.world>0||true;
-    if(o.phase==='go'){const a=angDeg(o.dir,o.tgt);const step=Math.min(a,dt*55/ER*57.3);if(a>.01){const ax=_pw.crossVectors(o.dir,o.tgt);if(ax.lengthSq()>1e-12){ax.normalize();o.dir.applyAxisAngle(ax,step/57.3).normalize();}}
+    if(o.phase==='go'){const a=angDeg(o.dir,o.tgt);const step=Math.min(a,dt*55/ER0*57.3);if(a>.01){const ax=_pw.crossVectors(o.dir,o.tgt);if(ax.lengthSq()>1e-12){ax.normalize();o.dir.applyAxisAngle(ax,step/57.3/UNI).normalize();}}
       o.alt+=(Math.max(7,Math.min(40,a*60))-o.alt)*Math.min(1,dt*.8);if(a<.05){o.phase='hover';sfx('mission');toast('L\'orbe flotte au-dessus de '+o.city+' : les habitants lèvent les yeux.','score');}}
     else if(o.phase==='hover'){o.hover+=dt;o.alt=6+Math.sin(o.t*1.3)*.8;awaken(o.ci,dt*.07*(1+.15*UP.orbs));
       if(Math.random()<dt*.35){const hs=HUM.filter(h=>h.alive&&!h.awake&&angDeg(h.v,o.dir)<.8*LK);if(hs.length){const h=pick(hs);h.awake='orb';h.glow=3;ST.awake=(ST.awake||0)+1;}}
@@ -6344,10 +6344,10 @@ function orbLabHtml(){if(!UP.orbs)return '';return `<div class="item"><h4>Orbes-
    BASES TERRESTRES : laboratoires génétiques avancés (Jumana / Nasca, Skinwalker Ranch, col de Vence)
    ===================================================================== */
 function landSpot(dir,r,minDeg,minP){minP=minP||2.6;const fp=(v,rr,f)=>{if(!isLand(v))return false;if(!poiFree(v,minDeg*f,minP*f))return false;const B=tanBasis(v);for(let i=0;i<24;i++){const t=i/24*Math.PI*2;for(const q of [rr*.5,rr]){if(!isLand(surfPt(v,B,Math.cos(t)*q,Math.sin(t)*q,0).normalize()))return false;}}return true;};
-  const B=tanBasis(dir);const ring=(k,j)=>{const ang=k*.15*D2R,t=j/20*Math.PI*2;return dir.clone().multiplyScalar(Math.cos(ang)).addScaledVector(B.e,Math.sin(ang)*Math.cos(t)).addScaledVector(B.n,Math.sin(ang)*Math.sin(t)).normalize();};
+  const B=tanBasis(dir);const ring=(k,j)=>{const ang=k*.15*D2R/UNI,t=j/20*Math.PI*2;return dir.clone().multiplyScalar(Math.cos(ang)).addScaledVector(B.e,Math.sin(ang)*Math.cos(t)).addScaledVector(B.n,Math.sin(ang)*Math.sin(t)).normalize();};
   for(const [R,f] of [[[r*1.05],1],[[r*.8,r*.6],1],[[r*.8,r*.6],.6]])for(let k=0;k<=40;k++)for(let j=0;j<(k?20:1);j++){const v=k?ring(k,j):dir;if(R.some(rr=>fp(v,rr,f))){clearSite(v,r);POIREG.push(v);return v;}}clearSite(dir,r);POIREG.push(dir);return dir;}
 // rétrécit localement les villes / forêts pour laisser la place à un site
-function clearSite(v,r){const lim=(r+10)/ER/D2R;let ch=false;BUILD.forEach((b,i)=>{if(!b.cut&&angDeg(b.v,v)<lim){b.cut=1;b.w=b.h=b.d=.001;buildings.setMatrixAt(i,surfMat(b.v,-9,0,.001,.001,.001,_m));ch=true;}});if(ch)buildings.instanceMatrix.needsUpdate=true;
+function clearSite(v,r){const lim=(r+10)/ER0/D2R;let ch=false;BUILD.forEach((b,i)=>{if(!b.cut&&angDeg(b.v,v)<lim){b.cut=1;b.w=b.h=b.d=.001;buildings.setMatrixAt(i,surfMat(b.v,-9,0,.001,.001,.001,_m));ch=true;}});if(ch)buildings.instanceMatrix.needsUpdate=true;
   let ct=false;TREES.forEach((t,i)=>{if(angDeg(t,v)<lim){trees.setMatrixAt(i,surfMat(t,-9,0,.001,.001,.001,_m));ct=true;}});if(ct)trees.instanceMatrix.needsUpdate=true;}
 const ADV_TR=['tele','res'];
 const EBASES=[
@@ -6578,7 +6578,7 @@ function resetGame(){AWT=0;AWTW=0;if(typeof LCIN!=='undefined'&&LCIN){LCIN=null;
   MIL.forEach(u=>scene.remove(u.mesh));MIL.length=0;MISS.forEach(m=>scene.remove(m.mesh));MISS.length=0;BUL.length=0;lifting.length=0;
   HUM.forEach(h=>{if((!h.alive&&!h.parked)||h.awake){h.alive=true;h.awake=null;h.lift=0;h.dropping=false;}h.watching=false;h.att=0;h.seenVanish=0;});COWS.forEach(c=>{c.alive=true;c.lift=0;c.dropping=false;});
   let v=null;for(let k=0;k<400&&!v;k++){const c=new V3(Math.random()*2-1,Math.random()*2-1,Math.random()*2-1).normalize();const lat=Math.asin(c.y)/D2R;if(lat<-50||lat>68)continue;if(!isLand(c))continue;
-    if(CITIES.some(ct=>angDeg(c,ct.v)<11))continue;if(FARMS.some(f=>angDeg(c,f.v)<6))continue;if(VILLAGES.some(vl=>angDeg(c,vl.v)<3))continue;if(RADARS.some(r=>angDeg(c,r.v)<radarRange(r)/ER/D2R+2))continue;v=c;}
+    if(CITIES.some(ct=>angDeg(c,ct.v)<11))continue;if(FARMS.some(f=>angDeg(c,f.v)<6))continue;if(VILLAGES.some(vl=>angDeg(c,vl.v)<3))continue;if(RADARS.some(r=>angDeg(c,r.v)<radarRange(r)/ER0/D2R+2))continue;v=c;}
   if(!v)v=llv(-24,128);S.startV=v.clone();
   S.pos.copy(EC).addScaledVector(v,ER+36);S.vel.set(0,0,0);S.up.copy(v);
   S.fwd.set(0,1,0).cross(v).normalize();S.right.crossVectors(S.fwd,S.up).normalize();S.camOff.copy(S.fwd).multiplyScalar(-17).addScaledVector(S.up,6);
