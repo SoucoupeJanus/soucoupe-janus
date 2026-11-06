@@ -989,6 +989,14 @@ body.pcui #touch #tCtx{right:304px!important;bottom:148px!important}
 .mis-top .daily.fold>.dh .mfc::before{content:'▸'}
 .mis-top .daily.fold>:not(.dh){display:none!important}
 .mis-top .daily.fold{padding-top:6px;padding-bottom:6px}
+
+/* ---- v179 : balayer depuis une étiquette fait tourner la vue ---- */
+#labels,#labels .mk,#labels .navArr span{touch-action:none}
+#miniL .pax{display:none}
+#miniL.cmp .pax{display:flex;align-items:center;gap:2px;font-size:10px;opacity:.6}
+#miniL.cmp .pax b{font:700 11px 'Chakra Petch',sans-serif;color:#cfe0f7}
+#miniL.cmp .pax.some{opacity:1}
+#miniL.cmp .pax.some b{color:#ffb547}
 </style>
 
 <div id="stage"></div>
@@ -1014,7 +1022,7 @@ body.pcui #touch #tCtx{right:304px!important;bottom:148px!important}
   <div class="panel" id="tutoCard" hidden></div>
   <div class="panel" id="fleetBox" hidden></div>
   <div class="panel" id="landBox" hidden></div>
-  <div id="miniL" class="cmp" title="Toucher pour déployer ou réduire"><div class="g1"><div class="sc"><span id="mlSc">0</span><small>PTS</small></div><div class="aw"><span id="mlAw">0 %</span><small>ÉVEIL</small></div><div class="awp"><i><b id="mlAwP"></b><u style="right:-1px"></u></i><small id="mlAwN"></small></div><div class="r">⚡<i><b id="mlEn" style="background:#ffb547"></b></i></div><div class="r">🛡<i><b id="mlSh" style="background:#5aa8ff"></b></i></div><div class="r">✚<i><b id="mlHu" style="background:#e8f1ff"></b></i></div></div><div class="g2"><div class="sep"></div><div class="r wit">👁 <b id="mlWit">0</b><small>témoins</small></div><div class="r"><span class="segs" id="mlSeg"><u></u><u></u><u></u><u></u><u></u></span></div><div class="alt2" id="mlAl"></div><div class="cargo" id="mlCg"></div></div></div>
+  <div id="miniL" class="cmp" title="Toucher pour déployer ou réduire"><div class="g1"><div class="sc"><span id="mlSc">0</span><small>PTS</small></div><div class="aw"><span id="mlAw">0 %</span><small>ÉVEIL</small></div><div class="awp"><i><b id="mlAwP"></b><u style="right:-1px"></u></i><small id="mlAwN"></small></div><div class="r">⚡<i><b id="mlEn" style="background:#ffb547"></b></i></div><div class="r">🛡<i><b id="mlSh" style="background:#5aa8ff"></b></i></div><div class="r">✚<i><b id="mlHu" style="background:#e8f1ff"></b></i></div></div><div class="g2"><div class="sep"></div><div class="r wit">👁 <b id="mlWit">0</b><small>témoins</small></div><div class="r pax" title="Personnes à bord">👤<b id="mlPax">0</b></div><div class="r"><span class="segs" id="mlSeg"><u></u><u></u><u></u><u></u><u></u></span></div><div class="alt2" id="mlAl"></div><div class="cargo" id="mlCg"></div></div></div>
   <div class="tc">
     <div class="world" id="worldBadge"><b>g<sub>μν</sub></b> &nbsp;Monde positif</div>
     <div class="sub" id="flight">—</div>
@@ -1196,7 +1204,7 @@ body.pcui #touch #tCtx{right:304px!important;bottom:148px!important}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 178 · 06/11/2026</div>
+    <div class="verTag" data-notr>Version 179 · 06/11/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -2119,9 +2127,11 @@ const REAL_TOUCH=matchMedia('(pointer:coarse)').matches||('ontouchstart' in wind
   $('touch').addEventListener('contextmenu',e=>e.preventDefault());document.addEventListener('selectstart',e=>{if(document.body.classList.contains('mobile')&&!e.target.closest?.('textarea,input'))e.preventDefault();});
   $('toasts').addEventListener('pointerdown',e=>{const t=e.target.closest('.toast');if(!t||!document.body.classList.contains('mobile'))return;if(t.classList.contains('clamp')&&!t.classList.contains('full')){t.classList.add('full');clearTimeout(t._tm);t._tm=setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.remove(),500);},7000);return;}t.remove();});
   let aid=null,lx=0,ly=0;const cv=renderer.domElement;
-  cv.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;aid=e.pointerId;lx=e.clientX;ly=e.clientY;});
-  cv.addEventListener('pointermove',e=>{if(e.pointerId!==aid)return;look.dx+=(e.clientX-lx)*1.4;look.dy+=(e.clientY-ly)*1.4;lx=e.clientX;ly=e.clientY;});
-  cv.addEventListener('pointerup',e=>{if(e.pointerId===aid)aid=null;});cv.addEventListener('pointercancel',e=>{if(e.pointerId===aid)aid=null;});
+  // regard au doigt : aussi quand le balayage commence sur une étiquette de destination ou la flèche de cap
+  const lookStart=t=>t===cv||(t&&t.closest&&!!t.closest('#labels'));
+  document.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch'||!lookStart(e.target))return;aid=e.pointerId;lx=e.clientX;ly=e.clientY;},true);
+  document.addEventListener('pointermove',e=>{if(e.pointerId!==aid)return;look.dx+=(e.clientX-lx)*1.4;look.dy+=(e.clientY-ly)*1.4;lx=e.clientX;ly=e.clientY;},true);
+  document.addEventListener('pointerup',e=>{if(e.pointerId===aid)aid=null;},true);document.addEventListener('pointercancel',e=>{if(e.pointerId===aid)aid=null;},true);
   /* filet de sécurité iOS/Android : quand plus aucun doigt ne touche l'écran, on relâche tout */
   const resetAll=()=>{sid=null;TOUCH.x=TOUCH.y=0;TOUCH.bo=false;st.classList.remove('boost');{const h=(st.offsetWidth/2||60)-20;kn.style.left=h+'px';kn.style.top=h+'px';}HOLDS.forEach(f=>f());aid=null;mouseDown=false;};
   document.addEventListener('touchend',e=>{if(!e.touches||e.touches.length===0)resetAll();else{const ids=new Set([...e.touches].map(t=>t.identifier));if(aid!==null&&![...e.touches].some(t=>{const el=document.elementFromPoint(t.clientX,t.clientY);return el===cv;}))aid=null;}},{capture:true,passive:true});
@@ -3703,7 +3713,7 @@ function opsGo(){const el=$('opsChip');if(!el||!el._go||!started||paused)return;
 setTimeout(()=>{const el=$('opsChip');if(el)el.addEventListener('click',opsGo);},0);
 const GO_RE=/^(call\d|devt$|hunt$|n10$|pkg$|rdv$|ast$|esc$|wish\d|c\d|vil|sec|silo|el_|an2_|exb_|pb_|iss$|nasca$|pr_|an_|ord$|orb\d)/;
 function mk(key,cls){let e=labelEls.get(key);if(!e){e=document.createElement('div');e.className='mk '+cls;e.dataset.k=key;if(GO_RE.test(key)||BODIES.some(b=>b.key===key)||NEGS.some(n=>n.key===key)){e._go=1;e.classList.add('go');}$('labels').appendChild(e);labelEls.set(key,e);}e.dataset.used='1';return e;}
-function place(e,p,txt){if(e._go){(e._p||(e._p=new V3())).copy(p);}_v1.copy(p).project(camera);const behind=_v1.z>1;if(behind||Math.abs(_v1.x)>1.05||Math.abs(_v1.y)>1.05){e.style.display='none';return false;}
+var _plb=null;function place(e,p,txt){if(e._go){(e._p||(e._p=new V3())).copy(p);}const behind=(_plb||(_plb=new THREE.Vector3())).copy(p).applyMatrix4(camera.matrixWorldInverse).z>=0;_v1.copy(p).project(camera);if(behind||Math.abs(_v1.x)>1.05||Math.abs(_v1.y)>1.05){e.style.display='none';return false;}
   e.style.display='block';e.style.left=((_v1.x+1)/2*innerWidth)+'px';e.style.top=((1-_v1.y)/2*innerHeight)+'px';if(e._t!==txt){e.textContent=txt;e._t=txt;}return true;}
 function occluded(p){const b=curBody;if(!b||b.type==='star')return false;const o=camera.position;const d=_v5.subVectors(p,o);const L=d.length();d.divideScalar(L);const oc=_lt.subVectors(b.pos,o);const t=oc.dot(d);if(t<0||t>L)return false;const h2=oc.lengthSq()-t*t;return h2<b.R*b.R*.995;}
 // distances terrestres à l'échelle réelle (rayon 6 371 km) : la Terre du jeu est réduite
@@ -3737,7 +3747,7 @@ function updateHUD(){
   labelEls.forEach(e=>e.dataset.used='0');
   const camL=camera.position;
   const tgtBody=nav.city<0?nav.list[nav.i]:null;exchLabels();pbLabels();poLabels();orbLabels();callLabels();rdvLabel();featLabels();n10Label();elabLabels();ancLabels();issLabel();rivalLabel();
-  for(const b of BODIES){if(b===curBody&&curAlt<b.R*.6)continue;const e=mk(b.key,'planet');if(b!==curBody&&occluded(b.pos)){e.style.display='none';continue;}place(e,b.pos,b.name+'  '+dstr(Math.max(0,S.pos.distanceTo(b.pos)-b.R)));e.classList.toggle('target',b===tgtBody);}
+  for(const b of BODIES){if(b===curBody&&curAlt<b.R*.6)continue;if(farHide()&&b!==MOON&&b!==EARTH&&b!==tgtBody)continue;const e=mk(b.key,'planet');if(b!==curBody&&occluded(b.pos)){e.style.display='none';continue;}place(e,b.pos,b.name+'  '+dstr(Math.max(0,S.pos.distanceTo(b.pos)-b.R)));e.classList.toggle('target',b===tgtBody);}
   if(S.world<0)for(const n of NEGS){const e=mk(n.key,'planet neg');place(e,n.pos,n.name);e.classList.toggle('target',n===tgtBody);}
   else if(tgtBody&&tgtBody.neg){const e=mk(tgtBody.key,'planet neg');place(e,tgtBody.pos,tgtBody.name+' (invisible ici)');}
   const ei=earthInfo();
@@ -3778,7 +3788,7 @@ function updateHUD(){
   if(HUDM&&document.body.classList.contains('mobile')){setTxt('mlSc',fmt(S.score));setTxt('mlAw',globalAw().toFixed(1).replace('.',',')+' %');$('mlEn').style.width=(S.energy/me*100)+'%';$('mlSh').style.width=(S.shield/ms*100)+'%';$('mlHu').style.width=Math.max(0,S.hull/maxHull()*100)+'%';setTxt('mlWit',String(witnessesNow));
     const sg=$('mlSeg').children;for(let i=0;i<5;i++)sg[i].classList.toggle('on',S.level>i);setTxt('mlAl',LV_NAMES[S.level]+(S.alert>0?' · '+Math.round(S.alert)+'%':''));
     let mc='';for(let i=0;i<cargoCap();i++){const c=S.cargo[i];if(!c){mc+='<span class="cg empty"></span>';continue;}const k=c.type==='carcass'?'car':c.type==='cow'?'cow':(c.type==='ebe'||c.type==='prisoner')?'ebe':c.type==='amb'?'amb':c.trait?'mod':'hum';mc+=`<span class="cg ${k}">${CICON[k]||CICON.hum}</span>`;}
-    if($('mlCg')._h!==mc){$('mlCg').innerHTML=mc;$('mlCg')._h=mc;}}
+    if($('mlCg')._h!==mc){$('mlCg').innerHTML=mc;$('mlCg')._h=mc;const np=S.cargo.filter(c=>c&&c.type!=='cow'&&c.type!=='carcass').length;const pe=$('mlPax');if(pe){pe.textContent=np;pe.parentElement.classList.toggle('some',np>0);}}}
   const bars=$('alertBar').children;for(let i=0;i<5;i++)bars[i].classList.toggle('on',S.level>i);
   $('alertTxt').textContent=LV_NAMES[S.level]+(S.alert>0?' · '+Math.round(S.alert)+'%':'');
   const scr=S.scr||{};const cd=['heli','jet'].filter(t=>scr[t]!=null&&!MIL.some(u=>u.type===t)).map(t=>(t==='heli'?'Hélicos':'Chasseurs')+' dans '+Math.max(0,Math.ceil(scr[t]-S.t))+' s').join(' · ');
@@ -5392,7 +5402,7 @@ function updateExchange(dt){
     s.beamM.visible=s.phase==='talk';if(s.beamM.visible){s.beamM.position.copy(s.g.position);s.beamM.quaternion.copy(_q);s.beamM.scale.set(1,alt,1);}}
   EX.amb=EX.amb.filter(a=>a.state!=='done');
   if((++EX.fr||(EX.fr=1))%30===0)renderExchBox();}
-function exchLabels(){for(const b of EXB){if(b.sys!==SYS||(b.need&&!b.need()))continue;const d=S.pos.distanceTo(b.pos);if(d>9000)continue;const e=mk('exb_'+b.id,'planet');place(e,b.pos,'⌂ '+b.n+'  '+dstr(Math.max(0,d)));}}
+function exchLabels(){for(const b of EXB){if(b.sys!==SYS||(b.need&&!b.need()))continue;if(farHide()&&b.id!=='lune'&&nav.extName!==b.n)continue;const d=S.pos.distanceTo(b.pos);if(d>9000)continue;const e=mk('exb_'+b.id,'planet');place(e,b.pos,'⌂ '+b.n+'  '+dstr(Math.max(0,d)));}}
 function renderExchBox(){const el=$('exchBox');if(!el)return;const tr=EX.amb.filter(a=>a.state==='training');const show=tr.length||EX.req||EX.ships.length;el.hidden=!show;if(!show)return;
   let h='<div class="row lbl"><span>Programme d\'échange</span><span class="mono">'+exchTotal()+' envoyé'+(exchTotal()>1?'s':'')+'</span></div>';
   if(EX.req)h+='<div class="exreq">Demande : un humain de <b>'+REG[EX.req.reg].c.n+'</b> → '+EXB.find(b=>b.id===EX.req.base).short+' <span class="mono">'+Math.max(0,Math.ceil((EX.req.until-S.t)/60))+' min</span></div>';
@@ -5551,7 +5561,8 @@ function installModule(p){if(MOD[p.id])return;MOD[p.id]=1;sfx('mission');flash(.
   notifyOps('MODULE INSTALLÉ',p.n+' : « '+p.m+' » est installé sur votre vaisseau. '+p.e+'. Vaisseau entièrement rechargé et réparé. ('+n+'/'+PBASES.length+' chantiers)','green');
   mEvent('pbase',{n});if(!ST.pbTip){ST.pbTip=1;setTimeout(()=>toast('Les autres chantiers du système solaire offrent chacun un module différent. Liste et cibles : menu Améliorations (U).','lore',9000),2500);}}
 function updatePBases(dt){PBASES.forEach(p=>{const on=p.sys===SYS;p.mesh.visible=on;if(on&&p.mesh.userData.beacon)p.mesh.userData.beacon.material.opacity=.4+.3*Math.sin(S.t*2.5);});}
-function pbLabels(){for(const p of PBASES){if(p.sys!==SYS)continue;const d=S.pos.distanceTo(p.pos);if(d>60000)continue;const e=mk('pb_'+p.id,'planet');place(e,p.pos,(MOD[p.id]?'✓ ':'⚙ ')+p.n+'  '+dstr(d));}}
+function farHide(){if(farHide.t===S.t)return farHide.v;farHide.t=S.t;return farHide.v=SYS==='sol'&&curBody===EARTH&&earthInfo().alt<600;}
+function pbLabels(){for(const p of PBASES){if(p.sys!==SYS)continue;if(farHide()&&nav.extName!==p.n)continue;const d=S.pos.distanceTo(p.pos);if(d>60000)continue;const e=mk('pb_'+p.id,'planet');place(e,p.pos,(MOD[p.id]?'✓ ':'⚙ ')+p.n+'  '+dstr(d));}}
 ACT.pbTarget=d=>{const p=PBASES.find(x=>x.id===d.id);if(!p)return;if(p.sys!==SYS){toast('Cette base est dans un autre système stellaire.','bad');return;}nav.ext=()=>p.pos;nav.extName=p.n;nav.city=-1;toast('Cible : '+p.n+'. Appuyez sur B en vol pour vous orienter (le monde négatif raccourcit énormément le trajet).','');closeOverlays();};
 function pbShopHtml(){return `<h3>Chantiers planétaires</h3><p>Chaque base du système solaire installe gratuitement un module majeur lorsque vous y accostez (touche Y sur place). Les trajets lointains sont bien plus rapides dans le monde négatif.</p><div class="grid2">${PBASES.filter(p=>p.sys==='sol'||UMO.visited).map(p=>`<div class="item ${MOD[p.id]?'done':''}"><h4>${p.m}</h4><div class="d">${p.n}<br><b>${p.e}</b></div>${MOD[p.id]?'<div class="res">Installé</div>':`<button class="btn sm ghost" type="button" data-act="pbTarget" data-id="${p.id}">Cibler cette base</button>`}</div>`).join('')}</div>`;}
 
@@ -6309,8 +6320,8 @@ function poCtx(){const o=POS.order;if(o&&ldist(o.base.pos())<o.base.r){if(orderH
   return chainCtx();}
 function poDo(t){if(t.kind==='order'){deliverOrder();return true;}if(t.kind==='chainup'){chainUp(t.a);return true;}if(t.kind==='chaindown'){chainDown(t.c);return true;}return false;}
 function poLabels(){if(SYS!=='sol')return;
-  for(const p of PROBES){const d=ldist(p.pos);if(d<90000){place(mk('pr_'+p.id,'planet'),p.pos,'🛰 '+p.n+'  '+dstr(d));}}
-  for(const a of ANOM){const d=ldist(a.pos);if(d<70000){place(mk('an_'+a.id,'planet'),a.pos,(PO().anom[a.id]?'✓ ':'✦ ')+a.n+'  '+dstr(d));}}
+  for(const p of PROBES){if(farHide()&&nav.extName!==p.n)continue;const d=ldist(p.pos);if(d<90000){place(mk('pr_'+p.id,'planet'),p.pos,'🛰 '+p.n+'  '+dstr(d));}}
+  for(const a of ANOM){if(farHide()&&nav.extName!==a.n)continue;const d=ldist(a.pos);if(d<70000){place(mk('an_'+a.id,'planet'),a.pos,(PO().anom[a.id]?'✓ ':'✦ ')+a.n+'  '+dstr(d));}}
   if(POS.escort){place(mk('esc','planet'),POS.escort.pos,'⌂ Ambassadeur (escorte)  '+dstr(ldist(POS.escort.pos)));if(POS.escort.int)place(mk('esci','planet'),POS.escort.int.pos,'▲ Intercepteur MJ-12');}
   if(POS.ast)place(mk('ast','planet'),POS.ast.pos,'☄ Astéroïde → '+POS.ast.c.n+'  '+dstr(ldist(POS.ast.pos)));
   if(POS.order)place(mk('ord','planet'),POS.order.base.pos(),'📦 Commande : '+POS.order.base.n);}
