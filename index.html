@@ -1161,7 +1161,7 @@ body.pcui #touch #tCtx{right:304px!important;bottom:148px!important}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 173 · 06/11/2026</div>
+    <div class="verTag" data-notr>Version 174 · 06/11/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -3497,7 +3497,7 @@ const N10={site:null,g:null,fx:null,hums:[],st:0,hold:0,init:false,musT:0,glow:0
 function n10Load(){try{const v=JSON.parse(localStorage.getItem('janus_n10')||'{}');N10.st=v.st||0;N10.done=!!v.done;}catch(e){}}
 function n10Save(){try{localStorage.setItem('janus_n10',JSON.stringify({st:N10.st,done:N10.done}));}catch(e){}}
 function n10Site(){const base=llv(-14.83,-75.06);let best=null,bs=-1;const clr=10/ER0*57.3;const jb=EBASES.find(b=>b.id==='jumana');
-  for(let t=0;t<120;t++){const d=offsetDir2(base,Math.random()*6.28,rr(14,26)/ER0*57.3);if(landScore(d)<=.03||!isLand(d))continue;if(jb&&angDeg(d,jb.dir)<14/ER0*57.3)continue;let mh=mtnH(d),mn=mh,ok=true;for(let k=0;k<8&&ok;k++){const q=offsetDir2(d,k/8*6.28,clr*.9);if(landScore(q)<=0)ok=false;const h=mtnH(q);mh=Math.max(mh,h);mn=Math.min(mn,h);}if(!ok)continue;
+  for(let t=0;t<120;t++){const d=offsetDir2(base,Math.random()*6.28,rr(14,26)/ER0*57.3);if(landScore(d)<=.03||!isLand(d))continue;if(jb&&angDeg(d,jb.dir)<14/ER0*57.3)continue;if(FIELDS.some(f=>f.nasca&&angDeg(d,f.v)<44/ER0*57.3))continue;let mh=mtnH(d),mn=mh,ok=true;for(let k=0;k<8&&ok;k++){const q=offsetDir2(d,k/8*6.28,clr*.9);if(landScore(q)<=0)ok=false;const h=mtnH(q);mh=Math.max(mh,h);mn=Math.min(mn,h);}if(!ok)continue;
     let md=99;for(const b of BUILD){const a=angDeg(d,b.v);if(a<md)md=a;}const sc=md*2-(mh-mn)*3-mh*.2;if(sc>bs){bs=sc;best=d;}}
   return best||base;}
 function n10GlyphTex(){const cv=document.createElement('canvas');cv.width=cv.height=512;const g=cv.getContext('2d');g.strokeStyle='#fff';g.lineCap='round';g.lineJoin='round';g.lineWidth=9;
@@ -3512,7 +3512,7 @@ function n10GlyphTex(){const cv=document.createElement('canvas');cv.width=cv.hei
   return new THREE.CanvasTexture(cv);}
 function n10Build(){const d=N10.site;const g=new THREE.Group();g.position.copy(d).multiplyScalar(ER+mtnH(d));g.quaternion.setFromUnitVectors(_v1.set(0,1,0),d);earthSurf.add(g);N10.g=g;const F=N10.fx={lan:[],fw:[],cand:[]};
   const L=(c,e,ei)=>new THREE.MeshLambertMaterial({color:c,emissive:e||0,emissiveIntensity:ei||0});
-  let gd=null,gb=-1e9;for(let k=0;k<24;k++){for(const rd of [30,36,42]){const c=offsetDir2(d,k/24*6.28,rd/ER0*57.3);if(landScore(c)<=.03||!isLand(c))continue;let ok=true,mn=1e9,mx=-1e9;for(let j=0;j<12&&ok;j++){const q=offsetDir2(c,j/12*6.28,25/ER0*57.3);if(landScore(q)<=.02||!isLand(q))ok=false;const h=mtnH(q);mn=Math.min(mn,h);mx=Math.max(mx,h);}if(!ok)continue;const sc=-(mx-mn)-rd*.05;if(sc>gb){gb=sc;gd=c;}}}
+  let gd=null,gb=-1e9;for(let k=0;k<24;k++){for(const rd of [30,36,42]){const c=offsetDir2(d,k/24*6.28,rd/ER0*57.3);if(landScore(c)<=.03||!isLand(c))continue;let ok=true,mn=1e9,mx=-1e9;for(let j=0;j<12&&ok;j++){const q=offsetDir2(c,j/12*6.28,25/ER0*57.3);if(landScore(q)<=.02||!isLand(q))ok=false;const h=mtnH(q);mn=Math.min(mn,h);mx=Math.max(mx,h);}if(!ok)continue;if(FIELDS.some(f=>f.nasca&&angDeg(c,f.v)<52/ER0*57.3))continue;const sc=-(mx-mn)-rd*.05;if(sc>gb){gb=sc;gd=c;}}}
   gd=gd||offsetDir2(d,0,30/ER0*57.3);N10.gd=gd;const gg=new THREE.Group();gg.position.copy(gd).multiplyScalar(ER+mtnH(gd));gg.quaternion.setFromUnitVectors(_v1.set(0,1,0),gd);gg.updateMatrixWorld(true);earthSurf.add(gg);N10.gg=gg;
   const ggeo=new THREE.PlaneGeometry(46,46,16,16);ggeo.rotateX(-Math.PI/2);{const P=ggeo.attributes.position,v=new THREE.Vector3(),inv=new THREE.Matrix4().copy(gg.matrix).invert();for(let i=0;i<P.count;i++){v.set(P.getX(i),0,P.getZ(i)).applyMatrix4(gg.matrix);const dd=v.clone().normalize();v.copy(dd).multiplyScalar(ER+mtnH(dd)+.8).applyMatrix4(inv);P.setXYZ(i,v.x,v.y,v.z);}P.needsUpdate=true;}
   const gl=new THREE.Mesh(ggeo,new THREE.MeshBasicMaterial({map:n10GlyphTex(),transparent:true,color:0xffe7b0,opacity:.35,depthWrite:false,blending:THREE.AdditiveBlending,polygonOffset:true,polygonOffsetFactor:-4}));gg.add(gl);F.gl=gl;
@@ -3591,7 +3591,7 @@ function nlTex(kind){const cv=document.createElement('canvas');cv.width=cv.heigh
   else if(kind==='ligne'){g.lineWidth=4;P([[128,0],[128,256]]);}
   return new THREE.CanvasTexture(cv);}
 function nlOk(d,half,maxR){if(landScore(d)<=.03||!isLand(d))return false;let mn=1e9,mx=-1e9;for(let k=0;k<12;k++){const q=offsetDir2(d,k/12*6.28,half/ER0*57.3);if(landScore(q)<=.02||!isLand(q))return false;const h=mtnH(q);mn=Math.min(mn,h);mx=Math.max(mx,h);}const h0=mtnH(d);mn=Math.min(mn,h0);mx=Math.max(mx,h0);if(mx-mn>(maxR||12))return false;
-  const jb=EBASES.find(b=>b.id==='jumana');if(jb&&angDeg(d,jb.dir)<(half+8)/ER0*57.3)return false;if(N10.site&&angDeg(d,N10.site)<(half+30)/ER0*57.3)return false;if(N10.gd&&angDeg(d,N10.gd)<(half+26)/ER0*57.3)return false;for(const o of NL.g){if(angDeg(d,o.d)<(half+o.half+1)/ER0*57.3)return false;}return {mx};}
+  const jb=EBASES.find(b=>b.id==='jumana');if(jb&&angDeg(d,jb.dir)<(half+8)/ER0*57.3)return false;if(N10.site&&angDeg(d,N10.site)<(half+30)/ER0*57.3)return false;if(N10.gd&&angDeg(d,N10.gd)<(half+26)/ER0*57.3)return false;for(const f of FIELDS)if(f.nasca&&angDeg(d,f.v)<(half+27)/ER0*57.3)return false;for(const o of NL.g){if(angDeg(d,o.d)<(half+o.half+1)/ER0*57.3)return false;}return {mx};}
 function nlBuild(){if(NL.init)return;NL.init=true;const C=llv(-14.75,-75.1);const kinds=['singe','araignee','condor','baleine','astronaute','chien','arbre','mains','lezard','spirale','trapeze','trapeze','ligne','ligne','ligne','ligne'];
   kinds.forEach((k,i)=>{const lin=k==='ligne'||k==='trapeze';const sz=lin?rr(34,56):rr(16,26);const hf=k==='ligne'?sz*.3:sz*.55;for(let t=0;t<260;t++){const d=offsetDir2(C,Math.random()*6.28,rr(12,105)/ER0*57.3);const r=nlOk(d,hf,lin?5:12);if(!r)continue;
     const g=new THREE.Group();const h0=mtnH(d);g.position.copy(d).multiplyScalar(ER+h0);g.quaternion.setFromUnitVectors(_v1.set(0,1,0),d);g.rotateY(Math.random()*6.28);g.updateMatrixWorld(true);
@@ -3884,7 +3884,7 @@ function drawEarthMap(){const g=bctx,W=big.width,H=big.height;MK=mapK();MKM=Math
    MIBS.forEach(m=>hp(m.v,'Men in Black',30,()=>_v4.copy(EC).addScaledVector(m.v,ER+30)));NPCS.forEach(n=>hp(n.v,SPECIES[n.sp].n,40,()=>_v4.copy(EC).addScaledVector(n.v,ER+40)));
    if(S.world>0)MIL.forEach(u=>hp(_v5.subVectors(u.pos,EC).normalize(),'Unité militaire',0,()=>u.pos));
    if(SYS==='sol')hp(_v5.subVectors(ISS.pos,EC).normalize().clone(),'Station spatiale (ISS)',0,()=>ISS.pos);}
-  if(nav.ext){const tp=nav.ext();if(tp){const ll=vll(_v5.subVectors(tp,EC).normalize());const q=ll2xy(ll.lat,ll.lon,W,H);g.strokeStyle=COLM.tgt;g.lineWidth=2;g.setLineDash([4,3]);g.beginPath();g.arc(q[0],q[1],13,0,7);g.stroke();g.setLineDash([]);g.lineWidth=1;}}
+  
   if(EVN.ext){const tp=EVN.ext();if(tp){const ll=vll(_v5.subVectors(tp,EC).normalize());const q=ll2xy(ll.lat,ll.lon,W,H);g.strokeStyle='#ff7a2e';g.lineWidth=2.5;g.beginPath();g.arc(q[0],q[1],15,0,7);g.stroke();g.lineWidth=1;}}
   if(S.world>0)MIL.forEach(u=>{const ll=vll(_v5.subVectors(u.pos,EC).normalize());const q=ll2xy(ll.lat,ll.lon,W,H);g.fillStyle=COLM.mil;g.beginPath();g.moveTo(q[0],q[1]-6);g.lineTo(q[0]+5,q[1]+4);g.lineTo(q[0]-5,q[1]+4);g.fill();});
   const ei=earthInfo();
@@ -3902,6 +3902,7 @@ function drawEarthMap(){const g=bctx,W=big.width,H=big.height;MK=mapK();MKM=Math
     const ll=vll(_v5.subVectors(m.pos,EC).normalize());const q=ll2xy(ll.lat,ll.lon,W,H);g.fillStyle='#fff';g.strokeStyle='#ff3030';g.lineWidth=3;g.beginPath();g.arc(q[0],q[1],7,0,7);g.fill();g.stroke();g.lineWidth=1;
     const cq=ll2xy(m.city.lat,m.city.lon,W,H);g.strokeStyle='#ff3030';g.beginPath();g.arc(cq[0],cq[1],14+Math.sin(performance.now()/150)*3,0,7);g.stroke();});
   CITIES.forEach(c=>{if(!c.destroyed)return;const q=ll2xy(c.lat,c.lon,W,H);g.fillStyle='rgba(60,40,30,.8)';g.beginPath();g.arc(q[0],q[1],11,0,7);g.fill();});
+  if(nav.ext){const tp=nav.ext();if(tp){const ll=vll(_v5.subVectors(tp,EC).normalize());const q=ll2xy(ll.lat,ll.lon,W,H);const pu=Math.sin(performance.now()/180)*2.5;g.save();g.strokeStyle='rgba(0,0,0,.6)';g.lineWidth=6;g.beginPath();g.arc(q[0],q[1],(17+pu)*MKM,0,7);g.stroke();g.strokeStyle=COLM.tgt;g.lineWidth=3;g.beginPath();g.arc(q[0],q[1],(17+pu)*MKM,0,7);g.stroke();g.lineWidth=2;g.setLineDash([5,4]);g.beginPath();g.arc(q[0],q[1],(25+pu)*MKM,0,7);g.stroke();g.setLineDash([]);if(nav.extName){g.font='700 '+Math.round(13*MK)+'px "Chakra Petch",sans-serif';g.textAlign='center';g.lineWidth=3;g.strokeStyle='#000';g.strokeText('◎ '+nav.extName,q[0],q[1]+(40)*MKM);g.fillStyle=COLM.tgt;g.fillText('◎ '+nav.extName,q[0],q[1]+(40)*MKM);}g.restore();}}
   if(ei.alt<5000){const ll=vll(ei.dir);const q=ll2xy(ll.lat,ll.lon,W,H);
     const east=_v2.set(0,1,0).cross(ei.dir).normalize(),north=_v3.crossVectors(ei.dir,east);const a=Math.atan2(S.fwd.dot(east),S.fwd.dot(north));
     g.strokeStyle=S.world>0?COLM.ship:COLM.shipN;g.lineWidth=2;g.beginPath();g.arc(q[0],q[1],(16+Math.sin(performance.now()/200)*3)*MKM,0,7);g.stroke();g.lineWidth=1;shipArrow(g,q[0],q[1],a,S.world>0?COLM.ship:COLM.shipN,12*MKM);
@@ -4627,6 +4628,8 @@ FARMS.forEach((f,i)=>{let v=null;for(let k=0;k<30;k++){const c=offsetDir(f.v,rr(
   const add=(center,city,lo,hi)=>{let v=null;for(let k=0;k<30;k++){const c=offsetDir(center,rr(lo,hi));if(fieldOK(c)){v=c;break;}}if(!v)return;
     const m=new THREE.Mesh(geo,mat);m.matrixAutoUpdate=false;surfMat(v,.14,rr(0,6.28),1,1,1,m.matrix);m.receiveShadow=true;earthSurf.add(m);FIELDS.push({v,farm:{v:center,city},cv:null,g:null,tex:null,mesh:m,pattern:null});};
   VILLAGES.forEach(vl=>add(vl.v,vl,3.2,4.8));CITIES.forEach(c=>{add(c.v,c,4.6,6.5);add(c.v,c,4.6,6.5);});
+  {const NC=llv(-14.8,-75.08),jb={dir:llv(-14.72,-75.12)},NCITY={n:'Nasca',v:NC};let placed=0;const tries=[];for(let t=0;t<400&&placed<3;t++){const c=offsetDir2(NC,Math.random()*6.28,rr(45,120)/ER0*57.3);if(!fieldOK(c))continue;if(jb&&angDeg(c,jb.dir)<40/ER0*57.3)continue;let mn=1e9,mx=-1e9;for(let k=0;k<9;k++){const q=k?offsetDir2(c,k/8*6.28,22/ER0*57.3):c;const h=mtnH(q);mn=Math.min(mn,h);mx=Math.max(mx,h);}if(mx-mn>6)continue;
+    const dg=new THREE.PlaneGeometry(36,36,12,12);dg.rotateX(-Math.PI/2);const m=new THREE.Mesh(dg,mat);m.matrixAutoUpdate=false;surfMat(c,0,rr(0,6.28),1,1,1,m.matrix);{const P=dg.attributes.position,v=new THREE.Vector3(),inv=new THREE.Matrix4().copy(m.matrix).invert();for(let i=0;i<P.count;i++){v.set(P.getX(i),0,P.getZ(i)).applyMatrix4(m.matrix);const dd=v.clone().normalize();v.copy(dd).multiplyScalar(ER+mtnH(dd)+.3).applyMatrix4(inv);P.setXYZ(i,v.x,v.y,v.z);}P.needsUpdate=true;dg.computeVertexNormals();}m.receiveShadow=true;earthSurf.add(m);FIELDS.push({v:c,farm:{v:NC,city:NCITY},cv:null,g:null,tex:null,mesh:m,pattern:null,nasca:true});placed++;}}
   // pas d'arbres au milieu des champs
   const TC=Math.cos(27/ER);let n=0;TREES.forEach((tv,i)=>{if(FIELDS.some(f=>f.v.dot(tv)>TC)){_m.makeScale(0,0,0);trees.setMatrixAt(i,_m);n++;}});if(n)trees.instanceMatrix.needsUpdate=true;})();
 _FLD=FIELDS;
