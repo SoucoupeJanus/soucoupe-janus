@@ -1204,7 +1204,7 @@ body.pcui #touch #tCtx{right:304px!important;bottom:148px!important}
     <div class="homeMain"><button class="btn" id="btnContinue" type="button" hidden>Continuer la partie</button><button class="btn" id="btnStart" type="button">Nouvelle partie</button></div>
     <div class="homeAlt"><button class="abtn" id="btnInstall" type="button" data-act="installGame" hidden>📲 Installer le jeu</button><button class="abtn" type="button" data-act="shareGame">📣 Partager le jeu</button></div>
     <div class="homeSec"><button class="hbtn" id="btnLoadList" type="button" hidden>Charger…</button><button class="hbtn" type="button" data-act="guideOpen">📘 Guide</button><button class="hbtn" type="button" data-act="encOpen">📖 Sciences</button><button class="hbtn" type="button" data-act="achOpen">🏆 Succès</button><button class="hbtn" type="button" data-act="moreOpen">⚙ Options</button><button class="hbtn" type="button" data-act="langCycle" data-notr>🌐 Français</button></div>
-    <div class="verTag" data-notr>Version 179 · 06/11/2026</div>
+    <div class="verTag" data-notr>Version 180 · 06/11/2026</div>
   </div>
 </div>
 <div class="ov" id="ovGuide" hidden>
@@ -1547,10 +1547,11 @@ const EH={W:0,H:0,h:null},MTNMAX=18;
 function mtnH(d){if(!EH.h)return 0;const L=Math.hypot(d.x,d.y,d.z)||1;const v=Math.acos(clamp(d.y/L,-1,1))/Math.PI;let u=Math.atan2(d.z,-d.x)/(2*Math.PI);if(u<0)u+=1;
   const fx=u*EH.W,fy=v*EH.H;const x0=Math.min(EH.W-1,Math.floor(fx)),y0=Math.min(EH.H-1,Math.floor(fy));const tx=fx-x0,ty=fy-y0,W1=EH.W+1,A=EH.h;
   const a=A[y0*W1+x0],b=A[y0*W1+x0+1],c=A[(y0+1)*W1+x0],e=A[(y0+1)*W1+x0+1];if(!(a||b||c||e))return 0;return (a*(1-tx)+b*tx)*(1-ty)+(c*(1-tx)+e*tx)*ty;}
+const NZ_S=Math.sin(-14.8*Math.PI/180),NZ_C=Math.cos(-14.8*Math.PI/180);
 function earthRelief(o){const g=o.mesh.geometry;const Wn=g.parameters.widthSegments,Hn=g.parameters.heightSegments;const P=g.attributes.position;const hs=new Float32Array((Wn+1)*(Hn+1));
   for(let iy=1;iy<Hn;iy++){const v=iy/Hn,lat=90-v*180;for(let ix=0;ix<=Wn;ix++){const u=ix/Wn,lon=20+u*360;const mm=clAt(CLM,lat,lon);if(mm<.02)continue;const sl=lsAt(lat,lon);if(sl<=0)continue;
     const n3=nTile(u*9+.5,v*4.5+.2),n4=nTile(u*30+.21,v*15+.63);const r=1-Math.abs(2*n3-1);const m=clamp(mm*(.3+.9*r*r)+(n4-.5)*.12*mm,0,1)*smooth(0,.1,sl);if(m<=0)continue;
-    const h=MTNMAX*Math.pow(m,1.25);const i=iy*(Wn+1)+ix;hs[i]=h;const k=(o.R+h)/o.R;P.setXYZ(i,P.getX(i)*k,P.getY(i)*k,P.getZ(i)*k);}}
+    let h=MTNMAX*Math.pow(m,1.25);{/* plaine de Nasca : relief aplani autour du site */const la=lat*D2R,cd=Math.sin(la)*NZ_S+Math.cos(la)*NZ_C*Math.cos((lon+75.08)*D2R);const dd=Math.acos(clamp(cd,-1,1))/D2R;if(dd<8.5)h*=smooth(6,8.5,dd);if(h<=.01)continue;}const i=iy*(Wn+1)+ix;hs[i]=h;const k=(o.R+h)/o.R;P.setXYZ(i,P.getX(i)*k,P.getY(i)*k,P.getZ(i)*k);}}
   g.computeVertexNormals();const N=g.attributes.normal;for(let iy=0;iy<=Hn;iy++){const a=iy*(Wn+1),b=a+Wn;const x=N.getX(a)+N.getX(b),y=N.getY(a)+N.getY(b),z=N.getZ(a)+N.getZ(b);const l=Math.hypot(x,y,z)||1;N.setXYZ(a,x/l,y/l,z/l);N.setXYZ(b,x/l,y/l,z/l);}
   P.needsUpdate=true;N.needsUpdate=true;g.computeBoundingSphere();EH.W=Wn;EH.H=Hn;EH.h=hs;}
 function buildEarth(o){
@@ -3713,7 +3714,7 @@ function opsGo(){const el=$('opsChip');if(!el||!el._go||!started||paused)return;
 setTimeout(()=>{const el=$('opsChip');if(el)el.addEventListener('click',opsGo);},0);
 const GO_RE=/^(call\d|devt$|hunt$|n10$|pkg$|rdv$|ast$|esc$|wish\d|c\d|vil|sec|silo|el_|an2_|exb_|pb_|iss$|nasca$|pr_|an_|ord$|orb\d)/;
 function mk(key,cls){let e=labelEls.get(key);if(!e){e=document.createElement('div');e.className='mk '+cls;e.dataset.k=key;if(GO_RE.test(key)||BODIES.some(b=>b.key===key)||NEGS.some(n=>n.key===key)){e._go=1;e.classList.add('go');}$('labels').appendChild(e);labelEls.set(key,e);}e.dataset.used='1';return e;}
-var _plb=null;function place(e,p,txt){if(e._go){(e._p||(e._p=new V3())).copy(p);}const behind=(_plb||(_plb=new THREE.Vector3())).copy(p).applyMatrix4(camera.matrixWorldInverse).z>=0;_v1.copy(p).project(camera);if(behind||Math.abs(_v1.x)>1.05||Math.abs(_v1.y)>1.05){e.style.display='none';return false;}
+var _plb=null;function place(e,p,txt){if(e._go){(e._p||(e._p=new V3())).copy(p);}_v1.copy(p).project(camera);const behind=(e._far??=BODIES.some(b=>b.key===e.dataset.k))?(_plb||(_plb=new THREE.Vector3())).copy(p).applyMatrix4(camera.matrixWorldInverse).z>=0:_v1.z>1;if(behind||Math.abs(_v1.x)>1.05||Math.abs(_v1.y)>1.05){e.style.display='none';return false;}
   e.style.display='block';e.style.left=((_v1.x+1)/2*innerWidth)+'px';e.style.top=((1-_v1.y)/2*innerHeight)+'px';if(e._t!==txt){e.textContent=txt;e._t=txt;}return true;}
 function occluded(p){const b=curBody;if(!b||b.type==='star')return false;const o=camera.position;const d=_v5.subVectors(p,o);const L=d.length();d.divideScalar(L);const oc=_lt.subVectors(b.pos,o);const t=oc.dot(d);if(t<0||t>L)return false;const h2=oc.lengthSq()-t*t;return h2<b.R*b.R*.995;}
 // distances terrestres à l'échelle réelle (rayon 6 371 km) : la Terre du jeu est réduite
