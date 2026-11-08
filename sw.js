@@ -1,7 +1,7 @@
 /* Soucoupe Janus : service worker (installation + jeu hors ligne).
    Réseau d'abord : à chaque lancement connecté, la dernière version publiée sur GitHub est chargée
    et la copie locale est mise à jour au passage. Sans réseau, le jeu démarre depuis cette copie. */
-const CACHE='soucoupe-janus-v4';
+const CACHE='soucoupe-janus-v5';
 const THREE_URL='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 const FONTS_URL='https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap';
 const LOCAL=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon.png','./icons/favicon.svg','./icons/favicon.ico'];
@@ -19,7 +19,9 @@ self.addEventListener('fetch',e=>{
   // moteur 3D et fichiers de police : versions figées, la copie locale suffit (plus rapide, et indispensable hors ligne)
   if(cdn){e.respondWith(caches.match(req,{ignoreVary:true}).then(hit=>hit||fetch(req).then(res=>{if(keep(req,res)){const cp=res.clone();caches.open(CACHE).then(c=>c.put(req,cp)).catch(()=>{});}return res;})));return;}
   e.respondWith(fetch(req,page?{cache:'no-cache'}:undefined).then(res=>{
-    if(keep(req,res)){const copy=res.clone();caches.open(CACHE).then(c=>c.put(page?'./index.html':req,copy)).catch(()=>{});}
+    // la page est rangée sous « ./ » ET « ./index.html » : hors ligne, c'est toujours la dernière version vue en ligne qui démarre
+    if(keep(req,res)){if(page){const a=res.clone(),b=res.clone();caches.open(CACHE).then(c=>Promise.all([c.put('./index.html',a),c.put('./',b)])).catch(()=>{});}
+      else{const copy=res.clone();caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{});}}
     return res;
-  }).catch(()=>caches.match(req,{ignoreSearch:page,ignoreVary:true}).then(r=>r||(page?caches.match('./index.html'):null)).then(r=>r||Response.error())));
+  }).catch(()=>(page?caches.match('./index.html',{ignoreVary:true}):caches.match(req,{ignoreVary:true})).then(r=>r||caches.match(req,{ignoreSearch:page,ignoreVary:true})).then(r=>r||Response.error())));
 });
